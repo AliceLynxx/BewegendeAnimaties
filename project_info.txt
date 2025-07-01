@@ -15,11 +15,13 @@ BewegendeAnimaties is een Python-tool voor het genereren van fMRI-stijl GIF anim
 - Maakt complexe hersenprocessen visueel begrijpelijk
 - Ondersteunt wetenschappelijke communicatie
 - Biedt flexibele configuratie voor verschillende use cases
+- Verhoogt herkenbaarheid en wetenschappelijke waarde door realistische visualisaties
 
 **Functie**: 
 - Genereert 4 verschillende animatietypes op één hersenachtergrond
 - Volledig configureerbaar via constants bestand
 - Automatische batch-generatie van alle animaties
+- Ondersteunt zowel abstracte als realistische bewegende figuren
 
 ## Architectuur/modulestructuur
 ```
@@ -28,15 +30,15 @@ BewegendeAnimaties/
 ├── demo_bewegend_mannetje.py  # Demo script voor bewegend mannetje
 ├── requirements.txt           # Python dependencies
 ├── config/
-│   └── constants.py          # Configuratie en instellingen
+│   └── constants.py          # Configuratie en instellingen ✅
 ├── animaties/
 │   ├── __init__.py           # Package initialisatie
-│   ├── bewegend_mannetje.py  # Bewegend figuur animatie ✅
+│   ├── bewegend_mannetje.py  # Bewegend figuur animatie ✅ (uitgebreid)
 │   ├── vlekken_verschijnend.py # Uitspreidende vlekken
 │   ├── vlekken_verdwijnend.py  # Verdwijnende vlekken
 │   └── tekst_verschijnend.py   # Letter-voor-letter tekst
 ├── utils/
-│   ├── image_utils.py        # Afbeelding manipulatie
+│   ├── image_utils.py        # Afbeelding manipulatie ✅ (uitgebreid)
 │   ├── color_utils.py        # fMRI kleurenschema
 │   └── gif_utils.py          # GIF generatie utilities
 └── output/                   # Gegenereerde GIF bestanden
@@ -51,15 +53,22 @@ BewegendeAnimaties/
 - **Afhankelijkheden**: Geen
 
 ### config/constants.py
-- **Status**: ✅ Voltooid
+- **Status**: ✅ Voltooid en uitgebreid
 - **Pad**: /config/constants.py
-- **Functionaliteit**: Configuratie voor achtergrond, tekst, animatieparameters, fMRI kleuren
+- **Functionaliteit**: 
+  - Configuratie voor achtergrond, tekst, animatieparameters, fMRI kleuren
+  - Nieuwe configuratie voor realistisch lopend mannetje
+  - Random walk parameters en bewegingsinstellingen
 - **Afhankelijkheden**: Geen
 
 ### utils/image_utils.py
-- **Status**: ✅ Voltooid
+- **Status**: ✅ Voltooid en uitgebreid
 - **Pad**: /utils/image_utils.py
-- **Functionaliteit**: Afbeelding laden, ovaal masker, compositing, punt-in-ovaal detectie
+- **Functionaliteit**: 
+  - Afbeelding laden, ovaal masker, compositing, punt-in-ovaal detectie
+  - **NIEUW**: Stick figure tekenfuncties met verschillende poses
+  - **NIEUW**: Random walk utilities en positie berekeningen
+  - **NIEUW**: Ovaal boundary checking en position correction
 - **Afhankelijkheden**: PIL/Pillow, numpy, config.constants
 
 ### utils/color_utils.py
@@ -81,14 +90,17 @@ BewegendeAnimaties/
 - **Afhankelijkheden**: bewegend_mannetje module
 
 ### animaties/bewegend_mannetje.py
-- **Status**: ✅ Voltooid
+- **Status**: ✅ Voltooid en uitgebreid
 - **Pad**: /animaties/bewegend_mannetje.py
 - **Functionaliteit**: 
-  - Ovaalroute algoritme voor smooth beweging binnen hersenregio
-  - Bewegend figuur rendering met fMRI kleurenschema en gloed effect
+  - **ORIGINEEL**: Ovaalroute algoritme voor smooth beweging binnen hersenregio
+  - **ORIGINEEL**: Bewegend figuur rendering met fMRI kleurenschema en gloed effect
+  - **NIEUW**: Realistisch stick figure mannetje met loop animatie
+  - **NIEUW**: Vrije beweging binnen ovaal met random walk algoritme
+  - **NIEUW**: Verschillende poses voor natuurlijke loop-cyclus
+  - **NIEUW**: Bounce detection en natuurlijke richtingsveranderingen
   - Frame-by-frame animatie generatie met configureerbare parameters
   - Smooth interpolatie voor vloeiende beweging
-  - Verschillende route variaties (standaard, elliptisch, spiraal)
   - Anti-aliasing en pulsing effecten
 - **Afhankelijkheden**: utils modules (image_utils, color_utils, gif_utils), config.constants
 
@@ -125,3 +137,19 @@ BewegendeAnimaties/
 - **Pad**: /animaties/tekst_verschijnend.py
 - **Functionaliteit**: Tekst die letter voor letter verschijnt
 - **Afhankelijkheden**: utils modules, config
+
+## Nieuwe functionaliteit - Realistisch Lopend Mannetje
+
+### Belangrijkste verbeteringen:
+1. **Realistisch figuur**: Vervangen van abstracte cirkel door herkenbaar stick figure mannetje
+2. **Loop animatie**: 6 verschillende poses voor natuurlijke loop-cyclus
+3. **Vrije beweging**: Random walk algoritme in plaats van vaste ovaalroute
+4. **Natuurlijke beweging**: Momentum, richtingsveranderingen en bounce detection
+5. **Configureerbaar**: Volledig instelbaar via constants voor verschillende use cases
+
+### Technische implementatie:
+- Stick figure tekening met PIL ImageDraw
+- Random walk met momentum en noise parameters
+- Boundary detection en correction binnen ovaal
+- Pose cycling voor loop animatie
+- Behoud van fMRI styling en gloed effecten
