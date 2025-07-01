@@ -1,1 +1,4 @@
 /venv
+/output
+/config/__pycache__
+/utils/__pycache__
