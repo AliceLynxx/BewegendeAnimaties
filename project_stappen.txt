@@ -36,20 +36,17 @@
 - **Demo functionaliteit**: Test versie met vaste seed voor consistente resultaten
 - **Geoptimaliseerde rendering**: Efficiënte frame-by-frame generatie
 
-## Stap 4: Vlekken verdwijnend animatie (MUST-HAVE)
-**Doel**: Het omgekeerde proces - vlekken die verdwijnen van vol naar leeg.
-**Doelgroep**: Gebruikers die afnemende hersenactiviteit willen visualiseren.
-**Nut**: Toont processen zoals herstel, inhibitie of afnemende activiteit.
-**Noodzaak**: Completeert het spectrum van activiteit visualisatie.
-
-**Bestanden om te maken/wijzigen**:
-- animaties/vlekken_verdwijnend.py
-
-**Acties**:
-- Reverse algoritme van verschijnende vlekken
-- Smooth transitie van vol naar leeg
-- Natuurlijke verdwijn patronen
-- Consistent met verschijnende animatie
+## ✅ Stap 4: Vlekken verdwijnend animatie (VOLTOOID)
+**Samenvatting**: Vlekken verdwijnend animatie succesvol geïmplementeerd met:
+- **Reverse Algoritme**: Omgekeerd proces van vlekken_verschijnend.py voor complete toolkit
+- **Geleidelijke Verdwijning**: Vlekken starten op maximale grootte en verdwijnen geleidelijk
+- **Natuurlijke Patronen**: Sigmoid easing voor smooth verdwijn curves
+- **Gespreide Timing**: Vlekken verdwijnen op verschillende momenten voor natuurlijk effect
+- **fMRI Styling**: Consistent kleurenschema (oranje/rood/geel) met gloed effecten
+- **Organische Vormen**: Hergebruik van create_organic_spot functie voor natuurlijke vlekken
+- **Configureerbaar**: Volledig instelbaar via constants.py parameters
+- **Demo functionaliteit**: Test versie met vaste seed voor reproduceerbare resultaten
+- **Wetenschappelijke Waarde**: Toont afnemende hersenactiviteit, inhibitie of herstelprocessen
 
 ## Stap 5: Tekst verschijnend animatie (MUST-HAVE)
 **Doel**: Tekst die letter voor letter zichtbaar wordt binnen het ovaal.
