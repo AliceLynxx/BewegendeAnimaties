@@ -34,7 +34,7 @@ BewegendeAnimaties/
 ├── animaties/
 │   ├── __init__.py           # Package initialisatie
 │   ├── bewegend_mannetje.py  # Bewegend figuur animatie ✅ (uitgebreid)
-│   ├── vlekken_verschijnend.py # Uitspreidende vlekken
+│   ├── vlekken_verschijnend.py # Uitspreidende vlekken ✅
 │   ├── vlekken_verdwijnend.py  # Verdwijnende vlekken
 │   └── tekst_verschijnend.py   # Letter-voor-letter tekst
 ├── utils/
@@ -104,6 +104,20 @@ BewegendeAnimaties/
   - Anti-aliasing en pulsing effecten
 - **Afhankelijkheden**: utils modules (image_utils, color_utils, gif_utils), config.constants
 
+### animaties/vlekken_verschijnend.py
+- **Status**: ✅ Voltooid
+- **Pad**: /animaties/vlekken_verschijnend.py
+- **Functionaliteit**: 
+  - **Vlek Generatie**: Algoritme voor natuurlijk uitziende organische vlekken
+  - **Gradual Fill**: Geleidelijke uitbreiding van vlekken tot volledig gevuld ovaal
+  - **Natuurlijke Groei**: Organische vlek vormen met irregulariteit en groeipatronen
+  - **Timing Optimalisatie**: Smooth animatie met sigmoid easing voor natuurlijke groei
+  - **fMRI Styling**: Oranje/rood/geel kleurenschema met gloed effecten en pulsing
+  - **Configureerbaar**: Volledig instelbaar via constants (grootte, aantal, timing)
+  - **Demo functionaliteit**: Test versie met vaste seed voor consistente resultaten
+  - **Geoptimaliseerde rendering**: Efficiënte frame-by-frame generatie
+- **Afhankelijkheden**: utils modules (image_utils, color_utils, gif_utils), config.constants
+
 ### demo_bewegend_mannetje.py
 - **Status**: ✅ Voltooid
 - **Pad**: /demo_bewegend_mannetje.py
@@ -119,12 +133,6 @@ BewegendeAnimaties/
 - **Pad**: /main.py
 - **Functionaliteit**: Centraal script dat alle 4 animaties genereert
 - **Afhankelijkheden**: Alle animatie modules, config module
-
-### animaties/vlekken_verschijnend.py
-- **Status**: Nog niet gemaakt
-- **Pad**: /animaties/vlekken_verschijnend.py
-- **Functionaliteit**: Vlekken die uitspreiden tot vol ovaal
-- **Afhankelijkheden**: utils modules, config
 
 ### animaties/vlekken_verdwijnend.py
 - **Status**: Nog niet gemaakt
@@ -153,3 +161,19 @@ BewegendeAnimaties/
 - Boundary detection en correction binnen ovaal
 - Pose cycling voor loop animatie
 - Behoud van fMRI styling en gloed effecten
+
+## Nieuwe functionaliteit - Vlekken Verschijnend Animatie
+
+### Belangrijkste kenmerken:
+1. **Organische vlekken**: Natuurlijk uitziende vlek vormen met irregulariteit
+2. **Geleidelijke groei**: Sigmoid easing voor smooth groei van vlekken
+3. **Timing spreiding**: Vlekken verschijnen op verschillende momenten
+4. **fMRI styling**: Kleurgradiënt met pulsing effecten
+5. **Configureerbaar**: Grootte, aantal en timing via constants
+
+### Technische implementatie:
+- Organische vlek generatie met polygon shapes
+- Sigmoid growth curves voor natuurlijke animatie
+- Color gradient systeem voor variatie
+- Glow effects en pulsing voor dynamiek
+- Efficient frame-by-frame rendering
