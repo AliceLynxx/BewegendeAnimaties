@@ -71,9 +71,20 @@ def apply_oval_mask(image, mask):
         
     Returns:
         PIL.Image: Gemaskeerde afbeelding
+        
+    Raises:
+        ValueError: Als afbeelding en masker verschillende afmetingen hebben
     """
     if image.mode != 'RGBA':
         image = image.convert('RGBA')
+    
+    # Controleer of afmetingen overeenkomen
+    if image.size != mask.size:
+        raise ValueError(
+            f"Afbeelding en masker hebben verschillende afmetingen: "
+            f"afbeelding {image.size}, masker {mask.size}. "
+            f"Beide moeten dezelfde afmetingen hebben voor masking."
+        )
     
     # Maak transparante versie met masker
     masked = Image.new('RGBA', image.size, (0, 0, 0, 0))
