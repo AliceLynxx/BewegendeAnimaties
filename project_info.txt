@@ -32,15 +32,15 @@ BewegendeAnimaties/
 ├── config/
 │   └── constants.py          # Configuratie en instellingen ✅
 ├── animaties/
-│   ├── __init__.py           # Package initialisatie
+│   ├── __init__.py           # Package initialisatie ✅
 │   ├── bewegend_mannetje.py  # Bewegend figuur animatie ✅ (uitgebreid)
 │   ├── vlekken_verschijnend.py # Uitspreidende vlekken ✅
 │   ├── vlekken_verdwijnend.py  # Verdwijnende vlekken ✅
-│   └── tekst_verschijnend.py   # Letter-voor-letter tekst
+│   └── tekst_verschijnend.py   # Letter-voor-letter tekst ✅
 ├── utils/
 │   ├── image_utils.py        # Afbeelding manipulatie ✅ (uitgebreid)
-│   ├── color_utils.py        # fMRI kleurenschema
-│   └── gif_utils.py          # GIF generatie utilities
+│   ├── color_utils.py        # fMRI kleurenschema ✅
+│   └── gif_utils.py          # GIF generatie utilities ✅
 └── output/                   # Gegenereerde GIF bestanden
 ```
 
@@ -59,6 +59,7 @@ BewegendeAnimaties/
   - Configuratie voor achtergrond, tekst, animatieparameters, fMRI kleuren
   - Nieuwe configuratie voor realistisch lopend mannetje
   - Random walk parameters en bewegingsinstellingen
+  - **NIEUW**: Tekst animatie configuratie (font, kleur, positionering, timing)
 - **Afhankelijkheden**: Geen
 
 ### utils/image_utils.py
@@ -84,10 +85,10 @@ BewegendeAnimaties/
 - **Afhankelijkheden**: PIL/Pillow, config.constants
 
 ### animaties/__init__.py
-- **Status**: ✅ Voltooid
+- **Status**: ✅ Voltooid en uitgebreid
 - **Pad**: /animaties/__init__.py
-- **Functionaliteit**: Package initialisatie, importeert hoofdfuncties
-- **Afhankelijkheden**: bewegend_mannetje module
+- **Functionaliteit**: Package initialisatie, importeert hoofdfuncties van alle animatie modules
+- **Afhankelijkheden**: bewegend_mannetje, tekst_verschijnend modules
 
 ### animaties/bewegend_mannetje.py
 - **Status**: ✅ Voltooid en uitgebreid
@@ -133,6 +134,22 @@ BewegendeAnimaties/
   - **Wetenschappelijke Waarde**: Toont afnemende hersenactiviteit, inhibitie of herstelprocessen
 - **Afhankelijkheden**: utils modules (image_utils, color_utils, gif_utils), config.constants
 
+### animaties/tekst_verschijnend.py
+- **Status**: ✅ Voltooid
+- **Pad**: /animaties/tekst_verschijnend.py
+- **Functionaliteit**: 
+  - **Letter-voor-letter animatie**: Tekst verschijnt geleidelijk karakter voor karakter
+  - **Intelligente positionering**: Automatische berekening van optimale tekstpositie binnen ovaal
+  - **Flexibele positionering**: Ondersteuning voor center, left, right, top, bottom posities
+  - **Font management**: Automatische font detectie met fallback opties
+  - **fMRI styling**: Oranje/rood/geel kleurenschema met verhoogde gloed effecten
+  - **Pulsing effecten**: Dynamische kleur pulsing voor extra visuele impact
+  - **Boundary checking**: Zorgt ervoor dat tekst altijd binnen ovaal grenzen blijft
+  - **Configureerbaar**: Volledig instelbaar via constants (tekst, font, kleur, timing)
+  - **Demo functionaliteit**: Multi-tekst demo met verschillende posities en kleuren
+  - **Educatieve waarde**: Perfect voor labeling van hersenregio's en processen
+- **Afhankelijkheden**: utils modules (image_utils, color_utils, gif_utils), config.constants
+
 ### demo_bewegend_mannetje.py
 - **Status**: ✅ Voltooid
 - **Pad**: /demo_bewegend_mannetje.py
@@ -149,11 +166,43 @@ BewegendeAnimaties/
 - **Functionaliteit**: Centraal script dat alle 4 animaties genereert
 - **Afhankelijkheden**: Alle animatie modules, config module
 
-### animaties/tekst_verschijnend.py
-- **Status**: Nog niet gemaakt
-- **Pad**: /animaties/tekst_verschijnend.py
-- **Functionaliteit**: Tekst die letter voor letter verschijnt
-- **Afhankelijkheden**: utils modules, config
+## Nieuwe functionaliteit - Tekst Verschijnend Animatie
+
+### Belangrijkste kenmerken:
+1. **Letter-voor-letter onthulling**: Tekst verschijnt geleidelijk karakter voor karakter
+2. **Intelligente positionering**: Automatische berekening van optimale positie binnen ovaal
+3. **Flexibele configuratie**: Ondersteuning voor verschillende posities (center, left, right, top, bottom)
+4. **Font management**: Robuuste font detectie met fallback naar standaard fonts
+5. **fMRI styling**: Consistent kleurenschema met verhoogde gloed effecten voor tekst
+6. **Pulsing effecten**: Dynamische kleur variatie voor extra visuele impact
+7. **Boundary checking**: Tekst blijft altijd binnen ovaal grenzen
+8. **Demo functionaliteit**: Multi-tekst demo voor verschillende use cases
+
+### Technische implementatie:
+- **Font loading**: Automatische detectie van beschikbare fonts (Arial, DejaVu, fallback)
+- **Text positioning**: Mathematische berekening van optimale posities binnen ellips
+- **Boundary validation**: Controle dat alle tekst hoeken binnen ovaal blijven
+- **Character revelation**: Frame-by-frame onthulling met configureerbare timing
+- **Glow enhancement**: Verhoogde gloed radius en intensiteit voor tekst zichtbaarheid
+- **Color pulsing**: Sinus-gebaseerde kleur variatie voor dynamische effecten
+- **Mask integration**: Naadloze integratie met bestaande ovaal masker systeem
+
+### Doelgroep en nut:
+- **Educatieve gebruikers**: Voor het toevoegen van labels of uitleg aan hersenvisualisaties
+- **Neurowetenschappers**: Voor het labelen van specifieke hersenregio's of processen
+- **Presentatie doeleinden**: Voor het toevoegen van context aan animaties
+- **Wetenschappelijke communicatie**: Verhoogt de communicatieve waarde van visualisaties
+
+### Configuratie opties:
+- **TEXT_CONTENT**: Standaard tekst inhoud ("fMRI")
+- **TEXT_FONT_SIZE**: Font grootte (48)
+- **TEXT_COLOR**: Tekst kleur (fMRI primary oranje)
+- **TEXT_POSITION**: Positionering ("center", "left", "right", "top", "bottom")
+- **TEXT_ANIMATION_SPEED**: Snelheid van letter onthulling (0.15 sec/letter)
+- **TEXT_GLOW_RADIUS**: Verhoogde gloed radius (15) voor betere zichtbaarheid
+- **TEXT_GLOW_INTENSITY**: Gloed intensiteit (0.8) voor sterker effect
+- **TEXT_PULSE_SPEED**: Snelheid van pulsing effect (2.0 cycli/sec)
+- **TEXT_FONT_PATH**: Optioneel pad naar custom font
 
 ## Nieuwe functionaliteit - Realistisch Lopend Mannetje
 
