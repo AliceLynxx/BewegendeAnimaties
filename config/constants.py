@@ -8,8 +8,8 @@ BACKGROUND_DEFAULT_SIZE = (800, 600)  # Standaard afmetingen als geen achtergron
 
 # Ovaal regio configuratie (hersenregio waar animatie plaatsvindt)
 OVAL_CENTER = (400, 300)  # Centrum van het ovaal (x, y)
-OVAL_WIDTH = 200  # Breedte van het ovaal
-OVAL_HEIGHT = 150  # Hoogte van het ovaal
+OVAL_WIDTH = 300  # Breedte van het ovaal (verhoogd van 200 naar 300)
+OVAL_HEIGHT = 225  # Hoogte van het ovaal (verhoogd van 150 naar 225)
 
 # Animatie algemene instellingen
 ANIMATION_DURATION = 3.0  # Duur van animatie in seconden
@@ -34,7 +34,7 @@ MOVING_FIGURE_SPEED = 1.0  # Snelheid multiplier
 
 # Realistisch lopend mannetje configuratie
 WALKING_FIGURE_SIZE = 20  # Grootte van stick figure mannetje
-WALKING_SPEED = 2.0  # Bewegingssnelheid in pixels per frame
+WALKING_SPEED = 3.5  # Bewegingssnelheid in pixels per frame (verhoogd van 2.0 naar 3.5)
 WALKING_DIRECTION_CHANGE_CHANCE = 0.05  # Kans op richtingsverandering per frame (0.0-1.0)
 WALKING_RANDOM_VARIATION = 0.3  # Willekeurige variatie in beweging (0.0-1.0)
 WALKING_POSE_CHANGE_SPEED = 3  # Snelheid van pose verandering (frames per pose)
