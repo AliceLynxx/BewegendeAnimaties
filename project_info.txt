@@ -25,11 +25,13 @@ BewegendeAnimaties is een Python-tool voor het genereren van fMRI-stijl GIF anim
 ```
 BewegendeAnimaties/
 ├── main.py                    # Centraal script voor alle animaties
+├── demo_bewegend_mannetje.py  # Demo script voor bewegend mannetje
 ├── requirements.txt           # Python dependencies
 ├── config/
 │   └── constants.py          # Configuratie en instellingen
 ├── animaties/
-│   ├── bewegend_mannetje.py  # Bewegend figuur animatie
+│   ├── __init__.py           # Package initialisatie
+│   ├── bewegend_mannetje.py  # Bewegend figuur animatie ✅
 │   ├── vlekken_verschijnend.py # Uitspreidende vlekken
 │   ├── vlekken_verdwijnend.py  # Verdwijnende vlekken
 │   └── tekst_verschijnend.py   # Letter-voor-letter tekst
@@ -72,17 +74,39 @@ BewegendeAnimaties/
 - **Functionaliteit**: GIF creatie, optimalisatie, frame handling, test functionaliteit
 - **Afhankelijkheden**: PIL/Pillow, config.constants
 
+### animaties/__init__.py
+- **Status**: ✅ Voltooid
+- **Pad**: /animaties/__init__.py
+- **Functionaliteit**: Package initialisatie, importeert hoofdfuncties
+- **Afhankelijkheden**: bewegend_mannetje module
+
+### animaties/bewegend_mannetje.py
+- **Status**: ✅ Voltooid
+- **Pad**: /animaties/bewegend_mannetje.py
+- **Functionaliteit**: 
+  - Ovaalroute algoritme voor smooth beweging binnen hersenregio
+  - Bewegend figuur rendering met fMRI kleurenschema en gloed effect
+  - Frame-by-frame animatie generatie met configureerbare parameters
+  - Smooth interpolatie voor vloeiende beweging
+  - Verschillende route variaties (standaard, elliptisch, spiraal)
+  - Anti-aliasing en pulsing effecten
+- **Afhankelijkheden**: utils modules (image_utils, color_utils, gif_utils), config.constants
+
+### demo_bewegend_mannetje.py
+- **Status**: ✅ Voltooid
+- **Pad**: /demo_bewegend_mannetje.py
+- **Functionaliteit**: 
+  - Demonstreert gebruik van bewegend_mannetje module
+  - Genereert verschillende voorbeeld animaties
+  - Toont configuratie opties
+  - Gebruiksvriendelijke interface voor testen
+- **Afhankelijkheden**: animaties.bewegend_mannetje, config.constants
+
 ### main.py
 - **Status**: Nog niet gemaakt
 - **Pad**: /main.py
 - **Functionaliteit**: Centraal script dat alle 4 animaties genereert
 - **Afhankelijkheden**: Alle animatie modules, config module
-
-### animaties/bewegend_mannetje.py
-- **Status**: Nog niet gemaakt
-- **Pad**: /animaties/bewegend_mannetje.py
-- **Functionaliteit**: Genereert animatie van bewegend figuur in ovaalroute
-- **Afhankelijkheden**: utils modules, config
 
 ### animaties/vlekken_verschijnend.py
 - **Status**: Nog niet gemaakt

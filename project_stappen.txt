@@ -3,20 +3,16 @@
 ## ✅ Stap 1: Basis infrastructuur opzetten (VOLTOOID)
 **Samenvatting**: Basis infrastructuur succesvol geïmplementeerd met configuratie systeem, utility functies voor afbeelding manipulatie, fMRI kleurenschema en GIF generatie. Alle dependencies gedocumenteerd in requirements.txt.
 
-## Stap 2: Bewegend mannetje animatie (MUST-HAVE)
-**Doel**: De eerste animatie implementeren - een bewegend figuur dat een ovaalroute volgt.
-**Doelgroep**: Gebruikers die hersenactiviteit willen visualiseren met bewegende elementen.
-**Nut**: Toont dynamische processen in de hersenen, zoals neurotransmitter beweging.
-**Noodzaak**: Dit is een kernfunctionaliteit die het project onderscheidt.
-
-**Bestanden om te maken/wijzigen**:
-- animaties/bewegend_mannetje.py
-
-**Acties**:
-- Ovaalroute algoritme implementeren
-- Bewegend figuur tekenen met fMRI kleuren
-- Animatie frames genereren
-- Smooth beweging tussen punten
+## ✅ Stap 2: Bewegend mannetje animatie (VOLTOOID)
+**Samenvatting**: Bewegend mannetje animatie succesvol geïmplementeerd met:
+- Ovaalroute algoritme voor smooth beweging binnen hersenregio
+- Bewegend figuur rendering met fMRI kleurenschema en gloed effecten
+- Frame-by-frame animatie generatie met configureerbare parameters
+- Verschillende route variaties (standaard, elliptisch, spiraal)
+- Smooth interpolatie voor extra vloeiende beweging
+- Pulsing effecten en anti-aliasing
+- Demo script voor gebruiksvriendelijke testing
+- Volledig geïntegreerd met bestaande infrastructuur
 
 ## Stap 3: Vlekken verschijnend animatie (MUST-HAVE)
 **Doel**: Animatie waarbij vlekken zich uitspreiden tot het hele ovaal gevuld is.
