@@ -24,13 +24,14 @@ BewegendeAnimaties/
 ## File Details by Directory
 
 ### Configuration (/config/)
-**constants.py** (2.7KB)
+**constants.py** (2.8KB)
 - Centrale configuratie voor alle animatie parameters
 - fMRI kleurenschema definities
 - Ovaal dimensies en positionering
 - Animatie timing en frame instellingen
 - **NIEUW**: Configuratie voor realistisch lopend mannetje
 - **NIEUW**: Random walk parameters en bewegingsinstellingen
+- **NIEUW**: Vlekken animatie configuratie (grootte, aantal, timing)
 
 ### Animation Modules (/animaties/)
 **__init__.py** (klein bestand)
@@ -52,11 +53,25 @@ BewegendeAnimaties/
 - Pulsing effecten en gloed rendering
 - Demo variaties generator
 
-**vlekken_verschijnend.py** [NIET GEÏMPLEMENTEERD]
-- Geplande functionaliteit: Vlekken die uitspreiden tot vol ovaal
+**vlekken_verschijnend.py** (8.8KB) - **VOLTOOID**
+- Organische vlekken die geleidelijk uitspreiden tot volledig gevuld ovaal
+- Natuurlijk uitziende vlek vormen met irregulariteit
+- Sigmoid easing voor smooth groei patronen
+- Gespreide timing - vlekken verschijnen op verschillende momenten
+- fMRI kleurgradiënt met pulsing effecten
+- Volledig configureerbaar via constants
+- Demo functionaliteit met reproduceerbare resultaten
 
-**vlekken_verdwijnend.py** [NIET GEÏMPLEMENTEERD]
-- Geplande functionaliteit: Vlekken die verdwijnen van vol naar leeg
+**vlekken_verdwijnend.py** (9.1KB) - **NIEUW VOLTOOID**
+- **Reverse Algoritme**: Omgekeerd proces van vlekken_verschijnend.py
+- **Geleidelijke Verdwijning**: Vlekken starten op maximale grootte en verdwijnen geleidelijk
+- **Natuurlijke Patronen**: Sigmoid easing voor smooth verdwijn curves
+- **Gespreide Timing**: Vlekken verdwijnen op verschillende momenten voor natuurlijk effect
+- **fMRI Styling**: Consistent kleurenschema (oranje/rood/geel) met gloed effecten
+- **Organische Vormen**: Hergebruik van create_organic_spot functie voor natuurlijke vlekken
+- **Configureerbaar**: Volledig instelbaar via constants.py parameters
+- **Demo functionaliteit**: Test versie met vaste seed voor reproduceerbare resultaten
+- **Wetenschappelijke Waarde**: Toont afnemende hersenactiviteit, inhibitie of herstelprocessen
 
 **tekst_verschijnend.py** [NIET GEÏMPLEMENTEERD]
 - Geplande functionaliteit: Tekst die letter voor letter verschijnt
@@ -102,17 +117,21 @@ BewegendeAnimaties/
 - Gebruikersgids en instructies
 
 ### Documentation Files
-**project_info.txt** (6.7KB) - **BIJGEWERKT**
+**project_info.txt** (9.9KB) - **BIJGEWERKT**
 - Uitgebreide projectbeschrijving
 - Doelgroep en use cases
 - Architectuur overzicht
 - Module status en afhankelijkheden
 - **NIEUW**: Documentatie van realistische figuur functionaliteit
+- **NIEUW**: Documentatie van vlekken verschijnend animatie
+- **NIEUW**: Documentatie van vlekken verdwijnend animatie
 
-**project_stappen.txt** (4.7KB) - **BIJGEWERKT**
+**project_stappen.txt** (5.2KB) - **BIJGEWERKT**
 - Ontwikkelroadmap en voortgang
 - Must-have vs nice-to-have features
 - **NIEUW**: Stap 2b voltooid (realistisch lopend mannetje)
+- **NIEUW**: Stap 3 voltooid (vlekken verschijnend)
+- **NIEUW**: Stap 4 voltooid (vlekken verdwijnend)
 - Resterende ontwikkelstappen
 
 **requirements.txt** (klein bestand)
@@ -135,10 +154,17 @@ BewegendeAnimaties/
    - Configurable randomness levels
    - Smooth trajectory generation
 
+### Spot Animation System (NIEUW)
+1. **Organic Spot Generation**: Natuurlijk uitziende vlek vormen
+2. **Growth/Shrinkage Algorithms**: Sigmoid easing voor smooth transitie
+3. **Timing Distribution**: Gespreide start/stop tijden voor natuurlijk effect
+4. **Color Gradient System**: fMRI kleurenschema met variatie
+5. **Pulsing Effects**: Dynamische kleur variaties
+
 ### Rendering Pipeline
 1. Background loading en processing
-2. Figure generation (cirkel of stick figure)
-3. Position calculation (route of random walk)
+2. Figure/spot generation (cirkel, stick figure, of organische vlekken)
+3. Position/size calculation (route, random walk, of growth/shrinkage)
 4. fMRI styling application (kleuren, gloed)
 5. Oval masking voor brain region
 6. Frame compositing en output
@@ -149,20 +175,36 @@ BewegendeAnimaties/
 - Pulsing animations voor levensechtheid
 - Anti-aliasing voor smooth visuals
 
-## Recent Major Updates (Issue #5 Implementation)
+## Recent Major Updates
 
-### Nieuwe Functionaliteit
+### Issue #5 Implementation (Realistisch Lopend Mannetje)
 1. **Realistisch Stick Figure**: Vervangen abstracte cirkel door herkenbaar mannetje
 2. **Loop Animatie**: 6 poses voor natuurlijke loop-cyclus
 3. **Vrije Beweging**: Random walk in plaats van vaste route
 4. **Natuurlijke Beweging**: Momentum, richtingsveranderingen, bounce detection
 5. **Uitgebreide Configuratie**: Nieuwe parameters voor beweging en uiterlijk
 
+### Issue #10 Implementation (Vlekken Verschijnend)
+1. **Organische Vlekken**: Natuurlijk uitziende vlek vormen met irregulariteit
+2. **Geleidelijke Groei**: Sigmoid easing voor smooth groei patronen
+3. **Timing Spreiding**: Vlekken verschijnen op verschillende momenten
+4. **fMRI Styling**: Kleurgradiënt met pulsing effecten
+5. **Configureerbaar**: Grootte, aantal en timing via constants
+
+### Issue #11 Implementation (Vlekken Verdwijnend) - **NIEUW**
+1. **Reverse Algoritme**: Omgekeerd proces van vlekken_verschijnend.py
+2. **Natuurlijke Verdwijning**: Sigmoid easing voor smooth verdwijn curves
+3. **Gespreide Timing**: Vlekken verdwijnen op verschillende momenten
+4. **Wetenschappelijke Relevantie**: Toont inhibitie, herstel en afnemende hersenactiviteit
+5. **Consistent Design**: Hergebruik van bestaande functies en styling
+
 ### Technische Verbeteringen
 - Uitgebreide `image_utils.py` met stick figure rendering
 - Nieuwe configuratie opties in `constants.py`
 - Backward compatibility met originele functionaliteit
 - Comprehensive demo en testing scripts
+- Organische vlek generatie algoritmes
+- Sigmoid easing functies voor natuurlijke animaties
 
 ### Code Quality
 - Uitgebreide documentatie en comments
@@ -171,14 +213,24 @@ BewegendeAnimaties/
 - Consistent coding style en naming conventions
 
 ## Development Status
-- ✅ **Voltooid**: Basis infrastructuur, originele bewegende figuur, realistisch lopend mannetje
-- 🔄 **In ontwikkeling**: Vlekken animaties, tekst animatie, centraal script
+- ✅ **Voltooid**: Basis infrastructuur, originele bewegende figuur, realistisch lopend mannetje, vlekken verschijnend, vlekken verdwijnend
+- 🔄 **In ontwikkeling**: Tekst animatie, centraal script
 - 📋 **Gepland**: Optimalisatie, uitgebreide configuratie, unit tests
+
+## Animation Types Overview
+1. **Bewegend Mannetje** (2 varianten):
+   - Origineel: Abstracte cirkel op ovaalroute
+   - Nieuw: Realistisch stick figure met vrije beweging
+2. **Vlekken Verschijnend**: Organische vlekken die uitspreiden
+3. **Vlekken Verdwijnend**: Organische vlekken die geleidelijk verdwijnen
+4. **Tekst Verschijnend** (gepland): Letter-voor-letter tekst animatie
 
 ## Usage Patterns
 1. **Onderzoek**: Wetenschappelijke visualisaties van hersenactiviteit
 2. **Educatie**: Uitleg van neurale processen en hersenwerking
 3. **Presentaties**: Visueel aantrekkelijke animaties voor lezingen
 4. **Demonstraties**: Interactieve voorbeelden van hersenactiviteit
+5. **Inhibitie Studies**: Visualisatie van afnemende hersenactiviteit
+6. **Herstelprocessen**: Tonen van neurologische herstel patronen
 
-Het project biedt een flexibel platform voor het creëren van wetenschappelijk accurate en visueel aantrekkelijke hersenactiviteit animaties.
+Het project biedt een flexibel platform voor het creëren van wetenschappelijk accurate en visueel aantrekkelijke hersenactiviteit animaties, met ondersteuning voor zowel toenemende als afnemende activiteit patronen.
