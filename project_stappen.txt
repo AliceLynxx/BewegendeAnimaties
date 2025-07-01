@@ -25,20 +25,16 @@
 - **fMRI styling**: Behoud van oranje/rood/geel kleurenschema en gloed effecten
 - **Demo variaties**: Verschillende bewegingspatronen en startposities
 
-## Stap 3: Vlekken verschijnend animatie (MUST-HAVE)
-**Doel**: Animatie waarbij vlekken zich uitspreiden tot het hele ovaal gevuld is.
-**Doelgroep**: Onderzoekers die toenemende hersenactiviteit willen tonen.
-**Nut**: Visualiseert processen zoals activatie spreading of neurale netwerk groei.
-**Noodzaak**: Essentieel voor het tonen van graduele hersenactiviteit toename.
-
-**Bestanden om te maken/wijzigen**:
-- animaties/vlekken_verschijnend.py
-
-**Acties**:
-- Algoritme voor vlek uitbreiding
-- Gradual fill van ovaal gebied
-- Natuurlijke vlek vormen en groei
-- Timing en smoothness optimaliseren
+## ✅ Stap 3: Vlekken verschijnend animatie (VOLTOOID)
+**Samenvatting**: Vlekken verschijnend animatie succesvol geïmplementeerd met:
+- **Vlek Generatie**: Algoritme voor natuurlijk uitziende organische vlekken
+- **Gradual Fill**: Geleidelijke uitbreiding van vlekken tot volledig gevuld ovaal
+- **Natuurlijke Groei**: Organische vlek vormen met irregulariteit en groeipatronen
+- **Timing Optimalisatie**: Smooth animatie met sigmoid easing voor natuurlijke groei
+- **fMRI Styling**: Oranje/rood/geel kleurenschema met gloed effecten en pulsing
+- **Configureerbaar**: Volledig instelbaar via constants (grootte, aantal, timing)
+- **Demo functionaliteit**: Test versie met vaste seed voor consistente resultaten
+- **Geoptimaliseerde rendering**: Efficiënte frame-by-frame generatie
 
 ## Stap 4: Vlekken verdwijnend animatie (MUST-HAVE)
 **Doel**: Het omgekeerde proces - vlekken die verdwijnen van vol naar leeg.
