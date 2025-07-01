@@ -1,23 +1,7 @@
 # Project Stappen - BewegendeAnimaties
 
-## Stap 1: Basis infrastructuur opzetten (MUST-HAVE)
-**Doel**: Een solide basis leggen voor het project met configuratie en utility functies.
-**Doelgroep**: Ontwikkelaars die het project willen gebruiken en uitbreiden.
-**Nut**: Zorgt voor herbruikbare code en eenvoudige configuratie.
-**Noodzaak**: Zonder deze basis kunnen de animaties niet functioneren.
-
-**Bestanden om te maken/wijzigen**:
-- config/constants.py - Configuratie instellingen
-- utils/image_utils.py - Basis afbeelding functies
-- utils/color_utils.py - fMRI kleurenschema
-- utils/gif_utils.py - GIF generatie utilities
-- requirements.txt - Python dependencies
-
-**Acties**:
-- Configuratie systeem opzetten voor achtergrond afbeelding en parameters
-- Basis functies voor afbeelding manipulatie
-- fMRI kleurenpalet definiëren
-- GIF export functionaliteit
+## ✅ Stap 1: Basis infrastructuur opzetten (VOLTOOID)
+**Samenvatting**: Basis infrastructuur succesvol geïmplementeerd met configuratie systeem, utility functies voor afbeelding manipulatie, fMRI kleurenschema en GIF generatie. Alle dependencies gedocumenteerd in requirements.txt.
 
 ## Stap 2: Bewegend mannetje animatie (MUST-HAVE)
 **Doel**: De eerste animatie implementeren - een bewegend figuur dat een ovaalroute volgt.
