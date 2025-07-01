@@ -48,22 +48,34 @@
 - **Demo functionaliteit**: Test versie met vaste seed voor reproduceerbare resultaten
 - **Wetenschappelijke Waarde**: Toont afnemende hersenactiviteit, inhibitie of herstelprocessen
 
-## Stap 5: Tekst verschijnend animatie (MUST-HAVE)
-**Doel**: Tekst die letter voor letter zichtbaar wordt binnen het ovaal.
-**Doelgroep**: Educatieve gebruikers die labels of uitleg willen toevoegen.
-**Nut**: Maakt het mogelijk om tekstuele informatie te integreren in de visualisatie.
-**Noodzaak**: Verhoogt de communicatieve waarde van de animaties aanzienlijk.
+## ✅ Stap 5: Tekst verschijnend animatie (VOLTOOID)
+**Samenvatting**: Tekst verschijnend animatie succesvol geïmplementeerd met:
+- **Letter-voor-letter animatie**: Tekst verschijnt geleidelijk karakter voor karakter
+- **Intelligente positionering**: Automatische berekening van optimale tekstpositie binnen ovaal
+- **Flexibele positionering**: Ondersteuning voor center, left, right, top, bottom posities
+- **Font management**: Automatische font detectie met fallback opties
+- **fMRI styling**: Oranje/rood/geel kleurenschema met verhoogde gloed effecten
+- **Pulsing effecten**: Dynamische kleur pulsing voor extra visuele impact
+- **Boundary checking**: Zorgt ervoor dat tekst altijd binnen ovaal grenzen blijft
+- **Configureerbaar**: Volledig instelbaar via constants (tekst, font, kleur, timing)
+- **Demo functionaliteit**: Multi-tekst demo met verschillende posities en kleuren
+- **Educatieve waarde**: Perfect voor labeling van hersenregio's en processen
 
-**Bestanden om te maken/wijzigen**:
-- animaties/tekst_verschijnend.py
+## ✅ Stap 6: Enhanced fMRI Kleuren (VOLTOOID)
+**Samenvatting**: Alle animaties geüpgraded met realistische fMRI-kleurschalen en dynamische kleureffecten:
+- **4 Neuroimaging Kleurschalen**: Hot, Cool, Jet, Viridis (wetenschappelijke standaarden)
+- **Vloeiende Kleurovergangen**: Smooth interpolatie tussen verschillende activiteitsniveaus
+- **Dynamische Kleurveranderingen**: Gebaseerd op bewegingssnelheid, tijd en activiteitsniveau
+- **Enhanced Gloed Effecten**: Verhoogde radius en intensiteit voor betere zichtbaarheid
+- **Bewegingsgebaseerde Kleuren**: Snelheid wordt gemapped naar kleurintensiteit
+- **Activiteitsgebaseerde Mapping**: Verschillende activiteitsniveaus krijgen verschillende kleuren
+- **Tijdelijke Kleurvariatie**: Cyclische kleurveranderingen voor dynamische effecten
+- **Intensiteit Mapping**: Ondersteuning voor positieve en negatieve activatie kleuren
+- **Wetenschappelijke Authenticiteit**: Verhoogt geloofwaardigheid door echte fMRI-kleurschalen
+- **Volledig Configureerbaar**: Alle kleurschalen en effecten instelbaar via constants
+- **Test Suite**: Uitgebreide test functionaliteit voor alle kleurschalen en animaties
 
-**Acties**:
-- Tekst rendering binnen ovaal
-- Letter-voor-letter animatie
-- Font en grootte configuratie
-- Positionering binnen ovaal optimaliseren
-
-## Stap 6: Centraal script en integratie (MUST-HAVE)
+## Stap 7: Centraal script en integratie (MUST-HAVE)
 **Doel**: Alle animaties samenvoegen in één uitvoerbaar script.
 **Doelgroep**: Eindgebruikers die alle animaties in één keer willen genereren.
 **Nut**: Maakt het project gebruiksvriendelijk en praktisch toepasbaar.
@@ -76,11 +88,13 @@
 **Acties**:
 - Alle animatie modules importeren en aanroepen
 - Batch processing van alle 4+ animaties (inclusief realistisch lopend mannetje)
+- Enhanced fMRI kleuren integratie
+- Kleurschema selectie interface
 - Error handling en logging
 - Gebruikersvriendelijke interface
 - Documentatie voor gebruikers
 
-## Stap 7: Optimalisatie en polish (NICE-TO-HAVE)
+## Stap 8: Optimalisatie en polish (NICE-TO-HAVE)
 **Doel**: Het project verfijnen en prestaties verbeteren.
 **Doelgroep**: Power users die geavanceerde features willen.
 **Nut**: Verhoogt de kwaliteit en flexibiliteit van de output.
@@ -91,8 +105,10 @@
 
 **Acties**:
 - Performance optimalisatie
-- Meer configuratie opties voor realistisch mannetje
+- Meer configuratie opties voor enhanced kleuren
 - Betere error handling
 - Code cleanup en documentatie
 - Unit tests toevoegen
 - Meer bewegingspatronen voor stick figure
+- Kleurschema customization interface
+- Batch export functionaliteit
