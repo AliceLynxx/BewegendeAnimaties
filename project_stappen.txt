@@ -1,0 +1,113 @@
+# Project Stappen - BewegendeAnimaties
+
+## Stap 1: Basis infrastructuur opzetten (MUST-HAVE)
+**Doel**: Een solide basis leggen voor het project met configuratie en utility functies.
+**Doelgroep**: Ontwikkelaars die het project willen gebruiken en uitbreiden.
+**Nut**: Zorgt voor herbruikbare code en eenvoudige configuratie.
+**Noodzaak**: Zonder deze basis kunnen de animaties niet functioneren.
+
+**Bestanden om te maken/wijzigen**:
+- config/constants.py - Configuratie instellingen
+- utils/image_utils.py - Basis afbeelding functies
+- utils/color_utils.py - fMRI kleurenschema
+- utils/gif_utils.py - GIF generatie utilities
+- requirements.txt - Python dependencies
+
+**Acties**:
+- Configuratie systeem opzetten voor achtergrond afbeelding en parameters
+- Basis functies voor afbeelding manipulatie
+- fMRI kleurenpalet definiëren
+- GIF export functionaliteit
+
+## Stap 2: Bewegend mannetje animatie (MUST-HAVE)
+**Doel**: De eerste animatie implementeren - een bewegend figuur dat een ovaalroute volgt.
+**Doelgroep**: Gebruikers die hersenactiviteit willen visualiseren met bewegende elementen.
+**Nut**: Toont dynamische processen in de hersenen, zoals neurotransmitter beweging.
+**Noodzaak**: Dit is een kernfunctionaliteit die het project onderscheidt.
+
+**Bestanden om te maken/wijzigen**:
+- animaties/bewegend_mannetje.py
+
+**Acties**:
+- Ovaalroute algoritme implementeren
+- Bewegend figuur tekenen met fMRI kleuren
+- Animatie frames genereren
+- Smooth beweging tussen punten
+
+## Stap 3: Vlekken verschijnend animatie (MUST-HAVE)
+**Doel**: Animatie waarbij vlekken zich uitspreiden tot het hele ovaal gevuld is.
+**Doelgroep**: Onderzoekers die toenemende hersenactiviteit willen tonen.
+**Nut**: Visualiseert processen zoals activatie spreading of neurale netwerk groei.
+**Noodzaak**: Essentieel voor het tonen van graduele hersenactiviteit toename.
+
+**Bestanden om te maken/wijzigen**:
+- animaties/vlekken_verschijnend.py
+
+**Acties**:
+- Algoritme voor vlek uitbreiding
+- Gradual fill van ovaal gebied
+- Natuurlijke vlek vormen en groei
+- Timing en smoothness optimaliseren
+
+## Stap 4: Vlekken verdwijnend animatie (MUST-HAVE)
+**Doel**: Het omgekeerde proces - vlekken die verdwijnen van vol naar leeg.
+**Doelgroep**: Gebruikers die afnemende hersenactiviteit willen visualiseren.
+**Nut**: Toont processen zoals herstel, inhibitie of afnemende activiteit.
+**Noodzaak**: Completeert het spectrum van activiteit visualisatie.
+
+**Bestanden om te maken/wijzigen**:
+- animaties/vlekken_verdwijnend.py
+
+**Acties**:
+- Reverse algoritme van verschijnende vlekken
+- Smooth transitie van vol naar leeg
+- Natuurlijke verdwijn patronen
+- Consistent met verschijnende animatie
+
+## Stap 5: Tekst verschijnend animatie (MUST-HAVE)
+**Doel**: Tekst die letter voor letter zichtbaar wordt binnen het ovaal.
+**Doelgroep**: Educatieve gebruikers die labels of uitleg willen toevoegen.
+**Nut**: Maakt het mogelijk om tekstuele informatie te integreren in de visualisatie.
+**Noodzaak**: Verhoogt de communicatieve waarde van de animaties aanzienlijk.
+
+**Bestanden om te maken/wijzigen**:
+- animaties/tekst_verschijnend.py
+
+**Acties**:
+- Tekst rendering binnen ovaal
+- Letter-voor-letter animatie
+- Font en grootte configuratie
+- Positionering binnen ovaal optimaliseren
+
+## Stap 6: Centraal script en integratie (MUST-HAVE)
+**Doel**: Alle animaties samenvoegen in één uitvoerbaar script.
+**Doelgroep**: Eindgebruikers die alle animaties in één keer willen genereren.
+**Nut**: Maakt het project gebruiksvriendelijk en praktisch toepasbaar.
+**Noodzaak**: Zonder dit script is het project niet bruikbaar voor eindgebruikers.
+
+**Bestanden om te maken/wijzigen**:
+- main.py
+- README.md (gebruikersinstructies)
+
+**Acties**:
+- Alle animatie modules importeren en aanroepen
+- Batch processing van alle 4 animaties
+- Error handling en logging
+- Gebruikersvriendelijke interface
+- Documentatie voor gebruikers
+
+## Stap 7: Optimalisatie en polish (NICE-TO-HAVE)
+**Doel**: Het project verfijnen en prestaties verbeteren.
+**Doelgroep**: Power users die geavanceerde features willen.
+**Nut**: Verhoogt de kwaliteit en flexibiliteit van de output.
+**Noodzaak**: Niet essentieel maar verhoogt gebruikerstevredenheid.
+
+**Bestanden om te maken/wijzigen**:
+- Alle bestaande bestanden kunnen geoptimaliseerd worden
+
+**Acties**:
+- Performance optimalisatie
+- Meer configuratie opties
+- Betere error handling
+- Code cleanup en documentatie
+- Unit tests toevoegen
