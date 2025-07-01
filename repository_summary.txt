@@ -1,0 +1,84 @@
+# Repository Summary - BewegendeAnimaties
+
+## Overzicht
+BewegendeAnimaties is een Python-tool voor het genereren van fMRI-stijl GIF animaties met bewegende elementen op een statische hersenachtergrond. Het project is ontworpen voor neurowetenschappers, onderzoekers en educatieve doeleinden.
+
+## Bestandsstructuur
+
+### Hoofdmap (/)
+- **README.md** (123 bytes)
+  - Korte projectbeschrijving
+  - Functionaliteit: Basis documentatie voor gebruikers
+
+- **start.txt** (1,602 bytes)
+  - Originele projectspecificatie en requirements
+  - Functionaliteit: Bevat doelstellingen, doelgroep, en technische vereisten
+  - Beschrijft 4 animatietypes: bewegend mannetje, vlekken verschijnend/verdwijnend, tekst verschijnend
+
+- **project_info.txt** (3,699 bytes)
+  - Gedetailleerde projectinformatie en architectuur
+  - Functionaliteit: Overzicht van modules, status en afhankelijkheden
+  - Bevat volledige modulestructuur en implementatieplan
+
+- **project_stappen.txt** (4,421 bytes)
+  - Stap-voor-stap implementatieplan
+  - Functionaliteit: Gedetailleerde roadmap met 7 stappen (6 must-have, 1 nice-to-have)
+  - Elke stap bevat doel, doelgroep, nut, noodzaak en acties
+
+- **repository_summary.txt** (dit bestand)
+  - Overzicht van repository structuur en architectuur
+  - Functionaliteit: Referentie voor ontwikkelaars
+
+## Geplande Projectstructuur
+
+### /config/ (nog niet geïmplementeerd)
+- **constants.py** - Configuratie en instellingen voor alle animaties
+
+### /animaties/ (nog niet geïmplementeerd)
+- **bewegend_mannetje.py** - Bewegend figuur animatie in ovaalroute
+- **vlekken_verschijnend.py** - Uitspreidende vlekken animatie
+- **vlekken_verdwijnend.py** - Verdwijnende vlekken animatie  
+- **tekst_verschijnend.py** - Letter-voor-letter tekst animatie
+
+### /utils/ (nog niet geïmplementeerd)
+- **image_utils.py** - Afbeelding manipulatie en ovaal masker functies
+- **color_utils.py** - fMRI kleurenschema en gloed effecten
+- **gif_utils.py** - GIF generatie en optimalisatie utilities
+
+### /output/ (nog niet geïmplementeerd)
+- Directory voor gegenereerde GIF bestanden
+
+## Architectuur en Modules
+
+### Kern Functionaliteit
+1. **Configuratie Systeem**: Centraal constants bestand voor alle parameters
+2. **Animatie Engines**: 4 verschillende animatietypes met eigen logica
+3. **Utility Layer**: Herbruikbare functies voor afbeelding, kleur en GIF handling
+4. **Centraal Script**: main.py voor batch-generatie van alle animaties
+
+### Belangrijkste Afhankelijkheden
+- **PIL/Pillow**: Afbeelding manipulatie en GIF generatie
+- **numpy**: Numerieke berekeningen voor animatie algoritmes
+- **Python 3.x**: Basis runtime environment
+
+### Kleurenschema
+- fMRI-stijl kleuren: oranje/rood/geel gloed
+- Statische hersenachtergrond blijft ongewijzigd
+- Bewegende elementen beperkt tot ovaalvorm
+
+## Ontwikkelstatus
+- **Huidige fase**: Projectplanning en documentatie voltooid
+- **Volgende stap**: Basis infrastructuur implementeren (Stap 1)
+- **Must-have features**: 6 stappen gedefinieerd
+- **Nice-to-have features**: 1 optimalisatiestap
+
+## Doelgroep en Use Cases
+- **Primair**: Neurowetenschappers en onderzoekers
+- **Secundair**: Educatieve instellingen
+- **Gebruik**: Wetenschappelijke presentaties, onderzoeksvisualisatie, onderwijs
+
+## Technische Kenmerken
+- **Output**: 4 verschillende GIF animaties per run
+- **Configuratie**: Via constants bestand
+- **Flexibiliteit**: Aanpasbare parameters voor alle animatietypes
+- **Performance**: Geoptimaliseerd voor batch processing
