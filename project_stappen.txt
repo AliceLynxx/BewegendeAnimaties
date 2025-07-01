@@ -14,6 +14,17 @@
 - Demo script voor gebruiksvriendelijke testing
 - Volledig geïntegreerd met bestaande infrastructuur
 
+## ✅ Stap 2b: Realistisch lopend mannetje (VOLTOOID)
+**Samenvatting**: Uitbreiding van bewegend mannetje met realistisch figuur en vrije beweging:
+- **Realistisch figuur**: Stick figure mannetje met hoofd, lichaam, armen en benen
+- **Loop animatie**: 6 verschillende poses voor natuurlijke loop-cyclus
+- **Vrije beweging**: Random walk algoritme in plaats van vaste ovaalroute
+- **Natuurlijke beweging**: Momentum, richtingsveranderingen en bounce detection
+- **Boundary management**: Blijft altijd binnen ovaal grenzen
+- **Configureerbaar**: Volledig instelbaar via constants
+- **fMRI styling**: Behoud van oranje/rood/geel kleurenschema en gloed effecten
+- **Demo variaties**: Verschillende bewegingspatronen en startposities
+
 ## Stap 3: Vlekken verschijnend animatie (MUST-HAVE)
 **Doel**: Animatie waarbij vlekken zich uitspreiden tot het hele ovaal gevuld is.
 **Doelgroep**: Onderzoekers die toenemende hersenactiviteit willen tonen.
@@ -71,7 +82,7 @@
 
 **Acties**:
 - Alle animatie modules importeren en aanroepen
-- Batch processing van alle 4 animaties
+- Batch processing van alle 4+ animaties (inclusief realistisch lopend mannetje)
 - Error handling en logging
 - Gebruikersvriendelijke interface
 - Documentatie voor gebruikers
@@ -87,7 +98,8 @@
 
 **Acties**:
 - Performance optimalisatie
-- Meer configuratie opties
+- Meer configuratie opties voor realistisch mannetje
 - Betere error handling
 - Code cleanup en documentatie
 - Unit tests toevoegen
+- Meer bewegingspatronen voor stick figure
