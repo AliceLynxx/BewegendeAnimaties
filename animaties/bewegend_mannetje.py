@@ -3,7 +3,7 @@ Bewegend mannetje animatie module voor fMRI-stijl visualisaties.
 
 Deze module implementeert zowel een bewegend figuur dat een ovaalroute volgt als
 een realistisch lopend mannetje dat vrij beweegt binnen het hersengebied,
-met fMRI kleurenschema en gloed effecten.
+met uitgebreide fMRI kleurenschema's en dynamische kleureffecten.
 """
 
 import math
@@ -15,15 +15,39 @@ from utils.image_utils import (
     create_stick_figure, generate_random_position_in_oval, calculate_next_position,
     ensure_within_oval, is_position_in_oval
 )
-from utils.color_utils import get_fmri_color, add_glow_effect, create_colored_circle, create_pulsing_color
+from utils.color_utils import (
+    get_fmri_color, add_glow_effect, create_colored_circle, create_pulsing_color,
+    create_movement_based_color, create_activity_based_color, map_value_to_color,
+    create_gradient_animation_color, get_color_scheme, apply_temporal_color_variation
+)
 from utils.gif_utils import create_gif_from_frames
 from config.constants import (
     OVAL_CENTER, OVAL_WIDTH, OVAL_HEIGHT, TOTAL_FRAMES, 
     MOVING_FIGURE_SIZE, MOVING_FIGURE_SPEED, OUTPUT_FILENAMES,
     WALKING_FIGURE_SIZE, WALKING_SPEED, WALKING_DIRECTION_CHANGE_CHANCE,
     WALKING_RANDOM_VARIATION, WALKING_POSE_CHANGE_SPEED, WALKING_BOUNDARY_MARGIN,
-    RANDOM_WALK_STEP_SIZE, RANDOM_WALK_MOMENTUM, RANDOM_WALK_DIRECTION_NOISE
+    RANDOM_WALK_STEP_SIZE, RANDOM_WALK_MOMENTUM, RANDOM_WALK_DIRECTION_NOISE,
+    DEFAULT_COLOR_SCHEME, DYNAMIC_COLORS
 )
+
+
+def calculate_movement_speed(current_pos, previous_pos):
+    """
+    Berekent bewegingssnelheid tussen twee posities.
+    
+    Args:
+        current_pos (tuple): Huidige positie (x, y)
+        previous_pos (tuple): Vorige positie (x, y)
+        
+    Returns:
+        float: Bewegingssnelheid in pixels per frame
+    """
+    if previous_pos is None:
+        return 0.0
+    
+    dx = current_pos[0] - previous_pos[0]
+    dy = current_pos[1] - previous_pos[1]
+    return math.sqrt(dx * dx + dy * dy)
 
 
 def calculate_oval_position(progress, clockwise=True, route_variation=0):
@@ -61,61 +85,74 @@ def calculate_oval_position(progress, clockwise=True, route_variation=0):
     return (int(x), int(y))
 
 
-def create_moving_figure(size=None, color=None, pulse_position=0.0):
+def create_moving_figure(size=None, color=None, pulse_position=0.0, color_scheme=None, 
+                        activity_level=0.5, time_factor=0.0):
     """
-    Creëert een bewegend figuur met fMRI styling (originele cirkel versie).
+    Creëert een bewegend figuur met enhanced fMRI styling (originele cirkel versie).
     
     Args:
         size (int): Grootte van het figuur (standaard uit constants)
-        color (tuple): RGB kleur (standaard fMRI primary)
+        color (tuple): RGB kleur (standaard uit kleurschema)
         pulse_position (float): Positie voor pulsing effect (0.0-1.0)
+        color_scheme (str): Naam van het kleurschema
+        activity_level (float): Activiteitsniveau voor kleurmapping (0.0-1.0)
+        time_factor (float): Tijd factor voor dynamische effecten
         
     Returns:
         PIL.Image: Figuur afbeelding met transparante achtergrond
     """
     if size is None:
         size = MOVING_FIGURE_SIZE
+    
+    # Gebruik activity-based kleur als geen specifieke kleur gegeven
     if color is None:
-        color = get_fmri_color('primary')
+        color = create_activity_based_color(activity_level, color_scheme, time_factor)
     
     # Creëer pulserende kleur
-    pulsing_color = create_pulsing_color(color, pulse_position)
+    pulsing_color = create_pulsing_color(color, pulse_position, color_scheme)
     
     # Maak basis cirkel
     figure = create_colored_circle(size, pulsing_color, alpha=220)
     
-    # Voeg gloed effect toe
-    figure_with_glow = add_glow_effect(figure, pulsing_color, radius=8, intensity=0.6)
+    # Voeg enhanced gloed effect toe
+    figure_with_glow = add_glow_effect(figure, pulsing_color, enhanced=True)
     
     return figure_with_glow
 
 
-def create_walking_figure(pose_frame=0, size=None, color=None, pulse_position=0.0):
+def create_walking_figure(pose_frame=0, size=None, color=None, pulse_position=0.0,
+                         color_scheme=None, movement_speed=0.0, max_speed=10.0, time_factor=0.0):
     """
-    Creëert een realistisch lopend mannetje figuur met fMRI styling.
+    Creëert een realistisch lopend mannetje figuur met enhanced fMRI styling.
     
     Args:
         pose_frame (int): Frame nummer voor loop animatie
         size (int): Grootte van het mannetje (standaard uit constants)
-        color (tuple): RGB kleur (standaard fMRI primary)
+        color (tuple): RGB kleur (standaard bewegingsgebaseerd)
         pulse_position (float): Positie voor pulsing effect (0.0-1.0)
+        color_scheme (str): Naam van het kleurschema
+        movement_speed (float): Huidige bewegingssnelheid
+        max_speed (float): Maximale bewegingssnelheid
+        time_factor (float): Tijd factor voor dynamische effecten
         
     Returns:
         PIL.Image: Stick figure afbeelding met transparante achtergrond en gloed
     """
     if size is None:
         size = WALKING_FIGURE_SIZE
+    
+    # Gebruik bewegingsgebaseerde kleur als geen specifieke kleur gegeven
     if color is None:
-        color = get_fmri_color('primary')
+        color = create_movement_based_color(movement_speed, max_speed, color_scheme, time_factor)
     
     # Creëer pulserende kleur
-    pulsing_color = create_pulsing_color(color, pulse_position)
+    pulsing_color = create_pulsing_color(color, pulse_position, color_scheme)
     
     # Maak stick figure
     figure = create_stick_figure(pose_frame, size, pulsing_color)
     
-    # Voeg gloed effect toe
-    figure_with_glow = add_glow_effect(figure, pulsing_color, radius=6, intensity=0.5)
+    # Voeg enhanced gloed effect toe
+    figure_with_glow = add_glow_effect(figure, pulsing_color, enhanced=True)
     
     return figure_with_glow
 
@@ -188,7 +225,8 @@ def generate_random_walk_path(total_frames, start_position=None):
     return positions
 
 
-def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplier=None):
+def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplier=None, 
+                            color_scheme=None):
     """
     Genereert alle frames voor de bewegend mannetje animatie (originele ovaal route).
     
@@ -196,18 +234,22 @@ def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplie
         clockwise (bool): Bewegingsrichting
         route_variation (int): Route variatie (0-2)
         speed_multiplier (float): Snelheid multiplier (standaard uit constants)
+        color_scheme (str): Naam van het kleurschema
         
     Returns:
         list: Lijst van PIL.Image frames
     """
     if speed_multiplier is None:
         speed_multiplier = MOVING_FIGURE_SPEED
+    if color_scheme is None:
+        color_scheme = DEFAULT_COLOR_SCHEME
     
     # Laad achtergrond en maak masker
     background = load_background_image()
     oval_mask = create_oval_mask(background.size)
     
     frames = []
+    previous_pos = None
     
     for frame_num in range(TOTAL_FRAMES):
         # Bereken voortgang met snelheid multiplier
@@ -216,10 +258,26 @@ def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplie
         
         # Bereken positie op ovaalroute
         x, y = calculate_oval_position(progress, clockwise, route_variation)
+        current_pos = (x, y)
         
-        # Creëer bewegend figuur met pulsing effect
+        # Bereken bewegingssnelheid voor kleurmapping
+        movement_speed = calculate_movement_speed(current_pos, previous_pos)
+        max_speed = WALKING_SPEED * speed_multiplier
+        
+        # Bereken activiteitsniveau gebaseerd op beweging en positie
+        activity_level = min(1.0, movement_speed / max_speed) if max_speed > 0 else 0.5
+        
+        # Tijd factor voor dynamische effecten
+        time_factor = frame_num / TOTAL_FRAMES
+        
+        # Creëer bewegend figuur met enhanced kleuren
         pulse_position = (frame_num / TOTAL_FRAMES) * 4  # 4 pulses per cyclus
-        figure = create_moving_figure(pulse_position=pulse_position)
+        figure = create_moving_figure(
+            pulse_position=pulse_position,
+            color_scheme=color_scheme,
+            activity_level=activity_level,
+            time_factor=time_factor
+        )
         
         # Maak frame met achtergrond
         frame = background.copy()
@@ -239,20 +297,25 @@ def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplie
         final_frame = composite_images(final_frame, masked_overlay)
         
         frames.append(final_frame)
+        previous_pos = current_pos
     
     return frames
 
 
-def generate_walking_animation_frames(start_position=None):
+def generate_walking_animation_frames(start_position=None, color_scheme=None):
     """
     Genereert alle frames voor de realistische lopende mannetje animatie.
     
     Args:
         start_position (tuple): Start positie (willekeurig als None)
+        color_scheme (str): Naam van het kleurschema
         
     Returns:
         list: Lijst van PIL.Image frames
     """
+    if color_scheme is None:
+        color_scheme = DEFAULT_COLOR_SCHEME
+    
     # Laad achtergrond en maak masker
     background = load_background_image()
     oval_mask = create_oval_mask(background.size)
@@ -261,16 +324,32 @@ def generate_walking_animation_frames(start_position=None):
     positions = generate_random_walk_path(TOTAL_FRAMES, start_position)
     
     frames = []
+    previous_pos = None
     
     for frame_num in range(TOTAL_FRAMES):
         x, y = positions[frame_num]
+        current_pos = (x, y)
+        
+        # Bereken bewegingssnelheid voor kleurmapping
+        movement_speed = calculate_movement_speed(current_pos, previous_pos)
+        max_speed = WALKING_SPEED * 2.0  # Verhoogde max voor betere kleurvariatie
         
         # Bereken pose frame voor loop animatie
         pose_frame = (frame_num // WALKING_POSE_CHANGE_SPEED) % 6
         
-        # Creëer lopend mannetje met pulsing effect
+        # Tijd factor voor dynamische effecten
+        time_factor = frame_num / TOTAL_FRAMES
+        
+        # Creëer lopend mannetje met enhanced kleuren
         pulse_position = (frame_num / TOTAL_FRAMES) * 3  # 3 pulses per cyclus
-        figure = create_walking_figure(pose_frame=pose_frame, pulse_position=pulse_position)
+        figure = create_walking_figure(
+            pose_frame=pose_frame,
+            pulse_position=pulse_position,
+            color_scheme=color_scheme,
+            movement_speed=movement_speed,
+            max_speed=max_speed,
+            time_factor=time_factor
+        )
         
         # Maak frame met achtergrond
         frame = background.copy()
@@ -290,6 +369,7 @@ def generate_walking_animation_frames(start_position=None):
         final_frame = composite_images(final_frame, masked_overlay)
         
         frames.append(final_frame)
+        previous_pos = current_pos
     
     return frames
 
@@ -342,7 +422,8 @@ def genereer_bewegend_mannetje_animatie(
     route_variation=0, 
     speed_multiplier=None,
     smooth_interpolation=False,
-    output_filename=None
+    output_filename=None,
+    color_scheme=None
 ):
     """
     Hoofdfunctie voor het genereren van bewegend mannetje animatie (originele ovaal route).
@@ -353,6 +434,7 @@ def genereer_bewegend_mannetje_animatie(
         speed_multiplier (float): Snelheid multiplier (standaard uit constants)
         smooth_interpolation (bool): Extra frames voor smoothere animatie
         output_filename (str): Naam van output bestand (standaard uit constants)
+        color_scheme (str): Naam van het kleurschema
         
     Returns:
         str: Pad naar gegenereerde GIF
@@ -361,14 +443,18 @@ def genereer_bewegend_mannetje_animatie(
         Exception: Als er een fout optreedt tijdens generatie
     """
     try:
+        if color_scheme is None:
+            color_scheme = DEFAULT_COLOR_SCHEME
+            
         print("Genereren van bewegend mannetje animatie (ovaal route)...")
         print(f"- Richting: {'Rechtsom' if clockwise else 'Linksom'}")
         print(f"- Route variatie: {route_variation}")
         print(f"- Snelheid multiplier: {speed_multiplier or MOVING_FIGURE_SPEED}")
+        print(f"- Kleurschema: {color_scheme}")
         print(f"- Smooth interpolatie: {smooth_interpolation}")
         
         # Genereer basis frames
-        frames = generate_animation_frames(clockwise, route_variation, speed_multiplier)
+        frames = generate_animation_frames(clockwise, route_variation, speed_multiplier, color_scheme)
         print(f"- {len(frames)} basis frames gegenereerd")
         
         # Voeg smooth interpolatie toe indien gewenst
@@ -380,7 +466,7 @@ def genereer_bewegend_mannetje_animatie(
         if output_filename is None:
             output_filename = OUTPUT_FILENAMES['moving_figure']
         
-        # Creëer GIF
+        # Creeër GIF
         output_path = create_gif_from_frames(frames, output_filename)
         print(f"✅ Animatie succesvol gegenereerd: {output_path}")
         
@@ -395,7 +481,8 @@ def genereer_bewegend_mannetje_animatie(
 def genereer_lopend_mannetje_animatie(
     start_position=None,
     smooth_interpolation=False,
-    output_filename=None
+    output_filename=None,
+    color_scheme=None
 ):
     """
     Hoofdfunctie voor het genereren van realistisch lopend mannetje animatie.
@@ -404,6 +491,7 @@ def genereer_lopend_mannetje_animatie(
         start_position (tuple): Start positie (willekeurig als None)
         smooth_interpolation (bool): Extra frames voor smoothere animatie
         output_filename (str): Naam van output bestand (standaard uit constants)
+        color_scheme (str): Naam van het kleurschema
         
     Returns:
         str: Pad naar gegenereerde GIF
@@ -412,14 +500,18 @@ def genereer_lopend_mannetje_animatie(
         Exception: Als er een fout optreedt tijdens generatie
     """
     try:
+        if color_scheme is None:
+            color_scheme = DEFAULT_COLOR_SCHEME
+            
         print("Genereren van realistisch lopend mannetje animatie...")
         print(f"- Start positie: {start_position or 'Willekeurig'}")
         print(f"- Mannetje grootte: {WALKING_FIGURE_SIZE}")
         print(f"- Bewegingssnelheid: {WALKING_SPEED} pixels/frame")
+        print(f"- Kleurschema: {color_scheme}")
         print(f"- Smooth interpolatie: {smooth_interpolation}")
         
         # Genereer basis frames
-        frames = generate_walking_animation_frames(start_position)
+        frames = generate_walking_animation_frames(start_position, color_scheme)
         print(f"- {len(frames)} basis frames gegenereerd")
         
         # Voeg smooth interpolatie toe indien gewenst
@@ -431,7 +523,7 @@ def genereer_lopend_mannetje_animatie(
         if output_filename is None:
             output_filename = OUTPUT_FILENAMES['walking_figure']
         
-        # Creëer GIF
+        # Creeër GIF
         output_path = create_gif_from_frames(frames, output_filename)
         print(f"✅ Realistisch lopend mannetje animatie succesvol gegenereerd: {output_path}")
         
@@ -445,7 +537,7 @@ def genereer_lopend_mannetje_animatie(
 
 def create_demo_variations():
     """
-    Creëert demo variaties van de bewegend mannetje animaties.
+    Creëert demo variaties van de bewegend mannetje animaties met verschillende kleurschema's.
     
     Returns:
         list: Lijst van paden naar gegenereerde GIFs
@@ -453,50 +545,31 @@ def create_demo_variations():
     variations = []
     
     try:
-        # Originele ovaal route variaties
-        print("\n=== Genereren originele ovaal route variaties ===")
+        # Test verschillende kleurschema's
+        color_schemes = ['hot', 'cool', 'jet', 'viridis']
         
-        # Standaard rechtsom
-        path1 = genereer_bewegend_mannetje_animatie(
-            clockwise=True, 
-            route_variation=0,
-            output_filename="bewegend_mannetje_rechtsom.gif"
-        )
-        variations.append(path1)
+        print("\n=== Genereren enhanced fMRI kleurschema variaties ===")
         
-        # Linksom
-        path2 = genereer_bewegend_mannetje_animatie(
-            clockwise=False, 
-            route_variation=0,
-            output_filename="bewegend_mannetje_linksom.gif"
-        )
-        variations.append(path2)
+        for scheme in color_schemes:
+            print(f"\n--- Kleurschema: {scheme} ---")
+            
+            # Originele ovaal route met kleurschema
+            path1 = genereer_bewegend_mannetje_animatie(
+                clockwise=True,
+                route_variation=0,
+                color_scheme=scheme,
+                output_filename=f"bewegend_mannetje_{scheme}_ovaal.gif"
+            )
+            variations.append(path1)
+            
+            # Realistisch lopend mannetje met kleurschema
+            path2 = genereer_lopend_mannetje_animatie(
+                color_scheme=scheme,
+                output_filename=f"bewegend_mannetje_{scheme}_lopend.gif"
+            )
+            variations.append(path2)
         
-        # Nieuwe realistisch lopend mannetje variaties
-        print("\n=== Genereren realistisch lopend mannetje variaties ===")
-        
-        # Standaard vrije beweging
-        path3 = genereer_lopend_mannetje_animatie(
-            output_filename="bewegend_mannetje_vrij_lopend.gif"
-        )
-        variations.append(path3)
-        
-        # Vrije beweging met smooth interpolatie
-        path4 = genereer_lopend_mannetje_animatie(
-            smooth_interpolation=True,
-            output_filename="bewegend_mannetje_vrij_lopend_smooth.gif"
-        )
-        variations.append(path4)
-        
-        # Vrije beweging vanaf centrum
-        center_start = OVAL_CENTER
-        path5 = genereer_lopend_mannetje_animatie(
-            start_position=center_start,
-            output_filename="bewegend_mannetje_vanaf_centrum.gif"
-        )
-        variations.append(path5)
-        
-        print(f"\n✅ {len(variations)} demo variaties succesvol gegenereerd")
+        print(f"\n✅ {len(variations)} enhanced kleurschema variaties succesvol gegenereerd")
         return variations
         
     except Exception as e:
@@ -505,11 +578,20 @@ def create_demo_variations():
 
 
 if __name__ == "__main__":
-    # Test de nieuwe functionaliteit
+    # Test de nieuwe enhanced fMRI kleuren functionaliteit
     try:
-        print("=== Test Realistisch Lopend Mannetje ===")
-        output_path = genereer_lopend_mannetje_animatie()
-        print(f"Test animatie gegenereerd: {output_path}")
+        print("=== Test Enhanced fMRI Kleuren ==")
+        
+        # Test met verschillende kleurschema's
+        schemes_to_test = ['hot', 'cool', 'jet']
+        
+        for scheme in schemes_to_test:
+            print(f"\n--- Test {scheme} kleurschema ---")
+            output_path = genereer_lopend_mannetje_animatie(
+                color_scheme=scheme,
+                output_filename=f"test_{scheme}_walking.gif"
+            )
+            print(f"Test animatie gegenereerd: {output_path}")
         
         # Genereer ook demo variaties
         print("\n=== Genereren Demo Variaties ===")

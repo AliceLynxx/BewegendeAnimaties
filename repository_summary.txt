@@ -1,7 +1,7 @@
 # Repository Summary - BewegendeAnimaties
 
 ## Project Overview
-BewegendeAnimaties is een Python-gebaseerde tool voor het genereren van fMRI-stijl GIF animaties. Het project simuleert hersenactiviteit door bewegende elementen te animeren op een statische hersenachtergrond, met karakteristieke fMRI-kleuren (oranje/rood/geel gloed).
+BewegendeAnimaties is een Python-gebaseerde tool voor het genereren van fMRI-stijl GIF animaties. Het project simuleert hersenactiviteit door bewegende elementen te animeren op een statische hersenachtergrond, met **enhanced neuroimaging kleurschalen** (hot, cool, jet, viridis) en dynamische kleureffecten.
 
 ## Repository Structure
 
@@ -10,7 +10,7 @@ BewegendeAnimaties is een Python-gebaseerde tool voor het genereren van fMRI-sti
 BewegendeAnimaties/
 ├── main.py                           # [PLANNED] Centraal uitvoerscript
 ├── demo_bewegend_mannetje.py         # Demo voor originele bewegende figuur
-├── demo_realistisch_lopend_mannetje.py # Demo voor nieuwe lopende figuur
+├── test_enhanced_colors.py           # Test suite voor enhanced fMRI kleuren ✅
 ├── requirements.txt                  # Python dependencies
 ├── project_info.txt                  # Project documentatie
 ├── project_stappen.txt              # Ontwikkelstappen en roadmap
@@ -24,57 +24,78 @@ BewegendeAnimaties/
 ## File Details by Directory
 
 ### Configuration (/config/)
-**constants.py** (2.8KB)
+**constants.py** (9.2KB) - **ENHANCED**
 - Centrale configuratie voor alle animatie parameters
-- fMRI kleurenschema definities
-- Ovaal dimensies en positionering
-- Animatie timing en frame instellingen
-- **NIEUW**: Configuratie voor realistisch lopend mannetje
-- **NIEUW**: Random walk parameters en bewegingsinstellingen
-- **NIEUW**: Vlekken animatie configuratie (grootte, aantal, timing)
+- **ORIGINEEL**: fMRI kleurenschema definities, ovaal dimensies, animatie timing
+- **NIEUW**: 4 neuroimaging kleurschalen (hot, cool, jet, viridis)
+- **NIEUW**: Kleur mapping configuratie voor intensiteitsniveaus
+- **NIEUW**: Dynamische kleurverandering instellingen
+- **NIEUW**: Enhanced gloed effect parameters
+- Configuratie voor realistisch lopend mannetje
+- Random walk parameters en bewegingsinstellingen
+- Vlekken animatie configuratie (grootte, aantal, timing)
 
 ### Animation Modules (/animaties/)
 **__init__.py** (klein bestand)
 - Package initialisatie
 - Importeert hoofdfuncties voor externe toegang
 
-**bewegend_mannetje.py** (18.4KB) - **UITGEBREID**
+**bewegend_mannetje.py** (22.0KB) - **ENHANCED**
 - **ORIGINELE FUNCTIONALITEIT**:
   - Ovaalroute algoritme voor smooth beweging
   - Abstracte cirkel figuur met fMRI styling
   - Verschillende route variaties (standaard, elliptisch, spiraal)
-- **NIEUWE FUNCTIONALITEIT**:
-  - Realistisch stick figure mannetje met anatomische onderdelen
+- **REALISTISCH MANNETJE**:
+  - Stick figure mannetje met anatomische onderdelen
   - 6 verschillende poses voor natuurlijke loop-cyclus
   - Vrije beweging binnen ovaal met random walk algoritme
   - Natuurlijke richtingsveranderingen en bounce detection
   - Momentum-gebaseerde beweging voor realisme
-- Smooth interpolatie voor extra vloeiende animatie
-- Pulsing effecten en gloed rendering
-- Demo variaties generator
+- **ENHANCED KLEUREN**:
+  - Bewegingsgebaseerde kleurvariatie (snelheid → kleur)
+  - Activiteitsgebaseerde kleurmapping
+  - Ondersteuning voor alle 4 kleurschalen
+  - Enhanced gloed effecten met verhoogde intensiteit
+  - Tijdelijke kleurvariatie en pulsing effecten
 
-**vlekken_verschijnend.py** (8.8KB) - **VOLTOOID**
-- Organische vlekken die geleidelijk uitspreiden tot volledig gevuld ovaal
-- Natuurlijk uitziende vlek vormen met irregulariteit
-- Sigmoid easing voor smooth groei patronen
-- Gespreide timing - vlekken verschijnen op verschillende momenten
-- fMRI kleurgradiënt met pulsing effecten
-- Volledig configureerbaar via constants
-- Demo functionaliteit met reproduceerbare resultaten
+**vlekken_verschijnend.py** (13.4KB) - **ENHANCED**
+- **ORIGINELE FUNCTIONALITEIT**:
+  - Organische vlekken die geleidelijk uitspreiden tot volledig gevuld ovaal
+  - Natuurlijk uitziende vlek vormen met irregulariteit
+  - Sigmoid easing voor smooth groei patronen
+  - Gespreide timing - vlekken verschijnen op verschillende momenten
+- **ENHANCED KLEUREN**:
+  - Grootte-gebaseerde kleurintensiteit mapping
+  - Ondersteuning voor alle 4 kleurschalen
+  - Enhanced gloed effecten met verhoogde intensiteit
+  - Tijdelijke kleurvariatie gebaseerd op vlekgroei
+  - Dynamische pulsing effecten per vlek
 
-**vlekken_verdwijnend.py** (9.1KB) - **NIEUW VOLTOOID**
-- **Reverse Algoritme**: Omgekeerd proces van vlekken_verschijnend.py
-- **Geleidelijke Verdwijning**: Vlekken starten op maximale grootte en verdwijnen geleidelijk
-- **Natuurlijke Patronen**: Sigmoid easing voor smooth verdwijn curves
-- **Gespreide Timing**: Vlekken verdwijnen op verschillende momenten voor natuurlijk effect
-- **fMRI Styling**: Consistent kleurenschema (oranje/rood/geel) met gloed effecten
-- **Organische Vormen**: Hergebruik van create_organic_spot functie voor natuurlijke vlekken
-- **Configureerbaar**: Volledig instelbaar via constants.py parameters
-- **Demo functionaliteit**: Test versie met vaste seed voor reproduceerbare resultaten
-- **Wetenschappelijke Waarde**: Toont afnemende hersenactiviteit, inhibitie of herstelprocessen
+**vlekken_verdwijnend.py** (14.3KB) - **ENHANCED**
+- **ORIGINELE FUNCTIONALITEIT**:
+  - Reverse Algoritme: Omgekeerd proces van vlekken_verschijnend.py
+  - Geleidelijke Verdwijning: Vlekken starten op maximale grootte en verdwijnen geleidelijk
+  - Natuurlijke Patronen: Sigmoid easing voor smooth verdwijn curves
+  - Gespreide Timing: Vlekken verdwijnen op verschillende momenten voor natuurlijk effect
+- **ENHANCED KLEUREN**:
+  - Verdwijn-gebaseerde kleurintensiteit (concentratie effect)
+  - Ondersteuning voor alle 4 kleurschalen
+  - Enhanced gloed effecten (minder intensief dan verschijnende vlekken)
+  - Tijdelijke kleurvariatie aangepast voor verdwijning
+  - Minder intensieve pulsing effecten voor natuurlijk verdwijnen
 
-**tekst_verschijnend.py** [NIET GEÏMPLEMENTEERD]
-- Geplande functionaliteit: Tekst die letter voor letter verschijnt
+**tekst_verschijnend.py** (15.0KB) - **ENHANCED**
+- **ORIGINELE FUNCTIONALITEIT**:
+  - Letter-voor-letter animatie: Tekst verschijnt geleidelijk karakter voor karakter
+  - Intelligente positionering: Automatische berekening van optimale tekstpositie binnen ovaal
+  - Flexibele positionering: Ondersteuning voor center, left, right, top, bottom posities
+  - Font management: Automatische font detectie met fallback opties
+- **ENHANCED KLEUREN**:
+  - Kleurschema-gebaseerde tekstkleuren (elk karakter eigen kleur)
+  - Ondersteuning voor alle 4 kleurschalen
+  - Enhanced gloed effecten voor betere zichtbaarheid
+  - Gradient animatie effecten per karakter
+  - Tijdelijke kleurvariatie voor dynamische effecten
 
 ### Utility Functions (/utils/)
 **image_utils.py** (13.4KB) - **UITGEBREID**
@@ -91,11 +112,18 @@ BewegendeAnimaties/
   - `ensure_within_oval()`: Boundary correction algoritme
   - `is_position_in_oval()`: Uitgebreide positie validatie
 
-**color_utils.py** (ongewijzigd)
-- fMRI kleurenschema implementatie
-- Gloed effecten en gradiënten
-- Pulserende kleur generatie
-- Alpha blending utilities
+**color_utils.py** (15.6KB) - **VOLLEDIG VERNIEUWD**
+- **ORIGINELE FUNCTIES**: fMRI kleurenschema, gloed effecten, gradiënten, pulserende kleuren
+- **ENHANCED FUNCTIES**:
+  - 4 neuroimaging standaard kleurschalen (hot, cool, jet, viridis)
+  - Vloeiende kleurovergangen met smooth interpolatie
+  - Bewegingsgebaseerde kleurmapping (`create_movement_based_color`)
+  - Activiteitsgebaseerde kleurveranderingen (`create_activity_based_color`)
+  - Tijdelijke kleurvariatie en gradient animaties
+  - Enhanced gloed effecten met verhoogde intensiteit
+  - Kleurschema preview generatie (`create_color_preview`)
+  - Intensiteit mapping voor positieve/negatieve activatie
+  - Kleur blending en smooth interpolatie algoritmes
 
 **gif_utils.py** (ongewijzigd)
 - GIF creatie en optimalisatie
@@ -103,35 +131,36 @@ BewegendeAnimaties/
 - Bestandsgrootte optimalisatie
 - Test functionaliteit
 
+### Test Scripts (Root)
+**test_enhanced_colors.py** (9.1KB) - **NIEUW**
+- **Volledige test suite voor enhanced fMRI kleuren**
+- Test alle 4 kleurschalen voor alle animatie modules
+- Kleurschema preview generatie
+- Dynamische features testing
+- Vergelijkingsoverzicht van kleurschalen
+- Geautomatiseerde batch testing
+- Resultaten samenvatting en validatie
+
 ### Demo Scripts (Root)
 **demo_bewegend_mannetje.py** (bestaand)
 - Demonstreert originele cirkel animatie
 - Verschillende route variaties
-- Gebruiksvriendelijke interface
-
-**demo_realistisch_lopend_mannetje.py** (7.2KB) - **NIEUW**
-- Interactieve demo voor nieuwe functionaliteit
-- Vergelijking oude vs nieuwe animatie
-- Verschillende bewegingspatronen
-- Configuratie voorbeelden
-- Gebruikersgids en instructies
+- Gebruikersvriendelijke interface
 
 ### Documentation Files
-**project_info.txt** (9.9KB) - **BIJGEWERKT**
+**project_info.txt** (12.7KB) - **ENHANCED**
 - Uitgebreide projectbeschrijving
 - Doelgroep en use cases
 - Architectuur overzicht
 - Module status en afhankelijkheden
-- **NIEUW**: Documentatie van realistische figuur functionaliteit
-- **NIEUW**: Documentatie van vlekken verschijnend animatie
-- **NIEUW**: Documentatie van vlekken verdwijnend animatie
+- **NIEUW**: Documentatie van enhanced fMRI kleuren functionaliteit
+- **NIEUW**: Kleurschalen details (hot, cool, jet, viridis)
+- **NIEUW**: Dynamische kleurverandering configuratie
 
-**project_stappen.txt** (5.2KB) - **BIJGEWERKT**
+**project_stappen.txt** (6.9KB) - **BIJGEWERKT**
 - Ontwikkelroadmap en voortgang
 - Must-have vs nice-to-have features
-- **NIEUW**: Stap 2b voltooid (realistisch lopend mannetje)
-- **NIEUW**: Stap 3 voltooid (vlekken verschijnend)
-- **NIEUW**: Stap 4 voltooid (vlekken verdwijnend)
+- **NIEUW**: Stap 6 voltooid (Enhanced fMRI Kleuren)
 - Resterende ontwikkelstappen
 
 **requirements.txt** (klein bestand)
@@ -140,11 +169,30 @@ BewegendeAnimaties/
 
 ## Key Architectural Components
 
+### Enhanced Color System (NIEUW)
+1. **4 Neuroimaging Kleurschalen**:
+   - **Hot**: Zwart → Rood → Oranje → Geel → Wit (klassieke warme kleuren)
+   - **Cool**: Cyaan → Blauw → Paars → Magenta (koele kleuren)
+   - **Jet**: Blauw → Cyaan → Groen → Geel → Rood (rainbow kleuren)
+   - **Viridis**: Paars → Blauw → Groen → Geel (perceptueel uniform)
+
+2. **Dynamische Kleurveranderingen**:
+   - Bewegingsgebaseerde kleuren (snelheid → intensiteit)
+   - Activiteitsgebaseerde mapping (activiteitsniveau → kleur)
+   - Tijdelijke kleurvariatie (cyclische veranderingen)
+   - Gradient animatie effecten
+
+3. **Enhanced Visual Effects**:
+   - Verhoogde gloed radius en intensiteit
+   - Smooth kleurovergangen tussen frames
+   - Pulsing effecten met kleurschema integratie
+   - Intensiteit mapping voor positieve/negatieve activatie
+
 ### Animation Engine
 - Frame-by-frame rendering systeem
 - Configurable timing en smoothness
 - Multiple animation types support
-- fMRI-style visual effects pipeline
+- **ENHANCED**: fMRI-style visual effects pipeline met neuroimaging kleuren
 
 ### Movement Algorithms
 1. **Ovaal Route** (origineel): Vaste elliptische bewegingsbaan
@@ -153,84 +201,87 @@ BewegendeAnimaties/
    - Boundary collision detection
    - Configurable randomness levels
    - Smooth trajectory generation
+   - **ENHANCED**: Bewegingsgebaseerde kleurvariatie
 
-### Spot Animation System (NIEUW)
+### Spot Animation System
 1. **Organic Spot Generation**: Natuurlijk uitziende vlek vormen
 2. **Growth/Shrinkage Algorithms**: Sigmoid easing voor smooth transitie
 3. **Timing Distribution**: Gespreide start/stop tijden voor natuurlijk effect
-4. **Color Gradient System**: fMRI kleurenschema met variatie
-5. **Pulsing Effects**: Dynamische kleur variaties
+4. **ENHANCED Color System**: Neuroimaging kleurschalen met grootte-gebaseerde intensiteit
+5. **Dynamic Effects**: Pulsing en tijdelijke kleurvariatie per vlek
 
-### Rendering Pipeline
+### Text Animation System (ENHANCED)
+1. **Letter-by-letter Rendering**: Karakter voor karakter onthulling
+2. **Intelligent Positioning**: Automatische positionering binnen ovaal
+3. **ENHANCED Colors**: Kleurschema-gebaseerde tekstkleuren per karakter
+4. **Dynamic Effects**: Gradient animaties en tijdelijke kleurvariatie
+5. **Enhanced Glow**: Verhoogde gloed effecten voor betere zichtbaarheid
+
+### Rendering Pipeline (ENHANCED)
 1. Background loading en processing
-2. Figure/spot generation (cirkel, stick figure, of organische vlekken)
-3. Position/size calculation (route, random walk, of growth/shrinkage)
-4. fMRI styling application (kleuren, gloed)
-5. Oval masking voor brain region
-6. Frame compositing en output
-
-### Visual Styling System
-- Consistent fMRI kleurenschema
-- Glow effects met configureerbare intensiteit
-- Pulsing animations voor levensechtheid
-- Anti-aliasing voor smooth visuals
+2. Figure/spot/text generation met enhanced kleuren
+3. Position/size calculation met bewegingsgebaseerde kleurmapping
+4. **ENHANCED**: Neuroimaging kleurschaal toepassing
+5. **ENHANCED**: Dynamische gloed effecten met verhoogde intensiteit
+6. Oval masking voor brain region
+7. Frame compositing en output
 
 ## Recent Major Updates
 
-### Issue #5 Implementation (Realistisch Lopend Mannetje)
-1. **Realistisch Stick Figure**: Vervangen abstracte cirkel door herkenbaar mannetje
-2. **Loop Animatie**: 6 poses voor natuurlijke loop-cyclus
-3. **Vrije Beweging**: Random walk in plaats van vaste route
-4. **Natuurlijke Beweging**: Momentum, richtingsveranderingen, bounce detection
-5. **Uitgebreide Configuratie**: Nieuwe parameters voor beweging en uiterlijk
+### Issue #17 Implementation (Enhanced fMRI Kleuren) - **NIEUW**
+1. **4 Neuroimaging Kleurschalen**: Hot, Cool, Jet, Viridis (wetenschappelijke standaarden)
+2. **Vloeiende Kleurovergangen**: Smooth interpolatie tussen verschillende activiteitsniveaus
+3. **Dynamische Kleurveranderingen**: Gebaseerd op bewegingssnelheid, tijd en activiteitsniveau
+4. **Enhanced Gloed Effecten**: Verhoogde radius en intensiteit voor betere zichtbaarheid
+5. **Wetenschappelijke Authenticiteit**: Verhoogt geloofwaardigheid door echte fMRI-kleurschalen
+6. **Volledig Configureerbaar**: Alle kleurschalen en effecten instelbaar via constants
+7. **Test Suite**: Uitgebreide test functionaliteit voor alle kleurschalen en animaties
 
-### Issue #10 Implementation (Vlekken Verschijnend)
-1. **Organische Vlekken**: Natuurlijk uitziende vlek vormen met irregulariteit
-2. **Geleidelijke Groei**: Sigmoid easing voor smooth groei patronen
-3. **Timing Spreiding**: Vlekken verschijnen op verschillende momenten
-4. **fMRI Styling**: Kleurgradiënt met pulsing effecten
-5. **Configureerbaar**: Grootte, aantal en timing via constants
+### Eerdere Updates
+- **Issue #5**: Realistisch Lopend Mannetje
+- **Issue #10**: Vlekken Verschijnend
+- **Issue #11**: Vlekken Verdwijnend
+- **Issue #12**: Tekst Verschijnend
 
-### Issue #11 Implementation (Vlekken Verdwijnend) - **NIEUW**
-1. **Reverse Algoritme**: Omgekeerd proces van vlekken_verschijnend.py
-2. **Natuurlijke Verdwijning**: Sigmoid easing voor smooth verdwijn curves
-3. **Gespreide Timing**: Vlekken verdwijnen op verschillende momenten
-4. **Wetenschappelijke Relevantie**: Toont inhibitie, herstel en afnemende hersenactiviteit
-5. **Consistent Design**: Hergebruik van bestaande functies en styling
-
-### Technische Verbeteringen
-- Uitgebreide `image_utils.py` met stick figure rendering
-- Nieuwe configuratie opties in `constants.py`
-- Backward compatibility met originele functionaliteit
-- Comprehensive demo en testing scripts
-- Organische vlek generatie algoritmes
-- Sigmoid easing functies voor natuurlijke animaties
-
-### Code Quality
-- Uitgebreide documentatie en comments
-- Modular design met herbruikbare componenten
-- Error handling en user feedback
-- Consistent coding style en naming conventions
+### Technische Verbeteringen (Enhanced Colors)
+- Volledig vernieuwde `color_utils.py` met neuroimaging kleurschalen
+- Uitgebreide configuratie opties in `constants.py`
+- Alle animatie modules geüpdatet met enhanced kleuren
+- Comprehensive test suite voor kleurschalen
+- Bewegings- en activiteitsgebaseerde kleurmapping
+- Enhanced gloed effecten met configureerbare intensiteit
 
 ## Development Status
-- ✅ **Voltooid**: Basis infrastructuur, originele bewegende figuur, realistisch lopend mannetje, vlekken verschijnend, vlekken verdwijnend
-- 🔄 **In ontwikkeling**: Tekst animatie, centraal script
+- ✅ **Voltooid**: Basis infrastructuur, bewegende figuren, vlekken animaties, tekst animatie, **enhanced fMRI kleuren**
+- 🔄 **In ontwikkeling**: Centraal script
 - 📋 **Gepland**: Optimalisatie, uitgebreide configuratie, unit tests
 
 ## Animation Types Overview
 1. **Bewegend Mannetje** (2 varianten):
    - Origineel: Abstracte cirkel op ovaalroute
    - Nieuw: Realistisch stick figure met vrije beweging
+   - **ENHANCED**: Bewegingsgebaseerde kleurvariatie
 2. **Vlekken Verschijnend**: Organische vlekken die uitspreiden
+   - **ENHANCED**: Grootte-gebaseerde kleurintensiteit
 3. **Vlekken Verdwijnend**: Organische vlekken die geleidelijk verdwijnen
-4. **Tekst Verschijnend** (gepland): Letter-voor-letter tekst animatie
+   - **ENHANCED**: Verdwijn-gebaseerde kleurconcentratie
+4. **Tekst Verschijnend**: Letter-voor-letter tekst animatie
+   - **ENHANCED**: Kleurschema-gebaseerde tekstkleuren per karakter
+
+## Enhanced Color Features
+1. **Wetenschappelijke Authenticiteit**: Echte neuroimaging kleurschalen
+2. **Dynamische Effecten**: Bewegings-, tijd- en activiteitsgebaseerde kleuren
+3. **Vloeiende Overgangen**: Smooth interpolatie tussen kleurstappen
+4. **Enhanced Gloed**: Verhoogde radius en intensiteit
+5. **Configureerbaar**: Volledig instelbaar via constants
+6. **Test Suite**: Uitgebreide validatie en vergelijking
 
 ## Usage Patterns
-1. **Onderzoek**: Wetenschappelijke visualisaties van hersenactiviteit
-2. **Educatie**: Uitleg van neurale processen en hersenwerking
-3. **Presentaties**: Visueel aantrekkelijke animaties voor lezingen
-4. **Demonstraties**: Interactieve voorbeelden van hersenactiviteit
+1. **Onderzoek**: Wetenschappelijke visualisaties met authentieke fMRI-kleuren
+2. **Educatie**: Uitleg van neurale processen met realistische kleurschalen
+3. **Presentaties**: Professionele animaties met neuroimaging standaarden
+4. **Demonstraties**: Interactieve voorbeelden met verschillende kleurschalen
 5. **Inhibitie Studies**: Visualisatie van afnemende hersenactiviteit
 6. **Herstelprocessen**: Tonen van neurologische herstel patronen
 
-Het project biedt een flexibel platform voor het creëren van wetenschappelijk accurate en visueel aantrekkelijke hersenactiviteit animaties, met ondersteuning voor zowel toenemende als afnemende activiteit patronen.
+Het project biedt nu een **wetenschappelijk authentiek** platform voor het creëren van fMRI-stijl hersenactiviteit animaties, met ondersteuning voor neuroimaging standaard kleurschalen en dynamische kleureffecten die de visuele impact en wetenschappelijke geloofwaardigheid aanzienlijk verhogen.
