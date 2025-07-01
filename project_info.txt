@@ -1,0 +1,96 @@
+# Project Info - BewegendeAnimaties
+
+## Projectomschrijving
+BewegendeAnimaties is een Python-tool voor het genereren van fMRI-stijl GIF animaties. Het project maakt gebruik van een statische hersenachtergrond waarop verschillende soorten bewegende elementen worden geanimeerd in karakteristieke fMRI-kleuren (oranje/rood/geel gloed).
+
+## Project doel, nut en functie
+**Doel**: Het creëren van visueel aantrekkelijke en wetenschappelijk relevante animaties die hersenactiviteit simuleren.
+
+**Doelgroep**: 
+- Neurowetenschappers en onderzoekers
+- Educatieve instellingen voor het uitleggen van hersenprocessen
+- Presentatie- en visualisatiedoeleinden
+
+**Nut**: 
+- Maakt complexe hersenprocessen visueel begrijpelijk
+- Ondersteunt wetenschappelijke communicatie
+- Biedt flexibele configuratie voor verschillende use cases
+
+**Functie**: 
+- Genereert 4 verschillende animatietypes op één hersenachtergrond
+- Volledig configureerbaar via constants bestand
+- Automatische batch-generatie van alle animaties
+
+## Architectuur/modulestructuur
+```
+BewegendeAnimaties/
+├── main.py                    # Centraal script voor alle animaties
+├── config/
+│   └── constants.py          # Configuratie en instellingen
+├── animaties/
+│   ├── bewegend_mannetje.py  # Bewegend figuur animatie
+│   ├── vlekken_verschijnend.py # Uitspreidende vlekken
+│   ├── vlekken_verdwijnend.py  # Verdwijnende vlekken
+│   └── tekst_verschijnend.py   # Letter-voor-letter tekst
+├── utils/
+│   ├── image_utils.py        # Afbeelding manipulatie
+│   ├── color_utils.py        # fMRI kleurenschema
+│   └── gif_utils.py          # GIF generatie utilities
+└── output/                   # Gegenereerde GIF bestanden
+```
+
+## Per module: status, bestandsnaam, pad, functionaliteit, afhankelijkheden
+
+### main.py
+- **Status**: Nog niet gemaakt
+- **Pad**: /main.py
+- **Functionaliteit**: Centraal script dat alle 4 animaties genereert
+- **Afhankelijkheden**: Alle animatie modules, config module
+
+### config/constants.py
+- **Status**: Nog niet gemaakt
+- **Pad**: /config/constants.py
+- **Functionaliteit**: Configuratie voor achtergrond, tekst, animatieparameters
+- **Afhankelijkheden**: Geen
+
+### animaties/bewegend_mannetje.py
+- **Status**: Nog niet gemaakt
+- **Pad**: /animaties/bewegend_mannetje.py
+- **Functionaliteit**: Genereert animatie van bewegend figuur in ovaalroute
+- **Afhankelijkheden**: utils modules, config
+
+### animaties/vlekken_verschijnend.py
+- **Status**: Nog niet gemaakt
+- **Pad**: /animaties/vlekken_verschijnend.py
+- **Functionaliteit**: Vlekken die uitspreiden tot vol ovaal
+- **Afhankelijkheden**: utils modules, config
+
+### animaties/vlekken_verdwijnend.py
+- **Status**: Nog niet gemaakt
+- **Pad**: /animaties/vlekken_verdwijnend.py
+- **Functionaliteit**: Vlekken die verdwijnen van vol naar leeg
+- **Afhankelijkheden**: utils modules, config
+
+### animaties/tekst_verschijnend.py
+- **Status**: Nog niet gemaakt
+- **Pad**: /animaties/tekst_verschijnend.py
+- **Functionaliteit**: Tekst die letter voor letter verschijnt
+- **Afhankelijkheden**: utils modules, config
+
+### utils/image_utils.py
+- **Status**: Nog niet gemaakt
+- **Pad**: /utils/image_utils.py
+- **Functionaliteit**: Afbeelding laden, ovaal masker, compositing
+- **Afhankelijkheden**: PIL/Pillow, numpy
+
+### utils/color_utils.py
+- **Status**: Nog niet gemaakt
+- **Pad**: /utils/color_utils.py
+- **Functionaliteit**: fMRI kleurenschema en gloed effecten
+- **Afhankelijkheden**: PIL/Pillow
+
+### utils/gif_utils.py
+- **Status**: Nog niet gemaakt
+- **Pad**: /utils/gif_utils.py
+- **Functionaliteit**: GIF creatie en optimalisatie
+- **Afhankelijkheden**: PIL/Pillow
