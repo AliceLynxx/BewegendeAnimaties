@@ -139,7 +139,7 @@ def ensure_text_within_oval(text, font, position):
     return calculate_text_position(text, font, "center")
 
 
-def render_partial_text(text, visible_chars, font, position, color, frame_number):
+def render_partial_text(text, visible_chars, font, position, color, frame_number, background_size):
     """
     Rendert gedeeltelijke tekst voor animatie frames.
     
@@ -150,12 +150,13 @@ def render_partial_text(text, visible_chars, font, position, color, frame_number
         position (tuple): (x, y) positie van tekst
         color (tuple): RGB kleur
         frame_number (int): Frame nummer voor pulsing effect
+        background_size (tuple): (width, height) van achtergrond afbeelding
         
     Returns:
         PIL.Image: Afbeelding met gedeeltelijke tekst
     """
-    # Maak transparante afbeelding
-    img = Image.new('RGBA', (OVAL_WIDTH + 100, OVAL_HEIGHT + 100), (0, 0, 0, 0))
+    # Maak transparante afbeelding met dezelfde afmetingen als achtergrond
+    img = Image.new('RGBA', background_size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
     
     # Bereken pulsing kleur
@@ -165,11 +166,8 @@ def render_partial_text(text, visible_chars, font, position, color, frame_number
     # Teken zichtbare deel van tekst
     visible_text = text[:visible_chars]
     if visible_text:
-        # Pas positie aan voor afbeelding offset
-        adjusted_pos = (position[0] - OVAL_CENTER[0] + OVAL_WIDTH//2 + 50,
-                       position[1] - OVAL_CENTER[1] + OVAL_HEIGHT//2 + 50)
-        
-        draw.text(adjusted_pos, visible_text, font=font, fill=pulsing_color)
+        # Gebruik directe positie (geen offset meer nodig)
+        draw.text(position, visible_text, font=font, fill=pulsing_color)
     
     return img
 
@@ -230,9 +228,9 @@ def create_text_appearing_animation(text=None, font_size=None, color=None,
         frame = background.copy()
         
         if visible_chars > 0:
-            # Render gedeeltelijke tekst
+            # Render gedeeltelijke tekst met achtergrond afmetingen
             text_img = render_partial_text(
-                text, visible_chars, font, text_position, color, frame_num
+                text, visible_chars, font, text_position, color, frame_num, background.size
             )
             
             # Voeg gloed effect toe
@@ -243,11 +241,8 @@ def create_text_appearing_animation(text=None, font_size=None, color=None,
             # Pas ovaal masker toe
             masked_text = apply_oval_mask(text_with_glow, mask)
             
-            # Combineer met achtergrond
-            # Bereken positie voor compositing
-            composite_pos = (OVAL_CENTER[0] - OVAL_WIDTH//2 - 50,
-                           OVAL_CENTER[1] - OVAL_HEIGHT//2 - 50)
-            frame = composite_images(frame, masked_text, composite_pos)
+            # Combineer met achtergrond (positie (0,0) omdat afbeeldingen nu dezelfde grootte hebben)
+            frame = composite_images(frame, masked_text, (0, 0))
         
         frames.append(frame)
     
