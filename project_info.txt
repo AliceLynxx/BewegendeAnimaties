@@ -25,6 +25,7 @@ BewegendeAnimaties is een Python-tool voor het genereren van fMRI-stijl GIF anim
 ```
 BewegendeAnimaties/
 ├── main.py                    # Centraal script voor alle animaties
+├── requirements.txt           # Python dependencies
 ├── config/
 │   └── constants.py          # Configuratie en instellingen
 ├── animaties/
@@ -41,17 +42,41 @@ BewegendeAnimaties/
 
 ## Per module: status, bestandsnaam, pad, functionaliteit, afhankelijkheden
 
+### requirements.txt
+- **Status**: ✅ Voltooid
+- **Pad**: /requirements.txt
+- **Functionaliteit**: Python dependencies (Pillow, numpy)
+- **Afhankelijkheden**: Geen
+
+### config/constants.py
+- **Status**: ✅ Voltooid
+- **Pad**: /config/constants.py
+- **Functionaliteit**: Configuratie voor achtergrond, tekst, animatieparameters, fMRI kleuren
+- **Afhankelijkheden**: Geen
+
+### utils/image_utils.py
+- **Status**: ✅ Voltooid
+- **Pad**: /utils/image_utils.py
+- **Functionaliteit**: Afbeelding laden, ovaal masker, compositing, punt-in-ovaal detectie
+- **Afhankelijkheden**: PIL/Pillow, numpy, config.constants
+
+### utils/color_utils.py
+- **Status**: ✅ Voltooid
+- **Pad**: /utils/color_utils.py
+- **Functionaliteit**: fMRI kleurenschema, gloed effecten, gradiënten, pulserende kleuren
+- **Afhankelijkheden**: PIL/Pillow, numpy, config.constants
+
+### utils/gif_utils.py
+- **Status**: ✅ Voltooid
+- **Pad**: /utils/gif_utils.py
+- **Functionaliteit**: GIF creatie, optimalisatie, frame handling, test functionaliteit
+- **Afhankelijkheden**: PIL/Pillow, config.constants
+
 ### main.py
 - **Status**: Nog niet gemaakt
 - **Pad**: /main.py
 - **Functionaliteit**: Centraal script dat alle 4 animaties genereert
 - **Afhankelijkheden**: Alle animatie modules, config module
-
-### config/constants.py
-- **Status**: Nog niet gemaakt
-- **Pad**: /config/constants.py
-- **Functionaliteit**: Configuratie voor achtergrond, tekst, animatieparameters
-- **Afhankelijkheden**: Geen
 
 ### animaties/bewegend_mannetje.py
 - **Status**: Nog niet gemaakt
@@ -76,21 +101,3 @@ BewegendeAnimaties/
 - **Pad**: /animaties/tekst_verschijnend.py
 - **Functionaliteit**: Tekst die letter voor letter verschijnt
 - **Afhankelijkheden**: utils modules, config
-
-### utils/image_utils.py
-- **Status**: Nog niet gemaakt
-- **Pad**: /utils/image_utils.py
-- **Functionaliteit**: Afbeelding laden, ovaal masker, compositing
-- **Afhankelijkheden**: PIL/Pillow, numpy
-
-### utils/color_utils.py
-- **Status**: Nog niet gemaakt
-- **Pad**: /utils/color_utils.py
-- **Functionaliteit**: fMRI kleurenschema en gloed effecten
-- **Afhankelijkheden**: PIL/Pillow
-
-### utils/gif_utils.py
-- **Status**: Nog niet gemaakt
-- **Pad**: /utils/gif_utils.py
-- **Functionaliteit**: GIF creatie en optimalisatie
-- **Afhankelijkheden**: PIL/Pillow
