@@ -53,7 +53,13 @@ SPOT_COUNT = 8  # Aantal vlekken per frame
 # Tekst animatie configuratie
 TEXT_CONTENT = "fMRI"  # Standaard tekst voor animatie
 TEXT_FONT_SIZE = 48  # Font grootte
-TEXT_COLOR = FMRI_COLORS['primary']  # Tekst kleur
+TEXT_COLOR = FMRI_COLORS['primary']  # Tekst kleur (oranje)
+TEXT_POSITION = "center"  # Positionering binnen ovaal ("center", "left", "right", "top", "bottom")
+TEXT_ANIMATION_SPEED = 0.15  # Snelheid van letter onthulling (seconden per letter)
+TEXT_GLOW_RADIUS = 15  # Gloed radius voor tekst (groter dan standaard voor meer effect)
+TEXT_GLOW_INTENSITY = 0.8  # Gloed intensiteit voor tekst
+TEXT_PULSE_SPEED = 2.0  # Snelheid van pulsing effect (cycli per seconde)
+TEXT_FONT_PATH = None  # Pad naar custom font (None = standaard font)
 
 # Output configuratie
 OUTPUT_DIR = "output"  # Directory voor gegenereerde GIFs
