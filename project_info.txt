@@ -35,7 +35,7 @@ BewegendeAnimaties/
 │   ├── __init__.py           # Package initialisatie
 │   ├── bewegend_mannetje.py  # Bewegend figuur animatie ✅ (uitgebreid)
 │   ├── vlekken_verschijnend.py # Uitspreidende vlekken ✅
-│   ├── vlekken_verdwijnend.py  # Verdwijnende vlekken
+│   ├── vlekken_verdwijnend.py  # Verdwijnende vlekken ✅
 │   └── tekst_verschijnend.py   # Letter-voor-letter tekst
 ├── utils/
 │   ├── image_utils.py        # Afbeelding manipulatie ✅ (uitgebreid)
@@ -118,6 +118,21 @@ BewegendeAnimaties/
   - **Geoptimaliseerde rendering**: Efficiënte frame-by-frame generatie
 - **Afhankelijkheden**: utils modules (image_utils, color_utils, gif_utils), config.constants
 
+### animaties/vlekken_verdwijnend.py
+- **Status**: ✅ Voltooid
+- **Pad**: /animaties/vlekken_verdwijnend.py
+- **Functionaliteit**: 
+  - **Reverse Algoritme**: Omgekeerd proces van vlekken_verschijnend.py
+  - **Geleidelijke Verdwijning**: Vlekken starten op maximale grootte en verdwijnen geleidelijk
+  - **Natuurlijke Patronen**: Sigmoid easing voor smooth verdwijn curves
+  - **Gespreide Timing**: Vlekken verdwijnen op verschillende momenten voor natuurlijk effect
+  - **fMRI Styling**: Consistent kleurenschema (oranje/rood/geel) met gloed effecten
+  - **Organische Vormen**: Hergebruik van create_organic_spot functie voor natuurlijke vlekken
+  - **Configureerbaar**: Volledig instelbaar via constants.py parameters
+  - **Demo functionaliteit**: Test versie met vaste seed voor reproduceerbare resultaten
+  - **Wetenschappelijke Waarde**: Toont afnemende hersenactiviteit, inhibitie of herstelprocessen
+- **Afhankelijkheden**: utils modules (image_utils, color_utils, gif_utils), config.constants
+
 ### demo_bewegend_mannetje.py
 - **Status**: ✅ Voltooid
 - **Pad**: /demo_bewegend_mannetje.py
@@ -133,12 +148,6 @@ BewegendeAnimaties/
 - **Pad**: /main.py
 - **Functionaliteit**: Centraal script dat alle 4 animaties genereert
 - **Afhankelijkheden**: Alle animatie modules, config module
-
-### animaties/vlekken_verdwijnend.py
-- **Status**: Nog niet gemaakt
-- **Pad**: /animaties/vlekken_verdwijnend.py
-- **Functionaliteit**: Vlekken die verdwijnen van vol naar leeg
-- **Afhankelijkheden**: utils modules, config
 
 ### animaties/tekst_verschijnend.py
 - **Status**: Nog niet gemaakt
@@ -177,3 +186,25 @@ BewegendeAnimaties/
 - Color gradient systeem voor variatie
 - Glow effects en pulsing voor dynamiek
 - Efficient frame-by-frame rendering
+
+## Nieuwe functionaliteit - Vlekken Verdwijnend Animatie
+
+### Belangrijkste kenmerken:
+1. **Omgekeerd proces**: Complement van vlekken_verschijnend.py voor complete toolkit
+2. **Natuurlijke verdwijning**: Sigmoid easing voor smooth verdwijn patronen
+3. **Gespreide timing**: Vlekken verdwijnen op verschillende momenten
+4. **Wetenschappelijke relevantie**: Toont inhibitie, herstel en afnemende hersenactiviteit
+5. **Consistent design**: Hergebruik van bestaande functies en styling
+
+### Technische implementatie:
+- Reverse algoritme van vlekken_verschijnend.py
+- calculate_spot_shrinkage() functie voor verdwijn berekeningen
+- Hergebruik van create_organic_spot() voor consistentie
+- Sigmoid easing omgekeerd voor natuurlijke verdwijning
+- Demo functionaliteit met reproduceerbare resultaten
+
+### Doelgroep en nut:
+- **Neurowetenschappers**: Visualisatie van inhibitie processen
+- **Onderzoekers**: Herstelprocessen en afnemende activiteit
+- **Educatief**: Verschillende fasen van hersenactiviteit uitleggen
+- **Wetenschappelijke waarde**: Completeert spectrum van activiteit visualisatie
