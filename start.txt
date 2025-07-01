@@ -1,0 +1,32 @@
+# BewegendeAnimaties - fMRI-stijl GIF Generator
+
+## Projectdoel
+Dit project heeft als doel om een tool te maken die fMRI-stijl GIF animaties kan genereren. De tool moet flexibel zijn en verschillende soorten bewegende animaties kunnen maken op een statische hersenachtergrond.
+
+## Doelgroep
+- Onderzoekers die visuele representaties van hersenactiviteit willen maken
+- Educatieve doeleinden voor het uitleggen van hersenprocessen
+- Presentaties en visualisaties van neurowetenschappelijk onderzoek
+
+## Functionaliteit
+De gebruiker moet via een constants/env bestand kunnen configureren:
+- Achtergrond afbeelding locatie (statische hersenafbeelding)
+- Tekst voor tekst-animaties
+- Andere parameters voor de verschillende animatietypes
+
+## Animatietypes die gegenereerd moeten worden:
+1. **Bewegend mannetje**: Een figuur die zich heen en weer beweegt langs een route binnen een ovaalvorm
+2. **Vlekken verschijnend**: Vlekken die zich uitspreiden totdat het hele ovaal één grote actieve massa is
+3. **Vlekken verdwijnend**: Het omgekeerde proces - van vol naar leeg
+4. **Tekst verschijnend**: Gebruiker-gedefinieerde tekst die letter voor letter zichtbaar wordt binnen het ovaal
+
+## Visuele stijl
+- Alle bewegende elementen in fMRI-stijl kleuren: oranje/rood/geel gloed
+- Achtergrond blijft statisch (hersenafbeelding)
+- Beweging beperkt tot ovaalvorm die de hersenregio representeert
+
+## Technische vereisten
+- Centraal Python script dat alle 4 animaties genereert
+- Configureerbaar via constants/env bestand
+- Output: 4 verschillende GIF bestanden
+- Flexibele route-definitie voor bewegende elementen
