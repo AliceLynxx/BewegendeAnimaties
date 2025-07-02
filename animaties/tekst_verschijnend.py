@@ -2,7 +2,7 @@
 Tekst verschijnend animatie module voor BewegendeAnimaties.
 
 Deze module implementeert een animatie waarbij tekst letter voor letter zichtbaar wordt
-binnen het ovaal, met enhanced fMRI-stijl kleurschalen en dynamische kleureffecten.
+binnen het ovaal, met enhanced fMRI-stijl kleurschalen, dynamische kleureffecten en fMRI-realisme.
 """
 
 import math
@@ -10,12 +10,17 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 from utils.image_utils import (
     load_background_image, create_oval_mask, apply_oval_mask, 
-    composite_images, get_oval_bounds, point_in_oval
+    composite_images, get_oval_bounds, point_in_oval,
+    render_voxel_texture, apply_spatial_smoothing_image,
+    enhance_edges_fmri_style, create_gradient_boundaries,
+    add_anatomical_variation
 )
 from utils.color_utils import (
     get_fmri_color, add_glow_effect, create_pulsing_color,
     map_value_to_color, create_gradient_animation_color,
-    apply_temporal_color_variation, get_color_scheme
+    apply_temporal_color_variation, get_color_scheme,
+    enhance_fmri_realism, simulate_zscore_mapping,
+    apply_temporal_correlation
 )
 from utils.gif_utils import create_gif_from_frames
 from config.constants import (
@@ -23,7 +28,7 @@ from config.constants import (
     TEXT_ANIMATION_SPEED, TEXT_GLOW_RADIUS, TEXT_GLOW_INTENSITY,
     TEXT_PULSE_SPEED, TEXT_FONT_PATH, OVAL_CENTER, OVAL_WIDTH, OVAL_HEIGHT,
     TOTAL_FRAMES, FRAMES_PER_SECOND, OUTPUT_FILENAMES, DEFAULT_COLOR_SCHEME,
-    TEXT_COLOR_SCHEME_BASED, DYNAMIC_COLORS
+    TEXT_COLOR_SCHEME_BASED, DYNAMIC_COLORS, FMRI_REALISM
 )
 
 
@@ -188,10 +193,81 @@ def get_text_color(char_index, total_chars, frame_number, color_scheme=None, bas
         return base_color or TEXT_COLOR
 
 
-def render_partial_text(text, visible_chars, font, position, color, frame_number, 
-                       background_size, color_scheme=None):
+def apply_fmri_realism_to_text(text_image, activity_level=0.7, time_factor=0.0, preserve_readability=True):
     """
-    Rendert gedeeltelijke tekst voor animatie frames met enhanced kleuren.
+    Past fMRI realisme effecten toe op tekst terwijl leesbaarheid behouden blijft.
+    
+    Args:
+        text_image (PIL.Image): Tekst afbeelding om realisme aan toe te voegen
+        activity_level (float): Activiteitsniveau (0.0-1.0)
+        time_factor (float): Tijd factor voor temporele effecten
+        preserve_readability (bool): Behoud leesbaarheid van tekst
+        
+    Returns:
+        PIL.Image: Tekst afbeelding met fMRI realisme effecten
+    """
+    # Aangepaste instellingen voor tekst (minder agressief dan voor andere elementen)
+    text_realism_settings = FMRI_REALISM.copy()
+    
+    if preserve_readability:
+        # Verminder effecten om leesbaarheid te behouden
+        text_realism_settings['voxel_opacity'] = min(0.2, FMRI_REALISM.get('voxel_opacity', 0.3))
+        text_realism_settings['noise_level'] = min(0.05, FMRI_REALISM.get('noise_level', 0.1))
+        text_realism_settings['smoothing_kernel'] = max(1, FMRI_REALISM.get('smoothing_kernel', 3) - 1)
+        text_realism_settings['edge_enhancement'] = True  # Belangrijk voor tekst leesbaarheid
+        text_realism_settings['gradient_strength'] = min(0.5, FMRI_REALISM.get('gradient_strength', 0.7))
+    
+    # Pas voxel textuur toe (subtiel voor tekst)
+    if text_realism_settings.get('voxel_enabled', True):
+        text_image = render_voxel_texture(
+            text_image,
+            text_realism_settings.get('voxel_size', 2),
+            text_realism_settings.get('voxel_opacity', 0.2),
+            'subtle'  # Altijd subtiele voxel stijl voor tekst
+        )
+    
+    # Pas lichte spatial smoothing toe
+    if text_realism_settings.get('smoothing_enabled', True):
+        text_image = apply_spatial_smoothing_image(
+            text_image,
+            text_realism_settings.get('smoothing_kernel', 2),  # Kleinere kernel voor tekst
+            preserve_edges=True  # Altijd randen behouden voor tekst
+        )
+    
+    # Verbeter randen (belangrijk voor tekst leesbaarheid)
+    if text_realism_settings.get('edge_enhancement', True):
+        text_image = enhance_edges_fmri_style(
+            text_image,
+            text_realism_settings.get('edge_glow_radius', 2),
+            text_realism_settings.get('edge_glow_intensity', 0.6),  # Verhoogd voor tekst
+            text_realism_settings.get('edge_detection_threshold', 0.2)
+        )
+    
+    # Voeg subtiele gradiënt grenzen toe
+    if text_realism_settings.get('gradient_boundaries', True):
+        text_image = create_gradient_boundaries(
+            text_image,
+            text_realism_settings.get('gradient_width', 3),  # Kleinere width voor tekst
+            text_realism_settings.get('gradient_falloff', 'gaussian'),
+            text_realism_settings.get('gradient_strength', 0.5)  # Verminderde sterkte
+        )
+    
+    # Voeg zeer subtiele anatomische variatie toe
+    if text_realism_settings.get('anatomical_variation', True) and not preserve_readability:
+        text_image = add_anatomical_variation(
+            text_image,
+            text_realism_settings.get('anatomical_asymmetry', 0.05),  # Zeer subtiel
+            hotspots=False,  # Geen hotspots voor tekst
+            gradients=True
+        )
+    
+    return text_image
+
+
+def render_partial_text(text, visible_chars, font, position, color, frame_number, 
+                       background_size, color_scheme=None, enable_fmri_realism=True):
+    """
+    Rendert gedeeltelijke tekst voor animatie frames met enhanced kleuren en fMRI realisme.
     
     Args:
         text (str): Volledige tekst
@@ -202,6 +278,7 @@ def render_partial_text(text, visible_chars, font, position, color, frame_number
         frame_number (int): Frame nummer voor pulsing effect
         background_size (tuple): (width, height) van achtergrond afbeelding
         color_scheme (str): Naam van het kleurschema
+        enable_fmri_realism (bool): Schakel fMRI realisme effecten in
         
     Returns:
         PIL.Image: Afbeelding met gedeeltelijke tekst
@@ -223,6 +300,23 @@ def render_partial_text(text, visible_chars, font, position, color, frame_number
             pulse_position = (frame_number * TEXT_PULSE_SPEED + i * 0.2) / FRAMES_PER_SECOND
             pulsing_color = create_pulsing_color(char_color, pulse_position, color_scheme)
             
+            # Simuleer z-score mapping voor wetenschappelijke authenticiteit
+            if FMRI_REALISM.get('zscore_mapping', True):
+                char_activity = (i + 1) / len(text)  # Activiteit neemt toe per karakter
+                zscore, is_significant, intensity = simulate_zscore_mapping(
+                    char_activity,
+                    FMRI_REALISM.get('zscore_range', (-3.0, 6.0)),
+                    FMRI_REALISM.get('zscore_threshold', 2.3)
+                )
+                
+                # Moduleer kleur gebaseerd op significantie
+                if is_significant:
+                    # Verhoog intensiteit voor significante activatie
+                    pulsing_color = tuple(min(255, int(c * (1.0 + intensity * 0.3))) for c in pulsing_color)
+                else:
+                    # Verminder intensiteit voor niet-significante activatie
+                    pulsing_color = tuple(int(c * 0.7) for c in pulsing_color)
+            
             # Teken karakter
             draw.text((current_x, position[1]), char, font=font, fill=pulsing_color)
             
@@ -231,13 +325,27 @@ def render_partial_text(text, visible_chars, font, position, color, frame_number
             char_width = char_bbox[2] - char_bbox[0]
             current_x += char_width
     
+    # Pas fMRI realisme toe indien ingeschakeld
+    if enable_fmri_realism and visible_chars > 0:
+        # Bereken activiteitsniveau gebaseerd op zichtbare karakters
+        activity_level = min(1.0, visible_chars / len(text))
+        time_factor = frame_number / TOTAL_FRAMES
+        
+        img = apply_fmri_realism_to_text(
+            img, 
+            activity_level=activity_level, 
+            time_factor=time_factor,
+            preserve_readability=True
+        )
+    
     return img
 
 
 def create_text_appearing_animation(text=None, font_size=None, color=None, 
-                                  position_type=None, animation_speed=None, color_scheme=None):
+                                  position_type=None, animation_speed=None, 
+                                  color_scheme=None, enable_fmri_realism=True):
     """
-    Hoofdfunctie voor het creëren van tekst verschijnend animatie.
+    Hoofdfunctie voor het creëren van tekst verschijnend animatie met fMRI realisme.
     
     Args:
         text (str): Tekst om te animeren (standaard uit constants)
@@ -246,6 +354,7 @@ def create_text_appearing_animation(text=None, font_size=None, color=None,
         position_type (str): Positionering type (standaard uit constants)
         animation_speed (float): Animatie snelheid (standaard uit constants)
         color_scheme (str): Naam van het kleurschema
+        enable_fmri_realism (bool): Schakel fMRI realisme effecten in
         
     Returns:
         list: Lijst van PIL.Image frames
@@ -278,6 +387,7 @@ def create_text_appearing_animation(text=None, font_size=None, color=None,
     chars_per_frame = animation_speed * FRAMES_PER_SECOND
     
     frames = []
+    previous_frame_data = None
     
     for frame_num in range(TOTAL_FRAMES):
         # Bereken aantal zichtbare karakters
@@ -293,10 +403,10 @@ def create_text_appearing_animation(text=None, font_size=None, color=None,
         frame = background.copy()
         
         if visible_chars > 0:
-            # Render gedeeltelijke tekst met enhanced kleuren
+            # Render gedeeltelijke tekst met enhanced kleuren en realisme
             text_img = render_partial_text(
                 text, visible_chars, font, text_position, color, frame_num, 
-                background.size, color_scheme
+                background.size, color_scheme, enable_fmri_realism
             )
             
             # Voeg enhanced gloed effect toe
@@ -307,6 +417,16 @@ def create_text_appearing_animation(text=None, font_size=None, color=None,
             # Pas ovaal masker toe
             masked_text = apply_oval_mask(text_with_glow, mask)
             
+            # Pas globale fMRI realisme toe op het hele frame indien ingeschakeld
+            if enable_fmri_realism:
+                enhanced_text, frame_data = enhance_fmri_realism(
+                    masked_text,
+                    frame_number=frame_num,
+                    previous_frame=previous_frame_data
+                )
+                previous_frame_data = frame_data
+                masked_text = enhanced_text
+            
             # Combineer met achtergrond
             frame = composite_images(frame, masked_text, (0, 0))
         
@@ -315,12 +435,13 @@ def create_text_appearing_animation(text=None, font_size=None, color=None,
     return frames
 
 
-def create_demo_animation(color_scheme=None):
+def create_demo_animation(color_scheme=None, enable_fmri_realism=True):
     """
     Creëert een demo versie van de tekst verschijnend animatie.
     
     Args:
         color_scheme (str): Naam van het kleurschema
+        enable_fmri_realism (bool): Schakel fMRI realisme effecten in
     
     Returns:
         list: Lijst van demo frames
@@ -341,14 +462,15 @@ def create_demo_animation(color_scheme=None):
         frames = create_text_appearing_animation(
             text=config["text"],
             position_type=config["position_type"],
-            color_scheme=color_scheme
+            color_scheme=color_scheme,
+            enable_fmri_realism=enable_fmri_realism
         )
         all_frames.extend(frames)
     
     return all_frames
 
 
-def generate_text_appearing_gif(output_filename=None, demo=False, color_scheme=None):
+def generate_text_appearing_gif(output_filename=None, demo=False, color_scheme=None, enable_fmri_realism=True):
     """
     Genereert een GIF van de tekst verschijnend animatie.
     
@@ -356,24 +478,27 @@ def generate_text_appearing_gif(output_filename=None, demo=False, color_scheme=N
         output_filename (str): Naam van output bestand (standaard uit constants)
         demo (bool): Of demo versie moet worden gegenereerd
         color_scheme (str): Naam van het kleurschema
+        enable_fmri_realism (bool): Schakel fMRI realisme effecten in
         
     Returns:
         str: Pad naar gegenereerd GIF bestand
     """
     if output_filename is None:
-        output_filename = OUTPUT_FILENAMES['text_appearing']
+        suffix = "_fmri_realism" if enable_fmri_realism else ""
+        output_filename = OUTPUT_FILENAMES['text_appearing'].replace('.gif', f'{suffix}.gif')
     if color_scheme is None:
         color_scheme = DEFAULT_COLOR_SCHEME
     
     print("Genereren tekst verschijnend animatie...")
     print(f"- Kleurschema: {color_scheme}")
     print(f"- Kleurschema-gebaseerde kleuren: {TEXT_COLOR_SCHEME_BASED}")
+    print(f"- fMRI realisme: {enable_fmri_realism}")
     
     if demo:
-        frames = create_demo_animation(color_scheme)
+        frames = create_demo_animation(color_scheme, enable_fmri_realism)
         print(f"Demo animatie gegenereerd met {len(frames)} frames")
     else:
-        frames = create_text_appearing_animation(color_scheme=color_scheme)
+        frames = create_text_appearing_animation(color_scheme=color_scheme, enable_fmri_realism=enable_fmri_realism)
         print(f"Animatie gegenereerd met {len(frames)} frames")
     
     # Maak GIF
@@ -383,9 +508,56 @@ def generate_text_appearing_gif(output_filename=None, demo=False, color_scheme=N
     return gif_path
 
 
-def create_color_scheme_demos():
+def create_fmri_realism_demo():
+    """
+    Creëert demo animaties die het verschil tonen tussen normale en fMRI-realisme versies.
+    
+    Returns:
+        list: Lijst van paden naar gegenereerde GIFs
+    """
+    demo_files = []
+    
+    try:
+        print("\n=== fMRI Realisme Demo voor Tekst ===")
+        
+        # Test verschillende kleurschema's met en zonder realisme
+        color_schemes = ['hot', 'viridis']
+        
+        for scheme in color_schemes:
+            print(f"\n--- Kleurschema: {scheme} ---")
+            
+            # Normale versie
+            normal_path = generate_text_appearing_gif(
+                output_filename=f"tekst_{scheme}_normal.gif",
+                demo=False,
+                color_scheme=scheme,
+                enable_fmri_realism=False
+            )
+            demo_files.append(normal_path)
+            
+            # fMRI realisme versie
+            realism_path = generate_text_appearing_gif(
+                output_filename=f"tekst_{scheme}_fmri_realism.gif",
+                demo=False,
+                color_scheme=scheme,
+                enable_fmri_realism=True
+            )
+            demo_files.append(realism_path)
+        
+        print(f"\n✅ {len(demo_files)} tekst demo bestanden gegenereerd")
+        return demo_files
+        
+    except Exception as e:
+        print(f"❌ Fout bij genereren fMRI realisme demo: {str(e)}")
+        return demo_files
+
+
+def create_color_scheme_demos(enable_fmri_realism=True):
     """
     Creëert demo animaties voor alle beschikbare kleurschema's.
+    
+    Args:
+        enable_fmri_realism (bool): Schakel fMRI realisme effecten in
     
     Returns:
         list: Lijst van paden naar gegenereerde GIFs
@@ -397,12 +569,14 @@ def create_color_scheme_demos():
     
     for scheme in schemes:
         print(f"\n--- Kleurschema: {scheme} ---")
-        output_filename = f"tekst_verschijnend_{scheme}.gif"
+        suffix = "_realism" if enable_fmri_realism else ""
+        output_filename = f"tekst_verschijnend_{scheme}{suffix}.gif"
         
         path = generate_text_appearing_gif(
             output_filename=output_filename,
             demo=False,
-            color_scheme=scheme
+            color_scheme=scheme,
+            enable_fmri_realism=enable_fmri_realism
         )
         demo_paths.append(path)
     
@@ -411,21 +585,30 @@ def create_color_scheme_demos():
 
 
 if __name__ == "__main__":
-    # Test de enhanced fMRI kleuren functionaliteit
+    # Test de enhanced fMRI realisme functionaliteit
     try:
-        print("=== Test Enhanced fMRI Kleuren voor Tekst Verschijnend ===")
+        print("=== Test Enhanced fMRI Realisme voor Tekst Verschijnend ===")
         
-        # Test standaard animatie
-        gif_path = generate_text_appearing_gif()
-        print(f"Standaard animatie: {gif_path}")
+        # Test fMRI realisme demo
+        print("\n--- fMRI Realisme Demo ---")
+        demo_paths = create_fmri_realism_demo()
+        print(f"Demo bestanden: {demo_paths}")
         
-        # Test verschillende kleurschema's
-        scheme_demos = create_color_scheme_demos()
-        print(f"Kleurschema demo's: {scheme_demos}")
+        # Test standaard animatie met realisme
+        gif_path = generate_text_appearing_gif(enable_fmri_realism=True)
+        print(f"Standaard animatie met realisme: {gif_path}")
         
-        # Test demo animatie
-        demo_path = generate_text_appearing_gif("tekst_verschijnend_demo.gif", demo=True)
-        print(f"Demo animatie: {demo_path}")
+        # Test verschillende kleurschema's met realisme
+        scheme_demos = create_color_scheme_demos(enable_fmri_realism=True)
+        print(f"Kleurschema demo's met realisme: {scheme_demos}")
+        
+        # Test demo animatie met realisme
+        demo_path = generate_text_appearing_gif(
+            "tekst_verschijnend_demo_realism.gif", 
+            demo=True, 
+            enable_fmri_realism=True
+        )
+        print(f"Demo animatie met realisme: {demo_path}")
         
         print("Test voltooid!")
         
