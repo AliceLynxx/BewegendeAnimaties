@@ -152,6 +152,97 @@ COLOR_MAPPING = {
     'gradient_steps': 256         # Aantal stappen in kleurgradiënten
 }
 
+# fMRI Realisme configuratie (NIEUW)
+FMRI_REALISM = {
+    # Voxel-achtige structuur
+    'voxel_size': 2,              # Voxel grootte voor textuur (pixels)
+    'voxel_enabled': True,        # Schakel voxel effecten in/uit
+    'voxel_opacity': 0.3,         # Transparantie van voxel raster (0.0-1.0)
+    
+    # Noise patterns (realistische ruis)
+    'noise_level': 0.1,           # Basis ruis niveau (0.0-1.0)
+    'noise_type': 'gaussian',     # Type ruis ('gaussian', 'uniform', 'salt_pepper')
+    'noise_temporal': True,       # Tijdelijke ruis variatie
+    'noise_spatial': True,        # Ruimtelijke ruis variatie
+    
+    # Spatial smoothing
+    'smoothing_kernel': 3,        # Kernel grootte voor spatial smoothing
+    'smoothing_enabled': True,    # Schakel smoothing in/uit
+    'smoothing_iterations': 1,    # Aantal smoothing iteraties
+    'smoothing_preserve_edges': True,  # Behoud randen tijdens smoothing
+    
+    # Statistical thresholding
+    'threshold_level': 0.3,       # Activatie drempel (0.0-1.0)
+    'threshold_enabled': True,    # Schakel thresholding in/uit
+    'threshold_type': 'soft',     # Type thresholding ('hard', 'soft')
+    'threshold_fade': 0.1,        # Fade zone voor soft thresholding
+    
+    # Cluster-based activatie
+    'cluster_min_size': 5,        # Minimale cluster grootte (pixels)
+    'cluster_enabled': True,      # Schakel cluster detectie in/uit
+    'cluster_connectivity': 8,    # Connectiviteit voor clustering (4 of 8)
+    'cluster_merge_distance': 3,  # Afstand voor cluster merging
+    
+    # Intensity variations
+    'intensity_levels': 5,        # Aantal intensiteitsniveaus binnen activatie
+    'intensity_variation': 0.2,   # Variatie in intensiteit (0.0-1.0)
+    'intensity_gradient': True,   # Gradiënt binnen activatiegebieden
+    'intensity_temporal': True,   # Tijdelijke intensiteitsvariatie
+    
+    # Temporal dynamics
+    'temporal_smoothing': True,   # Temporele smoothing tussen frames
+    'temporal_correlation': 0.8,  # Correlatie tussen opeenvolgende frames (0.0-1.0)
+    'temporal_drift': 0.05,       # Langzame drift in activatie (0.0-1.0)
+    'temporal_fluctuations': True, # Realistische temporele fluctuaties
+    
+    # Baseline fluctuations
+    'baseline_level': 0.1,        # Basis activatie niveau (0.0-1.0)
+    'baseline_variation': 0.05,   # Variatie in baseline (0.0-1.0)
+    'baseline_temporal': True,    # Tijdelijke baseline variatie
+    'baseline_spatial': True,     # Ruimtelijke baseline variatie
+    
+    # Edge enhancement
+    'edge_enhancement': True,     # Schakel rand verbetering in
+    'edge_glow_radius': 2,        # Radius voor rand gloed
+    'edge_glow_intensity': 0.4,   # Intensiteit van rand gloed (0.0-1.0)
+    'edge_detection_threshold': 0.2,  # Drempel voor rand detectie
+    
+    # Gradient boundaries
+    'gradient_boundaries': True,  # Zachte gradiënt grenzen
+    'gradient_width': 5,          # Breedte van gradiënt zone (pixels)
+    'gradient_falloff': 'gaussian', # Type falloff ('linear', 'gaussian', 'exponential')
+    'gradient_strength': 0.7,     # Sterkte van gradiënt effect (0.0-1.0)
+    
+    # Multi-level intensiteit
+    'multi_level_enabled': True,  # Verschillende intensiteitsniveaus binnen vorm
+    'level_count': 3,             # Aantal intensiteitsniveaus
+    'level_spacing': 0.3,         # Afstand tussen niveaus (0.0-1.0)
+    'level_blending': 'smooth',   # Blending tussen niveaus ('sharp', 'smooth')
+    
+    # Anatomical realism
+    'anatomical_variation': True, # Anatomische variatie in activatie
+    'anatomical_asymmetry': 0.1,  # Asymmetrie factor (0.0-1.0)
+    'anatomical_hotspots': True,  # Hotspot gebieden met hogere activatie
+    'anatomical_gradients': True, # Anatomische gradiënten
+    
+    # Z-score mapping simulatie
+    'zscore_mapping': True,       # Simuleer z-score gebaseerde kleuren
+    'zscore_range': (-3.0, 6.0),  # Z-score bereik (min, max)
+    'zscore_threshold': 2.3,      # Significantie drempel (z-score)
+    'zscore_colorbar': False,     # Toon kleurenbalk (voor toekomstige uitbreiding)
+    
+    # Contrast enhancement
+    'contrast_enhancement': True, # Verbeter contrast
+    'contrast_factor': 1.2,       # Contrast versterking factor
+    'contrast_adaptive': True,    # Adaptieve contrast verbetering
+    'contrast_preserve_range': True, # Behoud kleur bereik
+    
+    # Performance instellingen
+    'enable_caching': True,       # Cache berekeningen voor performance
+    'parallel_processing': False, # Parallelle verwerking (experimenteel)
+    'optimization_level': 'balanced', # Optimalisatie niveau ('speed', 'quality', 'balanced')
+}
+
 # Gloed effect instellingen (uitgebreid)
 GLOW_RADIUS = 10  # Radius van gloed effect
 GLOW_INTENSITY = 0.7  # Intensiteit van gloed (0.0 - 1.0)

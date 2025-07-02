@@ -1,15 +1,16 @@
 """
 Kleur utilities voor fMRI-stijl kleuren en gloed effecten.
-Uitgebreid met neuroimaging standaard kleurschalen en vloeiende overgangen.
+Uitgebreid met neuroimaging standaard kleurschalen, vloeiende overgangen en fMRI-realisme.
 """
 
 from PIL import Image, ImageDraw, ImageFilter
 import numpy as np
 import math
+import random
 from config.constants import (
     FMRI_COLORS, FMRI_COLOR_SCHEMES, DEFAULT_COLOR_SCHEME, COLOR_MAPPING,
     GLOW_RADIUS, GLOW_INTENSITY, ENHANCED_GLOW_RADIUS, ENHANCED_GLOW_INTENSITY,
-    DYNAMIC_COLORS
+    DYNAMIC_COLORS, FMRI_REALISM
 )
 
 
@@ -239,6 +240,476 @@ def create_movement_based_color(speed, max_speed, color_scheme=None, time_factor
     
     return create_activity_based_color(normalized_speed, color_scheme, time_factor)
 
+
+# ===== NIEUWE fMRI REALISME FUNCTIES =====
+
+def generate_fmri_noise(size, noise_type='gaussian', noise_level=0.1, temporal_factor=0.0):
+    """
+    Genereert realistische fMRI ruis patronen.
+    
+    Args:
+        size (tuple): (width, height) van de ruis
+        noise_type (str): Type ruis ('gaussian', 'uniform', 'salt_pepper')
+        noise_level (float): Intensiteit van ruis (0.0-1.0)
+        temporal_factor (float): Tijdelijke variatie factor (0.0-1.0)
+        
+    Returns:
+        numpy.ndarray: 2D array met ruis waarden (-1.0 tot 1.0)
+    """
+    width, height = size
+    
+    if noise_type == 'gaussian':
+        # Gaussische ruis (meest realistisch voor fMRI)
+        noise = np.random.normal(0, noise_level, (height, width))
+    elif noise_type == 'uniform':
+        # Uniforme ruis
+        noise = np.random.uniform(-noise_level, noise_level, (height, width))
+    elif noise_type == 'salt_pepper':
+        # Salt-and-pepper ruis
+        noise = np.zeros((height, width))
+        salt_pepper_mask = np.random.random((height, width)) < noise_level
+        noise[salt_pepper_mask] = np.random.choice([-1, 1], size=np.sum(salt_pepper_mask)) * noise_level
+    else:
+        # Fallback naar gaussische ruis
+        noise = np.random.normal(0, noise_level, (height, width))
+    
+    # Voeg tijdelijke variatie toe
+    if temporal_factor > 0:
+        temporal_modulation = 1.0 + 0.3 * math.sin(temporal_factor * 2 * math.pi)
+        noise *= temporal_modulation
+    
+    # Clamp tussen -1 en 1
+    noise = np.clip(noise, -1.0, 1.0)
+    
+    return noise
+
+
+def apply_voxel_texture(image, voxel_size=2, opacity=0.3):
+    """
+    Past voxel-achtige textuur toe voor realistische fMRI look.
+    
+    Args:
+        image (PIL.Image): Afbeelding om textuur aan toe te voegen
+        voxel_size (int): Grootte van voxels in pixels
+        opacity (float): Transparantie van voxel raster (0.0-1.0)
+        
+    Returns:
+        PIL.Image: Afbeelding met voxel textuur
+    """
+    if not FMRI_REALISM.get('voxel_enabled', True) or voxel_size <= 1:
+        return image
+    
+    if image.mode != 'RGBA':
+        image = image.convert('RGBA')
+    
+    width, height = image.size
+    
+    # Maak voxel overlay
+    voxel_overlay = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(voxel_overlay)
+    
+    # Teken voxel raster
+    grid_color = (128, 128, 128, int(255 * opacity))
+    
+    # Verticale lijnen
+    for x in range(0, width, voxel_size):
+        draw.line([(x, 0), (x, height)], fill=grid_color, width=1)
+    
+    # Horizontale lijnen
+    for y in range(0, height, voxel_size):
+        draw.line([(0, y), (width, y)], fill=grid_color, width=1)
+    
+    # Combineer met originele afbeelding
+    result = Image.alpha_composite(image, voxel_overlay)
+    
+    return result
+
+
+def apply_spatial_smoothing(image_array, kernel_size=3, iterations=1, preserve_edges=True):
+    """
+    Past spatial smoothing toe zoals gebruikt in fMRI analyse.
+    
+    Args:
+        image_array (numpy.ndarray): 2D array met intensiteitswaarden
+        kernel_size (int): Grootte van smoothing kernel
+        iterations (int): Aantal smoothing iteraties
+        preserve_edges (bool): Behoud randen tijdens smoothing
+        
+    Returns:
+        numpy.ndarray: Gesmoothde array
+    """
+    if not FMRI_REALISM.get('smoothing_enabled', True) or kernel_size <= 1:
+        return image_array
+    
+    smoothed = image_array.copy()
+    
+    for _ in range(iterations):
+        if preserve_edges:
+            # Edge-preserving smoothing (bilateral filter simulatie)
+            smoothed = _bilateral_filter_simple(smoothed, kernel_size)
+        else:
+            # Standaard Gaussische smoothing
+            smoothed = _gaussian_smooth(smoothed, kernel_size)
+    
+    return smoothed
+
+
+def _gaussian_smooth(array, kernel_size):
+    """Eenvoudige Gaussische smoothing."""
+    from scipy import ndimage
+    sigma = kernel_size / 3.0  # Standaard relatie tussen kernel size en sigma
+    return ndimage.gaussian_filter(array, sigma=sigma)
+
+
+def _bilateral_filter_simple(array, kernel_size):
+    """Eenvoudige bilateral filter implementatie."""
+    # Vereenvoudigde versie - in praktijk zou je scipy.ndimage gebruiken
+    # Voor nu gebruiken we gewone Gaussische filter
+    return _gaussian_smooth(array, kernel_size)
+
+
+def apply_statistical_thresholding(image_array, threshold=0.3, threshold_type='soft', fade_zone=0.1):
+    """
+    Past statistische thresholding toe zoals in fMRI analyse.
+    
+    Args:
+        image_array (numpy.ndarray): 2D array met activatiewaarden (0.0-1.0)
+        threshold (float): Drempelwaarde (0.0-1.0)
+        threshold_type (str): Type thresholding ('hard', 'soft')
+        fade_zone (float): Fade zone voor soft thresholding (0.0-1.0)
+        
+    Returns:
+        numpy.ndarray: Gethresholde array
+    """
+    if not FMRI_REALISM.get('threshold_enabled', True):
+        return image_array
+    
+    thresholded = image_array.copy()
+    
+    if threshold_type == 'hard':
+        # Harde thresholding: alles onder drempel wordt 0
+        thresholded[thresholded < threshold] = 0.0
+    elif threshold_type == 'soft':
+        # Zachte thresholding: geleidelijke overgang
+        fade_start = threshold - fade_zone / 2
+        fade_end = threshold + fade_zone / 2
+        
+        # Onder fade zone: 0
+        thresholded[thresholded < fade_start] = 0.0
+        
+        # In fade zone: geleidelijke overgang
+        fade_mask = (thresholded >= fade_start) & (thresholded <= fade_end)
+        fade_values = (thresholded[fade_mask] - fade_start) / fade_zone
+        thresholded[fade_mask] = fade_values * thresholded[fade_mask]
+    
+    return thresholded
+
+
+def detect_activation_clusters(image_array, min_size=5, connectivity=8):
+    """
+    Detecteert activatie clusters zoals in fMRI analyse.
+    
+    Args:
+        image_array (numpy.ndarray): 2D array met activatiewaarden
+        min_size (int): Minimale cluster grootte in pixels
+        connectivity (int): Connectiviteit voor clustering (4 of 8)
+        
+    Returns:
+        numpy.ndarray: Array met cluster labels (0 = geen cluster)
+    """
+    if not FMRI_REALISM.get('cluster_enabled', True):
+        return np.zeros_like(image_array, dtype=int)
+    
+    # Simpele cluster detectie implementatie
+    # In praktijk zou je scipy.ndimage.label gebruiken
+    binary_mask = image_array > FMRI_REALISM.get('threshold_level', 0.3)
+    
+    # Voor nu: eenvoudige connected components
+    clusters = np.zeros_like(image_array, dtype=int)
+    cluster_id = 1
+    
+    height, width = image_array.shape
+    visited = np.zeros_like(binary_mask, dtype=bool)
+    
+    def flood_fill(start_y, start_x, cluster_id):
+        """Eenvoudige flood fill voor cluster detectie."""
+        stack = [(start_y, start_x)]
+        cluster_pixels = []
+        
+        while stack:
+            y, x = stack.pop()
+            
+            if (y < 0 or y >= height or x < 0 or x >= width or 
+                visited[y, x] or not binary_mask[y, x]):
+                continue
+            
+            visited[y, x] = True
+            cluster_pixels.append((y, x))
+            
+            # Voeg buren toe (4 of 8 connectiviteit)
+            neighbors = [(y-1, x), (y+1, x), (y, x-1), (y, x+1)]
+            if connectivity == 8:
+                neighbors.extend([(y-1, x-1), (y-1, x+1), (y+1, x-1), (y+1, x+1)])
+            
+            for ny, nx in neighbors:
+                stack.append((ny, nx))
+        
+        return cluster_pixels
+    
+    # Vind alle clusters
+    for y in range(height):
+        for x in range(width):
+            if binary_mask[y, x] and not visited[y, x]:
+                cluster_pixels = flood_fill(y, x, cluster_id)
+                
+                # Alleen clusters boven minimale grootte behouden
+                if len(cluster_pixels) >= min_size:
+                    for py, px in cluster_pixels:
+                        clusters[py, px] = cluster_id
+                    cluster_id += 1
+    
+    return clusters
+
+
+def simulate_zscore_mapping(activity_level, zscore_range=(-3.0, 6.0), threshold=2.3):
+    """
+    Simuleert z-score gebaseerde kleurmapping zoals in fMRI software.
+    
+    Args:
+        activity_level (float): Activiteitsniveau (0.0-1.0)
+        zscore_range (tuple): (min_z, max_z) z-score bereik
+        threshold (float): Significantie drempel (z-score)
+        
+    Returns:
+        tuple: (zscore, is_significant, intensity)
+    """
+    if not FMRI_REALISM.get('zscore_mapping', True):
+        return activity_level, True, activity_level
+    
+    min_z, max_z = zscore_range
+    
+    # Map activiteit naar z-score
+    zscore = min_z + activity_level * (max_z - min_z)
+    
+    # Bepaal significantie
+    is_significant = abs(zscore) >= threshold
+    
+    # Bereken intensiteit gebaseerd op z-score
+    if is_significant:
+        # Normaliseer significante z-scores naar 0-1
+        if zscore >= 0:
+            intensity = min(1.0, (zscore - threshold) / (max_z - threshold))
+        else:
+            intensity = min(1.0, (abs(zscore) - threshold) / (abs(min_z) - threshold))
+    else:
+        intensity = 0.0
+    
+    return zscore, is_significant, intensity
+
+
+def create_multi_level_intensity(base_intensity, level_count=3, level_spacing=0.3):
+    """
+    Creëert multi-level intensiteit binnen activatiegebieden.
+    
+    Args:
+        base_intensity (float): Basis intensiteit (0.0-1.0)
+        level_count (int): Aantal intensiteitsniveaus
+        level_spacing (float): Afstand tussen niveaus (0.0-1.0)
+        
+    Returns:
+        float: Aangepaste intensiteit met levels
+    """
+    if not FMRI_REALISM.get('multi_level_enabled', True) or level_count <= 1:
+        return base_intensity
+    
+    # Bereken level
+    level_size = 1.0 / level_count
+    current_level = int(base_intensity / level_size)
+    current_level = min(current_level, level_count - 1)
+    
+    # Bereken intensiteit binnen level
+    level_start = current_level * level_size
+    level_progress = (base_intensity - level_start) / level_size
+    
+    # Pas level spacing toe
+    if FMRI_REALISM.get('level_blending', 'smooth') == 'smooth':
+        # Smooth blending tussen levels
+        adjusted_intensity = level_start + level_progress * level_size * (1.0 - level_spacing)
+    else:
+        # Sharp levels
+        adjusted_intensity = level_start + level_spacing * level_size
+    
+    return adjusted_intensity
+
+
+def apply_baseline_fluctuation(image_array, baseline_level=0.1, variation=0.05, temporal_factor=0.0):
+    """
+    Past baseline fluctuaties toe zoals in echte fMRI data.
+    
+    Args:
+        image_array (numpy.ndarray): 2D array met activatiewaarden
+        baseline_level (float): Basis activatie niveau (0.0-1.0)
+        variation (float): Variatie in baseline (0.0-1.0)
+        temporal_factor (float): Tijdelijke factor voor fluctuaties
+        
+    Returns:
+        numpy.ndarray: Array met baseline fluctuaties
+    """
+    if not FMRI_REALISM.get('baseline_temporal', True):
+        return image_array
+    
+    height, width = image_array.shape
+    
+    # Genereer baseline fluctuaties
+    if FMRI_REALISM.get('baseline_spatial', True):
+        # Ruimtelijke variatie in baseline
+        spatial_variation = np.random.normal(0, variation * 0.5, (height, width))
+    else:
+        spatial_variation = np.zeros((height, width))
+    
+    # Tijdelijke variatie
+    temporal_variation = variation * math.sin(temporal_factor * 2 * math.pi)
+    
+    # Combineer baseline met fluctuaties
+    baseline = baseline_level + spatial_variation + temporal_variation
+    baseline = np.clip(baseline, 0.0, 1.0)
+    
+    # Voeg toe aan activatie (maar niet boven 1.0)
+    result = np.clip(image_array + baseline, 0.0, 1.0)
+    
+    return result
+
+
+def apply_temporal_correlation(current_frame, previous_frame, correlation=0.8):
+    """
+    Past temporele correlatie toe tussen opeenvolgende frames.
+    
+    Args:
+        current_frame (numpy.ndarray): Huidige frame activatie
+        previous_frame (numpy.ndarray): Vorige frame activatie
+        correlation (float): Correlatie factor (0.0-1.0)
+        
+    Returns:
+        numpy.ndarray: Frame met temporele correlatie
+    """
+    if not FMRI_REALISM.get('temporal_smoothing', True) or previous_frame is None:
+        return current_frame
+    
+    # Gewogen gemiddelde tussen huidige en vorige frame
+    correlated_frame = correlation * previous_frame + (1.0 - correlation) * current_frame
+    
+    return np.clip(correlated_frame, 0.0, 1.0)
+
+
+def enhance_fmri_realism(image, settings=None, frame_number=0, previous_frame=None):
+    """
+    Hoofdfunctie die alle fMRI-realisme effecten toepast.
+    
+    Args:
+        image (PIL.Image): Originele afbeelding
+        settings (dict): Custom instellingen (gebruikt FMRI_REALISM als standaard)
+        frame_number (int): Frame nummer voor temporele effecten
+        previous_frame (numpy.ndarray): Vorige frame voor temporele correlatie
+        
+    Returns:
+        tuple: (enhanced_image, frame_data) - enhanced PIL.Image en numpy array voor volgende frame
+    """
+    if settings is None:
+        settings = FMRI_REALISM
+    
+    # Converteer naar numpy array voor verwerking
+    if image.mode != 'RGBA':
+        image = image.convert('RGBA')
+    
+    # Extraheer alpha channel voor activatie intensiteit
+    alpha_array = np.array(image.split()[-1]) / 255.0
+    
+    # Temporele factor voor dynamische effecten
+    temporal_factor = frame_number / 30.0  # Assumeer ~30 frames cyclus
+    
+    # 1. Voeg ruis toe
+    if settings.get('noise_level', 0) > 0:
+        noise = generate_fmri_noise(
+            image.size, 
+            settings.get('noise_type', 'gaussian'),
+            settings.get('noise_level', 0.1),
+            temporal_factor if settings.get('noise_temporal', True) else 0.0
+        )
+        alpha_array = np.clip(alpha_array + noise * 0.1, 0.0, 1.0)
+    
+    # 2. Pas spatial smoothing toe
+    if settings.get('smoothing_enabled', True):
+        alpha_array = apply_spatial_smoothing(
+            alpha_array,
+            settings.get('smoothing_kernel', 3),
+            settings.get('smoothing_iterations', 1),
+            settings.get('smoothing_preserve_edges', True)
+        )
+    
+    # 3. Pas statistical thresholding toe
+    if settings.get('threshold_enabled', True):
+        alpha_array = apply_statistical_thresholding(
+            alpha_array,
+            settings.get('threshold_level', 0.3),
+            settings.get('threshold_type', 'soft'),
+            settings.get('threshold_fade', 0.1)
+        )
+    
+    # 4. Detecteer clusters
+    if settings.get('cluster_enabled', True):
+        clusters = detect_activation_clusters(
+            alpha_array,
+            settings.get('cluster_min_size', 5),
+            settings.get('cluster_connectivity', 8)
+        )
+        # Gebruik clusters om activatie te moduleren
+        cluster_mask = clusters > 0
+        alpha_array = alpha_array * cluster_mask
+    
+    # 5. Pas multi-level intensiteit toe
+    if settings.get('multi_level_enabled', True):
+        vectorized_multi_level = np.vectorize(lambda x: create_multi_level_intensity(
+            x, 
+            settings.get('level_count', 3),
+            settings.get('level_spacing', 0.3)
+        ))
+        alpha_array = vectorized_multi_level(alpha_array)
+    
+    # 6. Voeg baseline fluctuaties toe
+    alpha_array = apply_baseline_fluctuation(
+        alpha_array,
+        settings.get('baseline_level', 0.1),
+        settings.get('baseline_variation', 0.05),
+        temporal_factor
+    )
+    
+    # 7. Pas temporele correlatie toe
+    if previous_frame is not None:
+        alpha_array = apply_temporal_correlation(
+            alpha_array,
+            previous_frame,
+            settings.get('temporal_correlation', 0.8)
+        )
+    
+    # Converteer terug naar PIL Image
+    enhanced_alpha = (alpha_array * 255).astype(np.uint8)
+    
+    # Maak nieuwe afbeelding met enhanced alpha
+    enhanced_image = image.copy()
+    enhanced_image.putalpha(Image.fromarray(enhanced_alpha))
+    
+    # 8. Pas voxel textuur toe
+    if settings.get('voxel_enabled', True):
+        enhanced_image = apply_voxel_texture(
+            enhanced_image,
+            settings.get('voxel_size', 2),
+            settings.get('voxel_opacity', 0.3)
+        )
+    
+    return enhanced_image, alpha_array
+
+
+# ===== BESTAANDE FUNCTIES (ongewijzigd) =====
 
 def add_glow_effect(image, color=None, radius=None, intensity=None, enhanced=False):
     """
