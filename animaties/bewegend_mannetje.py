@@ -3,7 +3,7 @@ Bewegend mannetje animatie module voor fMRI-stijl visualisaties.
 
 Deze module implementeert zowel een bewegend figuur dat een ovaalroute volgt als
 een realistisch lopend mannetje dat vrij beweegt binnen het hersengebied,
-met uitgebreide fMRI kleurenschema's en dynamische kleureffecten.
+met uitgebreide fMRI kleurenschema's, dynamische kleureffecten en fMRI-realisme.
 """
 
 import math
@@ -13,12 +13,16 @@ from PIL import Image, ImageDraw
 from utils.image_utils import (
     load_background_image, create_oval_mask, apply_oval_mask, composite_images,
     create_stick_figure, generate_random_position_in_oval, calculate_next_position,
-    ensure_within_oval, is_position_in_oval
+    ensure_within_oval, is_position_in_oval, render_voxel_texture,
+    apply_spatial_smoothing_image, enhance_edges_fmri_style, create_gradient_boundaries,
+    add_anatomical_variation
 )
 from utils.color_utils import (
     get_fmri_color, add_glow_effect, create_colored_circle, create_pulsing_color,
     create_movement_based_color, create_activity_based_color, map_value_to_color,
-    create_gradient_animation_color, get_color_scheme, apply_temporal_color_variation
+    create_gradient_animation_color, get_color_scheme, apply_temporal_color_variation,
+    enhance_fmri_realism, generate_fmri_noise, apply_statistical_thresholding,
+    detect_activation_clusters, simulate_zscore_mapping, apply_temporal_correlation
 )
 from utils.gif_utils import create_gif_from_frames
 from config.constants import (
@@ -27,7 +31,7 @@ from config.constants import (
     WALKING_FIGURE_SIZE, WALKING_SPEED, WALKING_DIRECTION_CHANGE_CHANCE,
     WALKING_RANDOM_VARIATION, WALKING_POSE_CHANGE_SPEED, WALKING_BOUNDARY_MARGIN,
     RANDOM_WALK_STEP_SIZE, RANDOM_WALK_MOMENTUM, RANDOM_WALK_DIRECTION_NOISE,
-    DEFAULT_COLOR_SCHEME, DYNAMIC_COLORS
+    DEFAULT_COLOR_SCHEME, DYNAMIC_COLORS, FMRI_REALISM
 )
 
 
@@ -86,9 +90,9 @@ def calculate_oval_position(progress, clockwise=True, route_variation=0):
 
 
 def create_moving_figure(size=None, color=None, pulse_position=0.0, color_scheme=None, 
-                        activity_level=0.5, time_factor=0.0):
+                        activity_level=0.5, time_factor=0.0, enable_fmri_realism=True):
     """
-    Creëert een bewegend figuur met enhanced fMRI styling (originele cirkel versie).
+    Creëert een bewegend figuur met enhanced fMRI styling en realisme (originele cirkel versie).
     
     Args:
         size (int): Grootte van het figuur (standaard uit constants)
@@ -97,6 +101,7 @@ def create_moving_figure(size=None, color=None, pulse_position=0.0, color_scheme
         color_scheme (str): Naam van het kleurschema
         activity_level (float): Activiteitsniveau voor kleurmapping (0.0-1.0)
         time_factor (float): Tijd factor voor dynamische effecten
+        enable_fmri_realism (bool): Schakel fMRI realisme effecten in
         
     Returns:
         PIL.Image: Figuur afbeelding met transparante achtergrond
@@ -117,13 +122,20 @@ def create_moving_figure(size=None, color=None, pulse_position=0.0, color_scheme
     # Voeg enhanced gloed effect toe
     figure_with_glow = add_glow_effect(figure, pulsing_color, enhanced=True)
     
+    # Pas fMRI realisme toe indien ingeschakeld
+    if enable_fmri_realism:
+        figure_with_glow = apply_fmri_realism_to_figure(
+            figure_with_glow, activity_level, time_factor
+        )
+    
     return figure_with_glow
 
 
 def create_walking_figure(pose_frame=0, size=None, color=None, pulse_position=0.0,
-                         color_scheme=None, movement_speed=0.0, max_speed=10.0, time_factor=0.0):
+                         color_scheme=None, movement_speed=0.0, max_speed=10.0, 
+                         time_factor=0.0, enable_fmri_realism=True):
     """
-    Creëert een realistisch lopend mannetje figuur met enhanced fMRI styling.
+    Creëert een realistisch lopend mannetje figuur met enhanced fMRI styling en realisme.
     
     Args:
         pose_frame (int): Frame nummer voor loop animatie
@@ -134,6 +146,7 @@ def create_walking_figure(pose_frame=0, size=None, color=None, pulse_position=0.
         movement_speed (float): Huidige bewegingssnelheid
         max_speed (float): Maximale bewegingssnelheid
         time_factor (float): Tijd factor voor dynamische effecten
+        enable_fmri_realism (bool): Schakel fMRI realisme effecten in
         
     Returns:
         PIL.Image: Stick figure afbeelding met transparante achtergrond en gloed
@@ -154,7 +167,74 @@ def create_walking_figure(pose_frame=0, size=None, color=None, pulse_position=0.
     # Voeg enhanced gloed effect toe
     figure_with_glow = add_glow_effect(figure, pulsing_color, enhanced=True)
     
+    # Pas fMRI realisme toe indien ingeschakeld
+    if enable_fmri_realism:
+        # Bereken activiteitsniveau gebaseerd op bewegingssnelheid
+        activity_level = min(1.0, movement_speed / max_speed) if max_speed > 0 else 0.5
+        figure_with_glow = apply_fmri_realism_to_figure(
+            figure_with_glow, activity_level, time_factor
+        )
+    
     return figure_with_glow
+
+
+def apply_fmri_realism_to_figure(figure, activity_level=0.5, time_factor=0.0):
+    """
+    Past fMRI realisme effecten toe op een figuur.
+    
+    Args:
+        figure (PIL.Image): Figuur om realisme aan toe te voegen
+        activity_level (float): Activiteitsniveau (0.0-1.0)
+        time_factor (float): Tijd factor voor temporele effecten
+        
+    Returns:
+        PIL.Image: Figuur met fMRI realisme effecten
+    """
+    # Pas voxel textuur toe
+    if FMRI_REALISM.get('voxel_enabled', True):
+        figure = render_voxel_texture(
+            figure,
+            FMRI_REALISM.get('voxel_size', 2),
+            FMRI_REALISM.get('voxel_opacity', 0.3),
+            'subtle'  # Gebruik subtiele voxel stijl voor figuren
+        )
+    
+    # Pas spatial smoothing toe
+    if FMRI_REALISM.get('smoothing_enabled', True):
+        figure = apply_spatial_smoothing_image(
+            figure,
+            FMRI_REALISM.get('smoothing_kernel', 3),
+            FMRI_REALISM.get('smoothing_preserve_edges', True)
+        )
+    
+    # Verbeter randen met fMRI-stijl
+    if FMRI_REALISM.get('edge_enhancement', True):
+        figure = enhance_edges_fmri_style(
+            figure,
+            FMRI_REALISM.get('edge_glow_radius', 2),
+            FMRI_REALISM.get('edge_glow_intensity', 0.4),
+            FMRI_REALISM.get('edge_detection_threshold', 0.2)
+        )
+    
+    # Voeg gradiënt grenzen toe
+    if FMRI_REALISM.get('gradient_boundaries', True):
+        figure = create_gradient_boundaries(
+            figure,
+            FMRI_REALISM.get('gradient_width', 5),
+            FMRI_REALISM.get('gradient_falloff', 'gaussian'),
+            FMRI_REALISM.get('gradient_strength', 0.7)
+        )
+    
+    # Voeg anatomische variatie toe
+    if FMRI_REALISM.get('anatomical_variation', True):
+        figure = add_anatomical_variation(
+            figure,
+            FMRI_REALISM.get('anatomical_asymmetry', 0.1),
+            FMRI_REALISM.get('anatomical_hotspots', True),
+            FMRI_REALISM.get('anatomical_gradients', True)
+        )
+    
+    return figure
 
 
 def generate_random_walk_path(total_frames, start_position=None):
@@ -226,7 +306,7 @@ def generate_random_walk_path(total_frames, start_position=None):
 
 
 def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplier=None, 
-                            color_scheme=None):
+                            color_scheme=None, enable_fmri_realism=True):
     """
     Genereert alle frames voor de bewegend mannetje animatie (originele ovaal route).
     
@@ -235,6 +315,7 @@ def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplie
         route_variation (int): Route variatie (0-2)
         speed_multiplier (float): Snelheid multiplier (standaard uit constants)
         color_scheme (str): Naam van het kleurschema
+        enable_fmri_realism (bool): Schakel fMRI realisme effecten in
         
     Returns:
         list: Lijst van PIL.Image frames
@@ -250,6 +331,7 @@ def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplie
     
     frames = []
     previous_pos = None
+    previous_frame_data = None
     
     for frame_num in range(TOTAL_FRAMES):
         # Bereken voortgang met snelheid multiplier
@@ -270,13 +352,14 @@ def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplie
         # Tijd factor voor dynamische effecten
         time_factor = frame_num / TOTAL_FRAMES
         
-        # Creëer bewegend figuur met enhanced kleuren
+        # Creëer bewegend figuur met enhanced kleuren en realisme
         pulse_position = (frame_num / TOTAL_FRAMES) * 4  # 4 pulses per cyclus
         figure = create_moving_figure(
             pulse_position=pulse_position,
             color_scheme=color_scheme,
             activity_level=activity_level,
-            time_factor=time_factor
+            time_factor=time_factor,
+            enable_fmri_realism=enable_fmri_realism
         )
         
         # Maak frame met achtergrond
@@ -292,6 +375,16 @@ def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplie
         # Pas ovaal masker toe (alleen binnen hersenregio)
         masked_overlay = apply_oval_mask(frame, oval_mask)
         
+        # Pas fMRI realisme toe op het hele frame indien ingeschakeld
+        if enable_fmri_realism:
+            enhanced_overlay, frame_data = enhance_fmri_realism(
+                masked_overlay, 
+                frame_number=frame_num,
+                previous_frame=previous_frame_data
+            )
+            previous_frame_data = frame_data
+            masked_overlay = enhanced_overlay
+        
         # Combineer met originele achtergrond
         final_frame = background.copy()
         final_frame = composite_images(final_frame, masked_overlay)
@@ -302,13 +395,14 @@ def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplie
     return frames
 
 
-def generate_walking_animation_frames(start_position=None, color_scheme=None):
+def generate_walking_animation_frames(start_position=None, color_scheme=None, enable_fmri_realism=True):
     """
     Genereert alle frames voor de realistische lopende mannetje animatie.
     
     Args:
         start_position (tuple): Start positie (willekeurig als None)
         color_scheme (str): Naam van het kleurschema
+        enable_fmri_realism (bool): Schakel fMRI realisme effecten in
         
     Returns:
         list: Lijst van PIL.Image frames
@@ -325,6 +419,7 @@ def generate_walking_animation_frames(start_position=None, color_scheme=None):
     
     frames = []
     previous_pos = None
+    previous_frame_data = None
     
     for frame_num in range(TOTAL_FRAMES):
         x, y = positions[frame_num]
@@ -340,7 +435,7 @@ def generate_walking_animation_frames(start_position=None, color_scheme=None):
         # Tijd factor voor dynamische effecten
         time_factor = frame_num / TOTAL_FRAMES
         
-        # Creëer lopend mannetje met enhanced kleuren
+        # Creëer lopend mannetje met enhanced kleuren en realisme
         pulse_position = (frame_num / TOTAL_FRAMES) * 3  # 3 pulses per cyclus
         figure = create_walking_figure(
             pose_frame=pose_frame,
@@ -348,7 +443,8 @@ def generate_walking_animation_frames(start_position=None, color_scheme=None):
             color_scheme=color_scheme,
             movement_speed=movement_speed,
             max_speed=max_speed,
-            time_factor=time_factor
+            time_factor=time_factor,
+            enable_fmri_realism=enable_fmri_realism
         )
         
         # Maak frame met achtergrond
@@ -363,6 +459,16 @@ def generate_walking_animation_frames(start_position=None, color_scheme=None):
         
         # Pas ovaal masker toe (alleen binnen hersenregio)
         masked_overlay = apply_oval_mask(frame, oval_mask)
+        
+        # Pas fMRI realisme toe op het hele frame indien ingeschakeld
+        if enable_fmri_realism:
+            enhanced_overlay, frame_data = enhance_fmri_realism(
+                masked_overlay, 
+                frame_number=frame_num,
+                previous_frame=previous_frame_data
+            )
+            previous_frame_data = frame_data
+            masked_overlay = enhanced_overlay
         
         # Combineer met originele achtergrond
         final_frame = background.copy()
@@ -423,7 +529,8 @@ def genereer_bewegend_mannetje_animatie(
     speed_multiplier=None,
     smooth_interpolation=False,
     output_filename=None,
-    color_scheme=None
+    color_scheme=None,
+    enable_fmri_realism=True
 ):
     """
     Hoofdfunctie voor het genereren van bewegend mannetje animatie (originele ovaal route).
@@ -435,6 +542,7 @@ def genereer_bewegend_mannetje_animatie(
         smooth_interpolation (bool): Extra frames voor smoothere animatie
         output_filename (str): Naam van output bestand (standaard uit constants)
         color_scheme (str): Naam van het kleurschema
+        enable_fmri_realism (bool): Schakel fMRI realisme effecten in
         
     Returns:
         str: Pad naar gegenereerde GIF
@@ -452,9 +560,13 @@ def genereer_bewegend_mannetje_animatie(
         print(f"- Snelheid multiplier: {speed_multiplier or MOVING_FIGURE_SPEED}")
         print(f"- Kleurschema: {color_scheme}")
         print(f"- Smooth interpolatie: {smooth_interpolation}")
+        print(f"- fMRI realisme: {enable_fmri_realism}")
         
         # Genereer basis frames
-        frames = generate_animation_frames(clockwise, route_variation, speed_multiplier, color_scheme)
+        frames = generate_animation_frames(
+            clockwise, route_variation, speed_multiplier, 
+            color_scheme, enable_fmri_realism
+        )
         print(f"- {len(frames)} basis frames gegenereerd")
         
         # Voeg smooth interpolatie toe indien gewenst
@@ -464,9 +576,10 @@ def genereer_bewegend_mannetje_animatie(
         
         # Bepaal output bestandsnaam
         if output_filename is None:
-            output_filename = OUTPUT_FILENAMES['moving_figure']
+            suffix = "_fmri_realism" if enable_fmri_realism else ""
+            output_filename = OUTPUT_FILENAMES['moving_figure'].replace('.gif', f'{suffix}.gif')
         
-        # Creeër GIF
+        # Creëer GIF
         output_path = create_gif_from_frames(frames, output_filename)
         print(f"✅ Animatie succesvol gegenereerd: {output_path}")
         
@@ -482,7 +595,8 @@ def genereer_lopend_mannetje_animatie(
     start_position=None,
     smooth_interpolation=False,
     output_filename=None,
-    color_scheme=None
+    color_scheme=None,
+    enable_fmri_realism=True
 ):
     """
     Hoofdfunctie voor het genereren van realistisch lopend mannetje animatie.
@@ -492,6 +606,7 @@ def genereer_lopend_mannetje_animatie(
         smooth_interpolation (bool): Extra frames voor smoothere animatie
         output_filename (str): Naam van output bestand (standaard uit constants)
         color_scheme (str): Naam van het kleurschema
+        enable_fmri_realism (bool): Schakel fMRI realisme effecten in
         
     Returns:
         str: Pad naar gegenereerde GIF
@@ -509,9 +624,10 @@ def genereer_lopend_mannetje_animatie(
         print(f"- Bewegingssnelheid: {WALKING_SPEED} pixels/frame")
         print(f"- Kleurschema: {color_scheme}")
         print(f"- Smooth interpolatie: {smooth_interpolation}")
+        print(f"- fMRI realisme: {enable_fmri_realism}")
         
         # Genereer basis frames
-        frames = generate_walking_animation_frames(start_position, color_scheme)
+        frames = generate_walking_animation_frames(start_position, color_scheme, enable_fmri_realism)
         print(f"- {len(frames)} basis frames gegenereerd")
         
         # Voeg smooth interpolatie toe indien gewenst
@@ -521,9 +637,10 @@ def genereer_lopend_mannetje_animatie(
         
         # Bepaal output bestandsnaam
         if output_filename is None:
-            output_filename = OUTPUT_FILENAMES['walking_figure']
+            suffix = "_fmri_realism" if enable_fmri_realism else ""
+            output_filename = OUTPUT_FILENAMES['walking_figure'].replace('.gif', f'{suffix}.gif')
         
-        # Creeër GIF
+        # Creëer GIF
         output_path = create_gif_from_frames(frames, output_filename)
         print(f"✅ Realistisch lopend mannetje animatie succesvol gegenereerd: {output_path}")
         
@@ -533,6 +650,48 @@ def genereer_lopend_mannetje_animatie(
         error_msg = f"Fout bij genereren lopend mannetje animatie: {str(e)}"
         print(f"❌ {error_msg}")
         raise Exception(error_msg)
+
+
+def create_fmri_realism_demo():
+    """
+    Creëert demo animaties die het verschil tonen tussen normale en fMRI-realisme versies.
+    
+    Returns:
+        list: Lijst van paden naar gegenereerde GIFs
+    """
+    demo_files = []
+    
+    try:
+        print("\n=== fMRI Realisme Demo ===")
+        
+        # Test verschillende kleurschema's met en zonder realisme
+        color_schemes = ['hot', 'viridis']
+        
+        for scheme in color_schemes:
+            print(f"\n--- Kleurschema: {scheme} ---")
+            
+            # Normale versie
+            normal_path = genereer_lopend_mannetje_animatie(
+                color_scheme=scheme,
+                enable_fmri_realism=False,
+                output_filename=f"demo_{scheme}_normal.gif"
+            )
+            demo_files.append(normal_path)
+            
+            # fMRI realisme versie
+            realism_path = genereer_lopend_mannetje_animatie(
+                color_scheme=scheme,
+                enable_fmri_realism=True,
+                output_filename=f"demo_{scheme}_fmri_realism.gif"
+            )
+            demo_files.append(realism_path)
+        
+        print(f"\n✅ {len(demo_files)} demo bestanden gegenereerd")
+        return demo_files
+        
+    except Exception as e:
+        print(f"❌ Fout bij genereren fMRI realisme demo: {str(e)}")
+        return demo_files
 
 
 def create_demo_variations():
@@ -553,19 +712,21 @@ def create_demo_variations():
         for scheme in color_schemes:
             print(f"\n--- Kleurschema: {scheme} ---")
             
-            # Originele ovaal route met kleurschema
+            # Originele ovaal route met kleurschema en fMRI realisme
             path1 = genereer_bewegend_mannetje_animatie(
                 clockwise=True,
                 route_variation=0,
                 color_scheme=scheme,
-                output_filename=f"bewegend_mannetje_{scheme}_ovaal.gif"
+                enable_fmri_realism=True,
+                output_filename=f"bewegend_mannetje_{scheme}_ovaal_realism.gif"
             )
             variations.append(path1)
             
-            # Realistisch lopend mannetje met kleurschema
+            # Realistisch lopend mannetje met kleurschema en fMRI realisme
             path2 = genereer_lopend_mannetje_animatie(
                 color_scheme=scheme,
-                output_filename=f"bewegend_mannetje_{scheme}_lopend.gif"
+                enable_fmri_realism=True,
+                output_filename=f"bewegend_mannetje_{scheme}_lopend_realism.gif"
             )
             variations.append(path2)
         
@@ -578,25 +739,31 @@ def create_demo_variations():
 
 
 if __name__ == "__main__":
-    # Test de nieuwe enhanced fMRI kleuren functionaliteit
+    # Test de nieuwe fMRI realisme functionaliteit
     try:
-        print("=== Test Enhanced fMRI Kleuren ==")
+        print("=== Test Enhanced fMRI Realisme ===")
         
-        # Test met verschillende kleurschema's
-        schemes_to_test = ['hot', 'cool', 'jet']
+        # Test fMRI realisme demo
+        print("\n--- fMRI Realisme Demo ---")
+        demo_paths = create_fmri_realism_demo()
+        print(f"Demo bestanden: {demo_paths}")
+        
+        # Test met verschillende kleurschema's en realisme
+        schemes_to_test = ['hot', 'viridis']
         
         for scheme in schemes_to_test:
-            print(f"\n--- Test {scheme} kleurschema ---")
+            print(f"\n--- Test {scheme} kleurschema met fMRI realisme ---")
             output_path = genereer_lopend_mannetje_animatie(
                 color_scheme=scheme,
-                output_filename=f"test_{scheme}_walking.gif"
+                enable_fmri_realism=True,
+                output_filename=f"test_{scheme}_walking_realism.gif"
             )
             print(f"Test animatie gegenereerd: {output_path}")
         
         # Genereer ook demo variaties
         print("\n=== Genereren Demo Variaties ===")
-        demo_paths = create_demo_variations()
-        print(f"Demo variaties: {demo_paths}")
+        demo_variations = create_demo_variations()
+        print(f"Demo variaties: {demo_variations}")
         
     except Exception as e:
         print(f"Test gefaald: {str(e)}")
