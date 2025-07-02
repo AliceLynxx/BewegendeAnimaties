@@ -1,16 +1,16 @@
 """
 Afbeelding utilities voor BewegendeAnimaties.
-Bevat functies voor achtergrond laden, ovaal masker generatie en compositing.
+Bevat functies voor achtergrond laden, ovaal masker generatie, compositing en fMRI-realisme.
 """
 
 import os
 import math
 import random
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter, ImageEnhance
 import numpy as np
 from config.constants import (
     BACKGROUND_IMAGE_PATH, BACKGROUND_DEFAULT_SIZE, 
-    OVAL_CENTER, OVAL_WIDTH, OVAL_HEIGHT
+    OVAL_CENTER, OVAL_WIDTH, OVAL_HEIGHT, FMRI_REALISM
 )
 
 
@@ -408,6 +408,397 @@ def ensure_within_oval(position, center=None, width=None, height=None):
     
     # Fallback naar centrum
     return center
+
+
+# ===== NIEUWE fMRI REALISME FUNCTIES =====
+
+def render_voxel_texture(image, voxel_size=2, opacity=0.3, style='grid'):
+    """
+    Rendert voxel-achtige textuur voor realistische fMRI look.
+    
+    Args:
+        image (PIL.Image): Afbeelding om textuur aan toe te voegen
+        voxel_size (int): Grootte van voxels in pixels
+        opacity (float): Transparantie van voxel effect (0.0-1.0)
+        style (str): Stijl van voxel effect ('grid', 'blocks', 'subtle')
+        
+    Returns:
+        PIL.Image: Afbeelding met voxel textuur
+    """
+    if not FMRI_REALISM.get('voxel_enabled', True) or voxel_size <= 1:
+        return image
+    
+    if image.mode != 'RGBA':
+        image = image.convert('RGBA')
+    
+    width, height = image.size
+    
+    if style == 'grid':
+        # Grid-stijl voxel textuur
+        return _render_grid_voxels(image, voxel_size, opacity)
+    elif style == 'blocks':
+        # Block-stijl voxel textuur
+        return _render_block_voxels(image, voxel_size, opacity)
+    elif style == 'subtle':
+        # Subtiele voxel textuur
+        return _render_subtle_voxels(image, voxel_size, opacity)
+    else:
+        return _render_grid_voxels(image, voxel_size, opacity)
+
+
+def _render_grid_voxels(image, voxel_size, opacity):
+    """Rendert grid-stijl voxel textuur."""
+    width, height = image.size
+    voxel_overlay = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(voxel_overlay)
+    
+    grid_color = (128, 128, 128, int(255 * opacity))
+    
+    # Verticale lijnen
+    for x in range(0, width, voxel_size):
+        draw.line([(x, 0), (x, height)], fill=grid_color, width=1)
+    
+    # Horizontale lijnen
+    for y in range(0, height, voxel_size):
+        draw.line([(0, y), (width, y)], fill=grid_color, width=1)
+    
+    return Image.alpha_composite(image, voxel_overlay)
+
+
+def _render_block_voxels(image, voxel_size, opacity):
+    """Rendert block-stijl voxel textuur."""
+    width, height = image.size
+    
+    # Maak pixelated versie
+    small_image = image.resize(
+        (width // voxel_size, height // voxel_size), 
+        Image.NEAREST
+    )
+    pixelated = small_image.resize((width, height), Image.NEAREST)
+    
+    # Blend met origineel
+    blend_factor = 1.0 - opacity
+    result = Image.blend(pixelated.convert('RGB'), image.convert('RGB'), blend_factor)
+    
+    # Behoud alpha channel
+    if image.mode == 'RGBA':
+        result.putalpha(image.split()[-1])
+    
+    return result.convert('RGBA')
+
+
+def _render_subtle_voxels(image, voxel_size, opacity):
+    """Rendert subtiele voxel textuur."""
+    # Combinatie van grid en lichte pixelation
+    grid_result = _render_grid_voxels(image, voxel_size, opacity * 0.5)
+    block_result = _render_block_voxels(grid_result, voxel_size, opacity * 0.3)
+    
+    return block_result
+
+
+def apply_spatial_smoothing_image(image, kernel_size=3, preserve_edges=True):
+    """
+    Past spatial smoothing toe op een PIL Image.
+    
+    Args:
+        image (PIL.Image): Afbeelding om te smoothen
+        kernel_size (int): Grootte van smoothing kernel
+        preserve_edges (bool): Behoud randen tijdens smoothing
+        
+    Returns:
+        PIL.Image: Gesmoothde afbeelding
+    """
+    if not FMRI_REALISM.get('smoothing_enabled', True) or kernel_size <= 1:
+        return image
+    
+    if preserve_edges:
+        # Edge-preserving smoothing
+        return _apply_edge_preserving_smooth(image, kernel_size)
+    else:
+        # Standaard Gaussische blur
+        sigma = kernel_size / 3.0
+        return image.filter(ImageFilter.GaussianBlur(radius=sigma))
+
+
+def _apply_edge_preserving_smooth(image, kernel_size):
+    """Past edge-preserving smoothing toe."""
+    # Vereenvoudigde edge-preserving filter
+    # In praktijk zou je een bilateral filter gebruiken
+    
+    # Detecteer randen
+    edges = image.filter(ImageFilter.FIND_EDGES)
+    
+    # Pas Gaussische blur toe
+    sigma = kernel_size / 3.0
+    smoothed = image.filter(ImageFilter.GaussianBlur(radius=sigma))
+    
+    # Blend gebaseerd op rand sterkte
+    if image.mode != 'RGBA':
+        image = image.convert('RGBA')
+    if smoothed.mode != 'RGBA':
+        smoothed = smoothed.convert('RGBA')
+    
+    # Eenvoudige blending - in praktijk complexer
+    result = Image.blend(smoothed.convert('RGB'), image.convert('RGB'), 0.3)
+    
+    if image.mode == 'RGBA':
+        result.putalpha(image.split()[-1])
+    
+    return result.convert('RGBA')
+
+
+def enhance_edges_fmri_style(image, glow_radius=2, glow_intensity=0.4, threshold=0.2):
+    """
+    Verbetert randen met fMRI-stijl gloed effect.
+    
+    Args:
+        image (PIL.Image): Afbeelding om randen te verbeteren
+        glow_radius (int): Radius voor rand gloed
+        glow_intensity (float): Intensiteit van rand gloed (0.0-1.0)
+        threshold (float): Drempel voor rand detectie
+        
+    Returns:
+        PIL.Image: Afbeelding met verbeterde randen
+    """
+    if not FMRI_REALISM.get('edge_enhancement', True):
+        return image
+    
+    if image.mode != 'RGBA':
+        image = image.convert('RGBA')
+    
+    # Detecteer randen
+    edges = image.filter(ImageFilter.FIND_EDGES)
+    
+    # Maak gloed effect voor randen
+    edge_glow = edges.filter(ImageFilter.GaussianBlur(radius=glow_radius))
+    
+    # Verhoog intensiteit van gloed
+    enhancer = ImageEnhance.Brightness(edge_glow)
+    edge_glow = enhancer.enhance(1.0 + glow_intensity)
+    
+    # Combineer met origineel
+    result = Image.alpha_composite(image, edge_glow)
+    
+    return result
+
+
+def render_activation_clusters(image, cluster_data, colors, min_size=5):
+    """
+    Rendert activatie clusters met realistische fMRI kleuren.
+    
+    Args:
+        image (PIL.Image): Basis afbeelding
+        cluster_data (numpy.ndarray): 2D array met cluster labels
+        colors (list): Lijst van kleuren voor clusters
+        min_size (int): Minimale cluster grootte om te renderen
+        
+    Returns:
+        PIL.Image: Afbeelding met gerenderde clusters
+    """
+    if not FMRI_REALISM.get('cluster_enabled', True):
+        return image
+    
+    if image.mode != 'RGBA':
+        image = image.convert('RGBA')
+    
+    width, height = image.size
+    cluster_overlay = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+    
+    # Render elke cluster
+    unique_clusters = np.unique(cluster_data)
+    unique_clusters = unique_clusters[unique_clusters > 0]  # Skip background (0)
+    
+    for i, cluster_id in enumerate(unique_clusters):
+        cluster_mask = cluster_data == cluster_id
+        cluster_size = np.sum(cluster_mask)
+        
+        if cluster_size >= min_size:
+            # Kies kleur voor cluster
+            color = colors[i % len(colors)] if colors else (255, 140, 0)
+            
+            # Render cluster
+            cluster_overlay = _render_single_cluster(
+                cluster_overlay, cluster_mask, color
+            )
+    
+    # Combineer met origineel
+    result = Image.alpha_composite(image, cluster_overlay)
+    
+    return result
+
+
+def _render_single_cluster(overlay, cluster_mask, color):
+    """Rendert een enkele cluster op de overlay."""
+    height, width = cluster_mask.shape
+    
+    # Converteer mask naar PIL Image
+    mask_image = Image.fromarray((cluster_mask * 255).astype(np.uint8), mode='L')
+    
+    # Maak gekleurde versie
+    colored_cluster = Image.new('RGBA', (width, height), color + (128,))
+    
+    # Pas mask toe
+    colored_cluster.putalpha(mask_image)
+    
+    # Combineer met overlay
+    result = Image.alpha_composite(overlay, colored_cluster)
+    
+    return result
+
+
+def create_gradient_boundaries(image, gradient_width=5, falloff='gaussian', strength=0.7):
+    """
+    Creëert zachte gradiënt grenzen voor natuurlijke overgangen.
+    
+    Args:
+        image (PIL.Image): Afbeelding om gradiënten aan toe te voegen
+        gradient_width (int): Breedte van gradiënt zone (pixels)
+        falloff (str): Type falloff ('linear', 'gaussian', 'exponential')
+        strength (float): Sterkte van gradiënt effect (0.0-1.0)
+        
+    Returns:
+        PIL.Image: Afbeelding met gradiënt grenzen
+    """
+    if not FMRI_REALISM.get('gradient_boundaries', True):
+        return image
+    
+    if image.mode != 'RGBA':
+        image = image.convert('RGBA')
+    
+    # Detecteer randen voor gradiënt plaatsing
+    alpha = image.split()[-1]
+    edges = alpha.filter(ImageFilter.FIND_EDGES)
+    
+    # Maak gradiënt masker
+    if falloff == 'gaussian':
+        gradient_mask = edges.filter(ImageFilter.GaussianBlur(radius=gradient_width))
+    elif falloff == 'linear':
+        gradient_mask = edges.filter(ImageFilter.BoxBlur(radius=gradient_width))
+    else:  # exponential of fallback
+        gradient_mask = edges.filter(ImageFilter.GaussianBlur(radius=gradient_width * 0.7))
+    
+    # Pas gradiënt toe op alpha channel
+    gradient_array = np.array(gradient_mask) / 255.0
+    alpha_array = np.array(alpha) / 255.0
+    
+    # Moduleer alpha met gradiënt
+    modulated_alpha = alpha_array * (1.0 - gradient_array * strength)
+    modulated_alpha = np.clip(modulated_alpha * 255, 0, 255).astype(np.uint8)
+    
+    # Maak nieuwe afbeelding met gemoduleerde alpha
+    result = image.copy()
+    result.putalpha(Image.fromarray(modulated_alpha))
+    
+    return result
+
+
+def add_anatomical_variation(image, asymmetry=0.1, hotspots=True, gradients=True):
+    """
+    Voegt anatomische variatie toe voor realistische hersenactivatie.
+    
+    Args:
+        image (PIL.Image): Afbeelding om variatie aan toe te voegen
+        asymmetry (float): Asymmetrie factor (0.0-1.0)
+        hotspots (bool): Voeg hotspot gebieden toe
+        gradients (bool): Voeg anatomische gradiënten toe
+        
+    Returns:
+        PIL.Image: Afbeelding met anatomische variatie
+    """
+    if not FMRI_REALISM.get('anatomical_variation', True):
+        return image
+    
+    if image.mode != 'RGBA':
+        image = image.convert('RGBA')
+    
+    width, height = image.size
+    alpha = np.array(image.split()[-1]) / 255.0
+    
+    # Voeg asymmetrie toe
+    if asymmetry > 0:
+        alpha = _add_asymmetry(alpha, asymmetry)
+    
+    # Voeg hotspots toe
+    if hotspots and FMRI_REALISM.get('anatomical_hotspots', True):
+        alpha = _add_hotspots(alpha, width, height)
+    
+    # Voeg anatomische gradiënten toe
+    if gradients and FMRI_REALISM.get('anatomical_gradients', True):
+        alpha = _add_anatomical_gradients(alpha, width, height)
+    
+    # Maak nieuwe afbeelding
+    result = image.copy()
+    result.putalpha(Image.fromarray((alpha * 255).astype(np.uint8)))
+    
+    return result
+
+
+def _add_asymmetry(alpha_array, asymmetry_factor):
+    """Voegt asymmetrie toe aan activatie patroon."""
+    height, width = alpha_array.shape
+    
+    # Maak asymmetrie masker
+    asymmetry_mask = np.ones_like(alpha_array)
+    
+    # Linker/rechter asymmetrie
+    center_x = width // 2
+    for x in range(width):
+        if x < center_x:
+            # Linker kant
+            factor = 1.0 + asymmetry_factor * (center_x - x) / center_x
+        else:
+            # Rechter kant
+            factor = 1.0 - asymmetry_factor * (x - center_x) / center_x
+        
+        asymmetry_mask[:, x] *= factor
+    
+    # Pas asymmetrie toe
+    result = alpha_array * asymmetry_mask
+    
+    return np.clip(result, 0.0, 1.0)
+
+
+def _add_hotspots(alpha_array, width, height):
+    """Voegt hotspot gebieden toe met verhoogde activatie."""
+    # Genereer 2-4 willekeurige hotspots
+    num_hotspots = random.randint(2, 4)
+    
+    for _ in range(num_hotspots):
+        # Willekeurige hotspot positie
+        hx = random.randint(width // 4, 3 * width // 4)
+        hy = random.randint(height // 4, 3 * height // 4)
+        
+        # Hotspot radius
+        radius = random.randint(10, 30)
+        
+        # Maak hotspot masker
+        y_coords, x_coords = np.ogrid[:height, :width]
+        distance = np.sqrt((x_coords - hx)**2 + (y_coords - hy)**2)
+        hotspot_mask = np.exp(-distance**2 / (2 * radius**2))
+        
+        # Voeg hotspot toe
+        alpha_array += hotspot_mask * 0.2
+    
+    return np.clip(alpha_array, 0.0, 1.0)
+
+
+def _add_anatomical_gradients(alpha_array, width, height):
+    """Voegt anatomische gradiënten toe."""
+    # Anterior-posterior gradiënt
+    ap_gradient = np.linspace(0.8, 1.2, height).reshape(-1, 1)
+    ap_gradient = np.tile(ap_gradient, (1, width))
+    
+    # Superior-inferior gradiënt
+    si_gradient = np.linspace(1.1, 0.9, width).reshape(1, -1)
+    si_gradient = np.tile(si_gradient, (height, 1))
+    
+    # Combineer gradiënten
+    combined_gradient = ap_gradient * si_gradient
+    
+    # Pas toe op activatie
+    result = alpha_array * combined_gradient
+    
+    return np.clip(result, 0.0, 1.0)
 
 
 def create_test_image():
