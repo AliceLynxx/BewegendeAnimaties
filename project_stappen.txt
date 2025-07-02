@@ -75,7 +75,66 @@
 - **Volledig Configureerbaar**: Alle kleurschalen en effecten instelbaar via constants
 - **Test Suite**: Uitgebreide test functionaliteit voor alle kleurschalen en animaties
 
-## Stap 7: Centraal script en integratie (MUST-HAVE)
+## ✅ Stap 7: fMRI-Realisme Enhancement (VOLTOOID)
+**Samenvatting**: Alle animaties geüpgraded met geavanceerde fMRI-realisme effecten voor wetenschappelijke authenticiteit:
+
+### **Voxel-based Rendering**:
+- **Voxel Texturen**: Grid, blocks, en subtle rendering stijlen voor authentieke fMRI appearance
+- **Configureerbare Voxel Grootte**: Instelbare voxel size en opacity voor verschillende realisme niveaus
+- **Subtiele Integratie**: Behoud van vorm herkenbaarheid terwijl fMRI-textuur wordt toegevoegd
+
+### **Noise Pattern Generation**:
+- **Realistische Ruis**: Gaussian, uniform, en salt-pepper noise patterns zoals in echte fMRI data
+- **Temporele Ruis Variatie**: Tijdelijke fluctuaties in ruis voor dynamische effecten
+- **Ruimtelijke Ruis Distributie**: Natuurlijke ruis verdeling over het hele beeld
+
+### **Spatial Smoothing**:
+- **Edge-Preserving Smoothing**: Bilateral filtering simulatie voor behoud van belangrijke randen
+- **Configureerbare Kernel Grootte**: Instelbare smoothing intensiteit
+- **fMRI-Style Processing**: Smoothing algoritmes gebaseerd op echte fMRI preprocessing
+
+### **Statistical Thresholding**:
+- **Hard en Soft Thresholding**: Simulatie van statistische drempelwaarden zoals in fMRI analyse
+- **Configureerbare Drempels**: Instelbare threshold levels en fade zones
+- **Significantie Simulatie**: Alleen significante activatie wordt getoond
+
+### **Cluster Detection en Rendering**:
+- **Connected Components**: Automatische detectie van activatie clusters
+- **Minimale Cluster Grootte**: Filtering van kleine, niet-significante clusters
+- **Cluster-based Visualization**: Rendering gebaseerd op cluster eigenschappen
+
+### **Z-score Mapping Simulatie**:
+- **Wetenschappelijke Authenticiteit**: Simulatie van z-score gebaseerde kleurmapping
+- **Significantie Testing**: Configureerbare z-score drempelwaarden
+- **Positieve en Negatieve Activatie**: Ondersteuning voor activatie en deactivatie
+
+### **Temporal Correlation**:
+- **Frame-to-Frame Correlatie**: Realistische temporele correlatie tussen opeenvolgende frames
+- **Baseline Fluctuaties**: Subtiele baseline schommelingen zoals in echte fMRI
+- **Temporal Smoothing**: Natuurlijke temporele dynamiek
+
+### **Anatomical Variation**:
+- **Asymmetrie Effecten**: Realistische links-rechts asymmetrie in hersenactivatie
+- **Hotspot Generatie**: Automatische generatie van activatie hotspots
+- **Anatomische Gradiënten**: Anterior-posterior en superior-inferior gradiënten
+
+### **Enhanced Edge Effects**:
+- **fMRI-Style Glow**: Verbeterde rand effecten met authentieke fMRI gloed
+- **Gradient Boundaries**: Zachte gradiënt grenzen voor natuurlijke overgangen
+- **Multi-level Intensiteit**: Verschillende intensiteitsniveaus binnen activatiegebieden
+
+### **Configureerbaar Realisme**:
+- **FMRI_REALISM Dictionary**: Volledig configureerbaar via constants.py
+- **Per-Module Instellingen**: Verschillende realisme niveaus per animatie type
+- **Performance Optimalisatie**: Caching en geoptimaliseerde algoritmes
+- **Backward Compatibility**: Alle bestaande functionaliteit blijft werken
+
+### **Demo en Test Functionaliteit**:
+- **Realisme Vergelijking**: Demo's die verschil tonen tussen normale en realisme versies
+- **Kleurschema Integratie**: fMRI-realisme werkt met alle 4 kleurschalen
+- **Wetenschappelijke Validatie**: Output vergelijkbaar met echte fMRI-scans
+
+## Stap 8: Centraal script en integratie (MUST-HAVE)
 **Doel**: Alle animaties samenvoegen in één uitvoerbaar script.
 **Doelgroep**: Eindgebruikers die alle animaties in één keer willen genereren.
 **Nut**: Maakt het project gebruiksvriendelijk en praktisch toepasbaar.
@@ -89,12 +148,14 @@
 - Alle animatie modules importeren en aanroepen
 - Batch processing van alle 4+ animaties (inclusief realistisch lopend mannetje)
 - Enhanced fMRI kleuren integratie
+- fMRI-realisme configuratie interface
 - Kleurschema selectie interface
+- Realisme niveau selectie (normale vs. fMRI-realisme versies)
 - Error handling en logging
 - Gebruikersvriendelijke interface
 - Documentatie voor gebruikers
 
-## Stap 8: Optimalisatie en polish (NICE-TO-HAVE)
+## Stap 9: Optimalisatie en polish (NICE-TO-HAVE)
 **Doel**: Het project verfijnen en prestaties verbeteren.
 **Doelgroep**: Power users die geavanceerde features willen.
 **Nut**: Verhoogt de kwaliteit en flexibiliteit van de output.
@@ -104,11 +165,15 @@
 - Alle bestaande bestanden kunnen geoptimaliseerd worden
 
 **Acties**:
-- Performance optimalisatie
-- Meer configuratie opties voor enhanced kleuren
+- Performance optimalisatie voor fMRI-realisme effecten
+- Meer configuratie opties voor enhanced kleuren en realisme
 - Betere error handling
 - Code cleanup en documentatie
 - Unit tests toevoegen
 - Meer bewegingspatronen voor stick figure
 - Kleurschema customization interface
 - Batch export functionaliteit
+- Parallel processing voor snellere rendering
+- Memory optimalisatie voor grote animaties
+- Advanced fMRI-realisme features (bijv. slice-based rendering)
+- Export naar verschillende formaten (MP4, WebM, etc.)
