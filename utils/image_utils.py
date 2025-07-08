@@ -1,6 +1,6 @@
 """
 Afbeelding utilities voor BewegendeAnimaties.
-Bevat functies voor achtergrond laden, ovaal masker generatie, compositing en fMRI-realisme.
+Bevat functies voor achtergrond laden, ovaal masker generatie, compositing, fMRI-realisme en heatmap compositing.
 """
 
 import os
@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageEnhance
 import numpy as np
 from config.constants import (
     BACKGROUND_IMAGE_PATH, BACKGROUND_DEFAULT_SIZE, 
-    OVAL_CENTER, OVAL_WIDTH, OVAL_HEIGHT, FMRI_REALISM
+    OVAL_CENTER, OVAL_WIDTH, OVAL_HEIGHT, FMRI_REALISM, HEATMAP_ENHANCEMENT
 )
 
 
@@ -118,6 +118,413 @@ def composite_images(background, overlay, position=(0, 0)):
     
     return result
 
+
+# ===== NIEUWE HEATMAP COMPOSITING FUNCTIES =====
+
+def apply_heatmap_compositing(background, heatmap_overlay, blend_mode=None, opacity=None, enhance_visibility=True):
+    """
+    Past geavanceerde heatmap compositing toe voor authentieke fMRI-look.
+    
+    Args:
+        background (PIL.Image): Achtergrond afbeelding
+        heatmap_overlay (PIL.Image): Heatmap overlay
+        blend_mode (str): Blending mode ('screen', 'overlay', 'multiply', 'normal')
+        opacity (float): Opacity van heatmap overlay (0.0-1.0)
+        enhance_visibility (bool): Verbeter zichtbaarheid van heatmap
+        
+    Returns:
+        PIL.Image: Afbeelding met heatmap compositing
+    """
+    if blend_mode is None:
+        blend_mode = HEATMAP_ENHANCEMENT.get('blending_mode', 'screen')
+    if opacity is None:
+        opacity = HEATMAP_ENHANCEMENT.get('blending_opacity', 0.8)
+    
+    # Zorg dat beide afbeeldingen RGBA zijn
+    if background.mode != 'RGBA':
+        background = background.convert('RGBA')
+    if heatmap_overlay.mode != 'RGBA':
+        heatmap_overlay = heatmap_overlay.convert('RGBA')
+    
+    # Zorg dat afbeeldingen dezelfde grootte hebben
+    if background.size != heatmap_overlay.size:
+        heatmap_overlay = heatmap_overlay.resize(background.size, Image.LANCZOS)
+    
+    # Verbeter zichtbaarheid van heatmap indien gewenst
+    if enhance_visibility:
+        from utils.color_utils import optimize_heatmap_visibility
+        heatmap_overlay = optimize_heatmap_visibility(heatmap_overlay)
+    
+    # Pas heatmap blending toe
+    from utils.color_utils import apply_heatmap_blending
+    result = apply_heatmap_blending(background, heatmap_overlay, blend_mode, opacity)
+    
+    return result
+
+
+def create_multi_layer_heatmap(background, heatmap_layers, layer_settings=None):
+    """
+    Creëert multi-layer heatmap compositing voor complexe visualisaties.
+    
+    Args:
+        background (PIL.Image): Achtergrond afbeelding
+        heatmap_layers (list): Lijst van heatmap overlay afbeeldingen
+        layer_settings (list): Lijst van instellingen per layer
+        
+    Returns:
+        PIL.Image: Afbeelding met multi-layer heatmap
+    """
+    if layer_settings is None:
+        layer_settings = [{}] * len(heatmap_layers)
+    
+    result = background.copy()
+    
+    # Pas elke layer toe
+    for i, (layer, settings) in enumerate(zip(heatmap_layers, layer_settings)):
+        # Standaard instellingen per layer
+        blend_mode = settings.get('blend_mode', 'screen')
+        opacity = settings.get('opacity', 0.8 - i * 0.1)  # Verminder opacity per layer
+        enhance = settings.get('enhance_visibility', True)
+        
+        # Pas layer toe
+        result = apply_heatmap_compositing(
+            result, layer, blend_mode, opacity, enhance
+        )
+    
+    return result
+
+
+def enhance_heatmap_compositing(image, enhancement_settings=None):
+    """
+    Verbetert heatmap compositing met geavanceerde effecten.
+    
+    Args:
+        image (PIL.Image): Afbeelding om te verbeteren
+        enhancement_settings (dict): Instellingen voor verbetering
+        
+    Returns:
+        PIL.Image: Verbeterde afbeelding
+    """
+    if enhancement_settings is None:
+        enhancement_settings = HEATMAP_ENHANCEMENT
+    
+    result = image.copy()
+    
+    # Pas alle heatmap effecten toe
+    from utils.color_utils import integrate_heatmap_effects
+    result = integrate_heatmap_effects(result, enhancement_settings)
+    
+    return result
+
+
+def create_heatmap_with_depth(intensity_data, background, color_scheme=None, depth_layers=3):
+    """
+    Creëert heatmap met diepte-effect door meerdere layers.
+    
+    Args:
+        intensity_data (numpy.ndarray): 2D array met intensiteitswaarden
+        background (PIL.Image): Achtergrond afbeelding
+        color_scheme (str): Naam van het kleurschema
+        depth_layers (int): Aantal diepte layers
+        
+    Returns:
+        PIL.Image: Heatmap met diepte-effect
+    """
+    from utils.color_utils import create_intensity_heatmap, enhance_depth_perception
+    
+    # Creëer basis heatmap
+    base_heatmap = create_intensity_heatmap(intensity_data, color_scheme)
+    
+    # Creëer meerdere diepte layers
+    depth_layers_list = []
+    for i in range(depth_layers):
+        # Varieer intensiteit per layer
+        layer_intensity = intensity_data * (1.0 - i * 0.2)
+        layer_heatmap = create_intensity_heatmap(layer_intensity, color_scheme)
+        
+        # Voeg diepte effect toe
+        depth_factor = 0.3 + i * 0.1
+        layer_with_depth = enhance_depth_perception(layer_heatmap, depth_factor)
+        
+        depth_layers_list.append(layer_with_depth)
+    
+    # Combineer alle layers
+    layer_settings = [
+        {'blend_mode': 'screen', 'opacity': 0.9},
+        {'blend_mode': 'overlay', 'opacity': 0.6},
+        {'blend_mode': 'multiply', 'opacity': 0.4}
+    ][:depth_layers]
+    
+    result = create_multi_layer_heatmap(background, depth_layers_list, layer_settings)
+    
+    return result
+
+
+def apply_scientific_heatmap_rendering(intensity_data, background, color_scheme=None, 
+                                     statistical_threshold=True, zscore_mapping=True):
+    """
+    Past wetenschappelijk accurate heatmap rendering toe.
+    
+    Args:
+        intensity_data (numpy.ndarray): 2D array met intensiteitswaarden
+        background (PIL.Image): Achtergrond afbeelding
+        color_scheme (str): Naam van het kleurschema
+        statistical_threshold (bool): Pas statistische thresholding toe
+        zscore_mapping (bool): Gebruik z-score gebaseerde mapping
+        
+    Returns:
+        PIL.Image: Wetenschappelijk accurate heatmap
+    """
+    from utils.color_utils import apply_scientific_color_mapping
+    
+    # Creëer wetenschappelijk accurate heatmap
+    heatmap = apply_scientific_color_mapping(
+        intensity_data, color_scheme, statistical_threshold
+    )
+    
+    # Pas geavanceerde compositing toe
+    result = apply_heatmap_compositing(
+        background, heatmap, 
+        blend_mode='screen', 
+        opacity=0.85,
+        enhance_visibility=True
+    )
+    
+    # Verbeter met heatmap effecten
+    result = enhance_heatmap_compositing(result)
+    
+    return result
+
+
+def create_animated_heatmap_frame(intensity_data, background, frame_number, total_frames, 
+                                color_scheme=None, temporal_effects=True):
+    """
+    Creëert een frame voor geanimeerde heatmap met temporele effecten.
+    
+    Args:
+        intensity_data (numpy.ndarray): 2D array met intensiteitswaarden
+        background (PIL.Image): Achtergrond afbeelding
+        frame_number (int): Huidige frame nummer
+        total_frames (int): Totaal aantal frames
+        color_scheme (str): Naam van het kleurschema
+        temporal_effects (bool): Schakel temporele effecten in
+        
+    Returns:
+        PIL.Image: Geanimeerd heatmap frame
+    """
+    from utils.color_utils import create_intensity_heatmap, apply_temporal_color_variation
+    
+    # Bereken temporele factor
+    temporal_factor = frame_number / total_frames
+    
+    # Pas temporele effecten toe op intensiteit data
+    if temporal_effects:
+        # Voeg temporele variatie toe
+        temporal_modulation = 1.0 + 0.2 * math.sin(temporal_factor * 4 * math.pi)
+        modulated_intensity = intensity_data * temporal_modulation
+        modulated_intensity = np.clip(modulated_intensity, 0.0, 1.0)
+    else:
+        modulated_intensity = intensity_data
+    
+    # Creëer heatmap voor dit frame
+    frame_heatmap = create_intensity_heatmap(modulated_intensity, color_scheme)
+    
+    # Pas frame-specifieke effecten toe
+    enhancement_settings = HEATMAP_ENHANCEMENT.copy()
+    if temporal_effects:
+        # Varieer effecten over tijd
+        enhancement_settings['gaussian_blur_sigma'] *= (1.0 + 0.3 * math.sin(temporal_factor * 2 * math.pi))
+        enhancement_settings['color_saturation'] *= (1.0 + 0.2 * math.cos(temporal_factor * 3 * math.pi))
+    
+    # Verbeter heatmap
+    enhanced_heatmap = enhance_heatmap_compositing(frame_heatmap, enhancement_settings)
+    
+    # Combineer met achtergrond
+    result = apply_heatmap_compositing(background, enhanced_heatmap)
+    
+    return result
+
+
+def create_heatmap_comparison(intensity_data, background, color_schemes, layout='horizontal'):
+    """
+    Creëert vergelijking tussen verschillende heatmap kleurschema's.
+    
+    Args:
+        intensity_data (numpy.ndarray): 2D array met intensiteitswaarden
+        background (PIL.Image): Achtergrond afbeelding
+        color_schemes (list): Lijst van kleurschema namen
+        layout (str): Layout voor vergelijking ('horizontal', 'vertical', 'grid')
+        
+    Returns:
+        PIL.Image: Vergelijkingsafbeelding met verschillende kleurschema's
+    """
+    from utils.color_utils import create_intensity_heatmap
+    
+    # Creëer heatmaps voor elk kleurschema
+    heatmaps = []
+    for scheme in color_schemes:
+        heatmap = create_intensity_heatmap(intensity_data, scheme)
+        composed = apply_heatmap_compositing(background, heatmap)
+        heatmaps.append(composed)
+    
+    # Combineer volgens layout
+    if layout == 'horizontal':
+        return _combine_images_horizontal(heatmaps)
+    elif layout == 'vertical':
+        return _combine_images_vertical(heatmaps)
+    elif layout == 'grid':
+        return _combine_images_grid(heatmaps)
+    else:
+        return _combine_images_horizontal(heatmaps)
+
+
+def _combine_images_horizontal(images):
+    """Combineert afbeeldingen horizontaal."""
+    if not images:
+        return None
+    
+    total_width = sum(img.width for img in images)
+    max_height = max(img.height for img in images)
+    
+    combined = Image.new('RGBA', (total_width, max_height), (0, 0, 0, 0))
+    
+    x_offset = 0
+    for img in images:
+        combined.paste(img, (x_offset, 0), img)
+        x_offset += img.width
+    
+    return combined
+
+
+def _combine_images_vertical(images):
+    """Combineert afbeeldingen verticaal."""
+    if not images:
+        return None
+    
+    max_width = max(img.width for img in images)
+    total_height = sum(img.height for img in images)
+    
+    combined = Image.new('RGBA', (max_width, total_height), (0, 0, 0, 0))
+    
+    y_offset = 0
+    for img in images:
+        combined.paste(img, (0, y_offset), img)
+        y_offset += img.height
+    
+    return combined
+
+
+def _combine_images_grid(images):
+    """Combineert afbeeldingen in een grid."""
+    if not images:
+        return None
+    
+    # Bereken grid afmetingen
+    grid_size = math.ceil(math.sqrt(len(images)))
+    
+    img_width = images[0].width
+    img_height = images[0].height
+    
+    grid_width = grid_size * img_width
+    grid_height = grid_size * img_height
+    
+    combined = Image.new('RGBA', (grid_width, grid_height), (0, 0, 0, 0))
+    
+    for i, img in enumerate(images):
+        row = i // grid_size
+        col = i % grid_size
+        
+        x = col * img_width
+        y = row * img_height
+        
+        combined.paste(img, (x, y), img)
+    
+    return combined
+
+
+def create_heatmap_overlay_with_transparency(intensity_data, color_scheme=None, 
+                                           transparency_gradient=True, edge_fade=True):
+    """
+    Creëert heatmap overlay met geavanceerde transparantie effecten.
+    
+    Args:
+        intensity_data (numpy.ndarray): 2D array met intensiteitswaarden
+        color_scheme (str): Naam van het kleurschema
+        transparency_gradient (bool): Gebruik transparantie gradiënt
+        edge_fade (bool): Fade randen van heatmap
+        
+    Returns:
+        PIL.Image: Heatmap overlay met transparantie effecten
+    """
+    from utils.color_utils import create_intensity_heatmap, apply_heatmap_transparency, apply_edge_softening
+    
+    # Creëer basis heatmap
+    heatmap = create_intensity_heatmap(intensity_data, color_scheme)
+    
+    # Pas transparantie effecten toe
+    if transparency_gradient:
+        heatmap = apply_heatmap_transparency(heatmap, intensity_based=True)
+    
+    # Pas rand verzachting toe
+    if edge_fade:
+        heatmap = apply_edge_softening(heatmap)
+    
+    return heatmap
+
+
+def optimize_heatmap_for_animation(heatmap, frame_number, total_frames, optimization_level='balanced'):
+    """
+    Optimaliseert heatmap voor animatie performance.
+    
+    Args:
+        heatmap (PIL.Image): Heatmap afbeelding
+        frame_number (int): Huidige frame nummer
+        total_frames (int): Totaal aantal frames
+        optimization_level (str): Optimalisatie niveau ('speed', 'quality', 'balanced')
+        
+    Returns:
+        PIL.Image: Geoptimaliseerde heatmap
+    """
+    if optimization_level == 'speed':
+        # Snelle optimalisatie: minder effecten
+        return _optimize_for_speed(heatmap)
+    elif optimization_level == 'quality':
+        # Kwaliteit optimalisatie: alle effecten
+        return _optimize_for_quality(heatmap, frame_number, total_frames)
+    else:  # balanced
+        # Gebalanceerde optimalisatie
+        return _optimize_balanced(heatmap, frame_number, total_frames)
+
+
+def _optimize_for_speed(heatmap):
+    """Optimaliseert voor snelheid."""
+    # Minimale effecten voor snelheid
+    return heatmap
+
+
+def _optimize_for_quality(heatmap, frame_number, total_frames):
+    """Optimaliseert voor kwaliteit."""
+    # Alle effecten voor beste kwaliteit
+    settings = HEATMAP_ENHANCEMENT.copy()
+    settings['gaussian_blur_sigma'] *= 1.2
+    settings['color_saturation'] *= 1.1
+    
+    return enhance_heatmap_compositing(heatmap, settings)
+
+
+def _optimize_balanced(heatmap, frame_number, total_frames):
+    """Gebalanceerde optimalisatie."""
+    # Selectieve effecten voor balans tussen snelheid en kwaliteit
+    settings = HEATMAP_ENHANCEMENT.copy()
+    
+    # Verminder effecten voor betere performance
+    settings['hotspot_enhancement'] = frame_number % 3 == 0  # Alleen elke 3e frame
+    settings['gaussian_blur_sigma'] *= 0.8
+    
+    return enhance_heatmap_compositing(heatmap, settings)
+
+
+# ===== BESTAANDE FUNCTIES (uitgebreid) =====
 
 def get_oval_bounds():
     """
@@ -410,7 +817,7 @@ def ensure_within_oval(position, center=None, width=None, height=None):
     return center
 
 
-# ===== NIEUWE fMRI REALISME FUNCTIES =====
+# ===== BESTAANDE fMRI REALISME FUNCTIES =====
 
 def render_voxel_texture(image, voxel_size=2, opacity=0.3, style='grid'):
     """
@@ -578,70 +985,6 @@ def enhance_edges_fmri_style(image, glow_radius=2, glow_intensity=0.4, threshold
     
     # Combineer met origineel
     result = Image.alpha_composite(image, edge_glow)
-    
-    return result
-
-
-def render_activation_clusters(image, cluster_data, colors, min_size=5):
-    """
-    Rendert activatie clusters met realistische fMRI kleuren.
-    
-    Args:
-        image (PIL.Image): Basis afbeelding
-        cluster_data (numpy.ndarray): 2D array met cluster labels
-        colors (list): Lijst van kleuren voor clusters
-        min_size (int): Minimale cluster grootte om te renderen
-        
-    Returns:
-        PIL.Image: Afbeelding met gerenderde clusters
-    """
-    if not FMRI_REALISM.get('cluster_enabled', True):
-        return image
-    
-    if image.mode != 'RGBA':
-        image = image.convert('RGBA')
-    
-    width, height = image.size
-    cluster_overlay = Image.new('RGBA', (width, height), (0, 0, 0, 0))
-    
-    # Render elke cluster
-    unique_clusters = np.unique(cluster_data)
-    unique_clusters = unique_clusters[unique_clusters > 0]  # Skip background (0)
-    
-    for i, cluster_id in enumerate(unique_clusters):
-        cluster_mask = cluster_data == cluster_id
-        cluster_size = np.sum(cluster_mask)
-        
-        if cluster_size >= min_size:
-            # Kies kleur voor cluster
-            color = colors[i % len(colors)] if colors else (255, 140, 0)
-            
-            # Render cluster
-            cluster_overlay = _render_single_cluster(
-                cluster_overlay, cluster_mask, color
-            )
-    
-    # Combineer met origineel
-    result = Image.alpha_composite(image, cluster_overlay)
-    
-    return result
-
-
-def _render_single_cluster(overlay, cluster_mask, color):
-    """Rendert een enkele cluster op de overlay."""
-    height, width = cluster_mask.shape
-    
-    # Converteer mask naar PIL Image
-    mask_image = Image.fromarray((cluster_mask * 255).astype(np.uint8), mode='L')
-    
-    # Maak gekleurde versie
-    colored_cluster = Image.new('RGBA', (width, height), color + (128,))
-    
-    # Pas mask toe
-    colored_cluster.putalpha(mask_image)
-    
-    # Combineer met overlay
-    result = Image.alpha_composite(overlay, colored_cluster)
     
     return result
 
