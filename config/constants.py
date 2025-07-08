@@ -152,7 +152,83 @@ COLOR_MAPPING = {
     'gradient_steps': 256         # Aantal stappen in kleurgradiënten
 }
 
-# fMRI Realisme configuratie (NIEUW)
+# HEATMAP ENHANCEMENT CONFIGURATIE (NIEUW)
+HEATMAP_ENHANCEMENT = {
+    'enabled': True,
+    
+    # Intensiteit mapping
+    'intensity_mapping': 'logarithmic',  # 'linear', 'logarithmic', 'exponential'
+    'intensity_levels': 12,              # Aantal intensiteitsniveaus
+    
+    # Kleur saturatie en helderheid
+    'color_saturation': 1.3,             # Verhoogde saturatie voor levendige kleuren
+    'adaptive_brightness': True,         # Adaptieve helderheid per regio
+    'brightness_enhancement': 1.1,       # Helderheid versterking factor
+    
+    # Vloeiende overgangen
+    'smooth_gradients': True,            # Vloeiende kleurovergangen
+    'gradient_transition_width': 3,      # Breedte van overgangszone
+    'gradient_method': 'gaussian',       # 'gaussian', 'linear', 'cubic'
+    
+    # Gaussische blur voor heatmap-effect
+    'gaussian_blur_sigma': 1.5,          # Blur sterkte voor heatmap-effect
+    'blur_preserve_edges': True,         # Behoud randen tijdens blur
+    
+    # Hotspot enhancement
+    'hotspot_enhancement': True,         # Voeg realistische hotspots toe
+    'hotspot_count': 3,                  # Aantal hotspots per frame
+    'hotspot_intensity_range': (0.6, 0.9), # (min, max) intensiteit voor hotspots
+    'hotspot_size_range': (15, 40),      # (min, max) radius voor hotspots
+    
+    # Rand verzachting
+    'edge_softening': 0.8,               # Sterkte van rand verzachting (0.0-1.0)
+    'edge_softening_method': 'gaussian', # 'gaussian', 'bilateral', 'morphological'
+    
+    # Diepte simulatie
+    'depth_simulation': True,            # Pseudo-3D effect voor diepte
+    'depth_factor': 0.3,                 # Sterkte van diepte effect
+    'depth_method': 'gradient',          # 'gradient', 'shadow', 'highlight'
+    
+    # Blending modes
+    'blending_mode': 'screen',           # 'normal', 'screen', 'overlay', 'multiply'
+    'blending_opacity': 0.8,             # Opacity voor heatmap blending
+    
+    # Transparantie effecten
+    'transparency_levels': [0.7, 0.8, 0.9, 1.0], # Verschillende transparantie niveaus
+    'intensity_based_transparency': True, # Transparantie gebaseerd op intensiteit
+    
+    # Contrast enhancement
+    'contrast_enhancement': 1.2,         # Contrast versterking factor
+    'adaptive_contrast': True,           # Adaptieve contrast verbetering
+    'contrast_preserve_range': True,     # Behoud kleur bereik
+    
+    # Ruimtelijke gradiënten
+    'spatial_gradients': True,           # Verbeter ruimtelijke gradiënten
+    'gradient_strength': 0.7,            # Sterkte van gradiënt effect
+    'gradient_direction': 'radial',      # 'radial', 'horizontal', 'vertical'
+    
+    # Wetenschappelijke kleurmapping
+    'scientific_color_mapping': True,    # Gebruik wetenschappelijk accurate kleuren
+    'zscore_based_mapping': True,        # Z-score gebaseerde kleurmapping
+    'statistical_thresholding': True,    # Pas statistische thresholding toe
+    
+    # Temporele effecten
+    'temporal_smoothing': True,          # Temporele smoothing tussen frames
+    'temporal_correlation': 0.8,         # Correlatie tussen frames
+    'temporal_variation': True,          # Tijdelijke kleurvariatie
+    
+    # Performance optimalisatie
+    'enable_caching': True,              # Cache berekeningen
+    'optimization_level': 'balanced',    # 'speed', 'quality', 'balanced'
+    'parallel_processing': False,        # Parallelle verwerking (experimenteel)
+    
+    # Debug en validatie
+    'debug_mode': False,                 # Debug informatie
+    'validation_enabled': True,          # Valideer parameters
+    'before_after_comparison': False,    # Genereer voor/na vergelijking
+}
+
+# fMRI Realisme configuratie (BESTAAND)
 FMRI_REALISM = {
     # Voxel-achtige structuur
     'voxel_size': 2,              # Voxel grootte voor textuur (pixels)
