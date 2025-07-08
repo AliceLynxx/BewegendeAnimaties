@@ -134,7 +134,104 @@
 - **Kleurschema Integratie**: fMRI-realisme werkt met alle 4 kleurschalen
 - **Wetenschappelijke Validatie**: Output vergelijkbaar met echte fMRI-scans
 
-## Stap 8: Centraal script en integratie (MUST-HAVE)
+## ✅ Stap 8: Heatmap Enhancement voor Authentieke fMRI-Look (VOLTOOID)
+**Samenvatting**: Alle animaties geüpgraded met authentieke heatmap enhancement voor onmiddellijke herkenning als professionele fMRI-heatmaps:
+
+### **Authentieke Heatmap Rendering**:
+- **Onmiddellijke Herkenning**: Animaties zijn direct herkenbaar als fMRI-heatmaps
+- **Wetenschappelijke Geloofwaardigheid**: Conform neuroimaging standaarden (FSL, SPM, AFNI)
+- **Professionele Uitstraling**: Vergelijkbaar met echte fMRI-software output
+
+### **Logaritmische Intensiteit Mapping**:
+- **Realistische Intensiteit Verdeling**: Logaritmische schaling zoals in echte fMRI
+- **Meer Detail in Lage Intensiteiten**: Natuurlijke intensiteit distributie
+- **Configureerbare Mapping**: Linear, logarithmic, exponential opties
+
+### **Enhanced Kleur Saturatie en Helderheid**:
+- **Intensiteit-gebaseerde Saturatie**: Hogere saturatie in activatiegebieden
+- **Adaptieve Helderheid**: Ruimtelijke helderheid aanpassing per regio
+- **Radiaal Helderheid Patroon**: Centrum helderder voor natuurlijke look
+
+### **Vloeiende Kleurovergangen**:
+- **Gaussische Overgangen**: Smooth transitions zonder banding effecten
+- **Edge-Preserving Blur**: Behoud van belangrijke details tijdens smoothing
+- **Configureerbare Overgangsbreedtes**: Instelbare gradient zones
+
+### **Realistische Activatie Hotspots**:
+- **Natuurlijke Hotspot Verdeling**: Automatische generatie van activatie hotspots
+- **Gaussische Falloff**: Realistische intensiteit verdeling binnen hotspots
+- **Configureerbare Hotspot Parameters**: Aantal, grootte en intensiteit instelbaar
+
+### **Ruimtelijke Gradiënten**:
+- **Radiaal Gradiënt Effect**: Centrum naar rand gradiënten voor diepte
+- **Horizontaal/Verticaal Gradiënten**: Anatomische gradiënt simulatie
+- **Configureerbare Gradiënt Sterkte**: Instelbare gradiënt intensiteit
+
+### **Zachte Rand Verzachting**:
+- **Natuurlijke Randen**: Zachte randen zoals in echte fMRI-scans
+- **Gaussische Rand Verzachting**: Edge softening met behoud van vorm
+- **Bilateral Filtering**: Geavanceerde rand behoud technieken
+
+### **Authentieke Heatmap Blending**:
+- **Screen Blending**: Klassieke heatmap blending mode
+- **Overlay Blending**: Complexe overlay formules voor realisme
+- **Multiply Blending**: Multiplicatieve blending voor specifieke effecten
+- **Configureerbare Opacity**: Instelbare transparantie per blending mode
+
+### **Diepte Perceptie Enhancement**:
+- **Pseudo-3D Effecten**: Diepte simulatie voor verbeterde visualisatie
+- **Gradient Diepte**: Radiaal gradiënt voor diepte perceptie
+- **Shadow/Highlight Effecten**: Subtiele schaduw en highlight effecten
+- **Multi-layer Compositing**: Gelaagde rendering voor complexe effecten
+
+### **Wetenschappelijke Kleurmapping**:
+- **Z-score Gebaseerde Kleuren**: Simulatie van statistische kleurmapping
+- **Statistical Thresholding**: Alleen significante activatie getoond
+- **Neuroimaging Standaarden**: Kleuren conform wetenschappelijke software
+- **Configureerbare Drempelwaarden**: Instelbare significantie niveaus
+
+### **Performance Optimalisatie**:
+- **Speed Optimalisatie**: Minimale effecten voor snelle rendering
+- **Balanced Optimalisatie**: Gebalanceerde kwaliteit en snelheid
+- **Quality Optimalisatie**: Alle effecten voor beste kwaliteit
+- **Caching Systeem**: Intelligente caching voor betere performance
+
+### **Multi-layer Heatmap Compositing**:
+- **Complexe Visualisaties**: Meerdere heatmap lagen combineren
+- **Per-layer Instellingen**: Verschillende blend modes per laag
+- **Gelaagde Transparantie**: Geavanceerde transparantie effecten
+- **Depth-based Layering**: Diepte-gebaseerde laag organisatie
+
+### **Nieuwe Utility Modules**:
+- **heatmap_utils.py**: Gespecialiseerde heatmap enhancement functies
+- **Uitgebreide color_utils.py**: Geïntegreerde heatmap functies
+- **Enhanced image_utils.py**: Heatmap compositing capabilities
+- **demo_heatmap_enhancement.py**: Volledige demo suite
+
+### **Configureerbare Heatmap Enhancement**:
+- **HEATMAP_ENHANCEMENT Dictionary**: Volledig configureerbaar via constants.py
+- **Intensiteit Mapping**: Logarithmic, linear, exponential opties
+- **Kleur Enhancement**: Saturatie, helderheid, contrast instellingen
+- **Blur en Smoothing**: Gaussische blur en edge preservation
+- **Hotspot Parameters**: Aantal, grootte, intensiteit configuratie
+- **Blending Modes**: Screen, overlay, multiply, normal opties
+- **Performance Settings**: Speed, balanced, quality optimalisatie
+
+### **Demo en Vergelijking Functionaliteit**:
+- **Voor/Na Vergelijking**: Duidelijk verschil tussen normale en heatmap-enhanced versies
+- **Kleurschema Vergelijking**: Alle kleurschalen met heatmap enhancement
+- **Heatmap Settings Vergelijking**: Minimal, balanced, maximum instellingen
+- **Performance Testing**: Optimalisatie niveaus vergelijking
+- **Wetenschappelijke Validatie**: Vergelijking met echte fMRI-scans
+
+### **Doelgroep Impact**:
+- **Neurowetenschappers**: Onmiddellijke herkenning van authentieke fMRI-visualisaties
+- **Medische Professionals**: Vertrouwde heatmap-stijl voor klinische geloofwaardigheid
+- **Onderzoekers**: Realistische fMRI-representatie voor publicaties
+- **Educatieve Instellingen**: Studenten herkennen echte fMRI-scans
+- **Software Ontwikkelaars**: Referentie implementatie voor fMRI heatmap visualisatie
+
+## Stap 9: Centraal script en integratie (MUST-HAVE)
 **Doel**: Alle animaties samenvoegen in één uitvoerbaar script.
 **Doelgroep**: Eindgebruikers die alle animaties in één keer willen genereren.
 **Nut**: Maakt het project gebruiksvriendelijk en praktisch toepasbaar.
@@ -149,13 +246,15 @@
 - Batch processing van alle 4+ animaties (inclusief realistisch lopend mannetje)
 - Enhanced fMRI kleuren integratie
 - fMRI-realisme configuratie interface
+- **NIEUW**: Heatmap enhancement configuratie interface
 - Kleurschema selectie interface
-- Realisme niveau selectie (normale vs. fMRI-realisme versies)
+- Realisme niveau selectie (normale vs. fMRI-realisme vs. heatmap-enhanced versies)
+- **NIEUW**: Heatmap enhancement niveau selectie (minimal, balanced, maximum)
 - Error handling en logging
 - Gebruikersvriendelijke interface
 - Documentatie voor gebruikers
 
-## Stap 9: Optimalisatie en polish (NICE-TO-HAVE)
+## Stap 10: Optimalisatie en polish (NICE-TO-HAVE)
 **Doel**: Het project verfijnen en prestaties verbeteren.
 **Doelgroep**: Power users die geavanceerde features willen.
 **Nut**: Verhoogt de kwaliteit en flexibiliteit van de output.
@@ -165,8 +264,13 @@
 - Alle bestaande bestanden kunnen geoptimaliseerd worden
 
 **Acties**:
-- Performance optimalisatie voor fMRI-realisme effecten
-- Meer configuratie opties voor enhanced kleuren en realisme
+- Performance optimalisatie voor fMRI-realisme en heatmap enhancement effecten
+- Meer configuratie opties voor enhanced kleuren, realisme en heatmap enhancement
+- **NIEUW**: Heatmap enhancement voor vlekken_verschijnend en vlekken_verdwijnend
+- **NIEUW**: Heatmap enhancement voor tekst_verschijnend
+- **NIEUW**: Colorbar rendering voor wetenschappelijke kleurenbalken
+- **NIEUW**: 3D heatmap effects voor geavanceerde visualisatie
+- **NIEUW**: Real-time preview van heatmap instellingen
 - Betere error handling
 - Code cleanup en documentatie
 - Unit tests toevoegen
@@ -177,3 +281,5 @@
 - Memory optimalisatie voor grote animaties
 - Advanced fMRI-realisme features (bijv. slice-based rendering)
 - Export naar verschillende formaten (MP4, WebM, etc.)
+- **NIEUW**: Interactive heatmap parameter tuning interface
+- **NIEUW**: Scientific validation tools voor vergelijking met echte fMRI
