@@ -3,7 +3,7 @@ Bewegend mannetje animatie module voor fMRI-stijl visualisaties.
 
 Deze module implementeert zowel een bewegend figuur dat een ovaalroute volgt als
 een realistisch lopend mannetje dat vrij beweegt binnen het hersengebied,
-met uitgebreide fMRI kleurenschema's, dynamische kleureffecten en fMRI-realisme.
+met uitgebreide fMRI kleurenschema's, dynamische kleureffecten, fMRI-realisme en heatmap enhancement.
 """
 
 import math
@@ -15,14 +15,17 @@ from utils.image_utils import (
     create_stick_figure, generate_random_position_in_oval, calculate_next_position,
     ensure_within_oval, is_position_in_oval, render_voxel_texture,
     apply_spatial_smoothing_image, enhance_edges_fmri_style, create_gradient_boundaries,
-    add_anatomical_variation
+    add_anatomical_variation, apply_heatmap_compositing, enhance_heatmap_compositing,
+    create_animated_heatmap_frame, optimize_heatmap_for_animation
 )
 from utils.color_utils import (
     get_fmri_color, add_glow_effect, create_colored_circle, create_pulsing_color,
     create_movement_based_color, create_activity_based_color, map_value_to_color,
     create_gradient_animation_color, get_color_scheme, apply_temporal_color_variation,
     enhance_fmri_realism, generate_fmri_noise, apply_statistical_thresholding,
-    detect_activation_clusters, simulate_zscore_mapping, apply_temporal_correlation
+    detect_activation_clusters, simulate_zscore_mapping, apply_temporal_correlation,
+    integrate_heatmap_effects, optimize_heatmap_visibility, enhance_depth_perception,
+    create_heatmap_gradient, apply_heatmap_blending
 )
 from utils.gif_utils import create_gif_from_frames
 from config.constants import (
@@ -31,7 +34,7 @@ from config.constants import (
     WALKING_FIGURE_SIZE, WALKING_SPEED, WALKING_DIRECTION_CHANGE_CHANCE,
     WALKING_RANDOM_VARIATION, WALKING_POSE_CHANGE_SPEED, WALKING_BOUNDARY_MARGIN,
     RANDOM_WALK_STEP_SIZE, RANDOM_WALK_MOMENTUM, RANDOM_WALK_DIRECTION_NOISE,
-    DEFAULT_COLOR_SCHEME, DYNAMIC_COLORS, FMRI_REALISM
+    DEFAULT_COLOR_SCHEME, DYNAMIC_COLORS, FMRI_REALISM, HEATMAP_ENHANCEMENT
 )
 
 
@@ -90,9 +93,10 @@ def calculate_oval_position(progress, clockwise=True, route_variation=0):
 
 
 def create_moving_figure(size=None, color=None, pulse_position=0.0, color_scheme=None, 
-                        activity_level=0.5, time_factor=0.0, enable_fmri_realism=True):
+                        activity_level=0.5, time_factor=0.0, enable_fmri_realism=True,
+                        enable_heatmap_enhancement=True):
     """
-    Creëert een bewegend figuur met enhanced fMRI styling en realisme (originele cirkel versie).
+    Creëert een bewegend figuur met enhanced fMRI styling, realisme en heatmap enhancement (originele cirkel versie).
     
     Args:
         size (int): Grootte van het figuur (standaard uit constants)
@@ -102,6 +106,7 @@ def create_moving_figure(size=None, color=None, pulse_position=0.0, color_scheme
         activity_level (float): Activiteitsniveau voor kleurmapping (0.0-1.0)
         time_factor (float): Tijd factor voor dynamische effecten
         enable_fmri_realism (bool): Schakel fMRI realisme effecten in
+        enable_heatmap_enhancement (bool): Schakel heatmap enhancement in
         
     Returns:
         PIL.Image: Figuur afbeelding met transparante achtergrond
@@ -128,14 +133,20 @@ def create_moving_figure(size=None, color=None, pulse_position=0.0, color_scheme
             figure_with_glow, activity_level, time_factor
         )
     
+    # Pas heatmap enhancement toe indien ingeschakeld
+    if enable_heatmap_enhancement:
+        figure_with_glow = apply_heatmap_enhancement_to_figure(
+            figure_with_glow, activity_level, time_factor
+        )
+    
     return figure_with_glow
 
 
 def create_walking_figure(pose_frame=0, size=None, color=None, pulse_position=0.0,
                          color_scheme=None, movement_speed=0.0, max_speed=10.0, 
-                         time_factor=0.0, enable_fmri_realism=True):
+                         time_factor=0.0, enable_fmri_realism=True, enable_heatmap_enhancement=True):
     """
-    Creëert een realistisch lopend mannetje figuur met enhanced fMRI styling en realisme.
+    Creëert een realistisch lopend mannetje figuur met enhanced fMRI styling, realisme en heatmap enhancement.
     
     Args:
         pose_frame (int): Frame nummer voor loop animatie
@@ -147,6 +158,7 @@ def create_walking_figure(pose_frame=0, size=None, color=None, pulse_position=0.
         max_speed (float): Maximale bewegingssnelheid
         time_factor (float): Tijd factor voor dynamische effecten
         enable_fmri_realism (bool): Schakel fMRI realisme effecten in
+        enable_heatmap_enhancement (bool): Schakel heatmap enhancement in
         
     Returns:
         PIL.Image: Stick figure afbeelding met transparante achtergrond en gloed
@@ -172,6 +184,13 @@ def create_walking_figure(pose_frame=0, size=None, color=None, pulse_position=0.
         # Bereken activiteitsniveau gebaseerd op bewegingssnelheid
         activity_level = min(1.0, movement_speed / max_speed) if max_speed > 0 else 0.5
         figure_with_glow = apply_fmri_realism_to_figure(
+            figure_with_glow, activity_level, time_factor
+        )
+    
+    # Pas heatmap enhancement toe indien ingeschakeld
+    if enable_heatmap_enhancement:
+        activity_level = min(1.0, movement_speed / max_speed) if max_speed > 0 else 0.5
+        figure_with_glow = apply_heatmap_enhancement_to_figure(
             figure_with_glow, activity_level, time_factor
         )
     
@@ -235,6 +254,38 @@ def apply_fmri_realism_to_figure(figure, activity_level=0.5, time_factor=0.0):
         )
     
     return figure
+
+
+def apply_heatmap_enhancement_to_figure(figure, activity_level=0.5, time_factor=0.0):
+    """
+    Past heatmap enhancement effecten toe op een figuur voor authentieke fMRI-heatmap look.
+    
+    Args:
+        figure (PIL.Image): Figuur om heatmap enhancement aan toe te voegen
+        activity_level (float): Activiteitsniveau (0.0-1.0)
+        time_factor (float): Tijd factor voor temporele effecten
+        
+    Returns:
+        PIL.Image: Figuur met heatmap enhancement effecten
+    """
+    if not HEATMAP_ENHANCEMENT.get('enabled', True):
+        return figure
+    
+    # Pas alle heatmap effecten toe
+    enhanced_figure = integrate_heatmap_effects(figure, HEATMAP_ENHANCEMENT, int(time_factor * 30))
+    
+    # Optimaliseer zichtbaarheid
+    enhanced_figure = optimize_heatmap_visibility(enhanced_figure, 1.2, preserve_detail=True)
+    
+    # Voeg diepte perceptie toe
+    if HEATMAP_ENHANCEMENT.get('depth_simulation', True):
+        enhanced_figure = enhance_depth_perception(
+            enhanced_figure,
+            HEATMAP_ENHANCEMENT.get('depth_factor', 0.3),
+            HEATMAP_ENHANCEMENT.get('depth_method', 'gradient')
+        )
+    
+    return enhanced_figure
 
 
 def generate_random_walk_path(total_frames, start_position=None):
@@ -306,9 +357,9 @@ def generate_random_walk_path(total_frames, start_position=None):
 
 
 def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplier=None, 
-                            color_scheme=None, enable_fmri_realism=True):
+                            color_scheme=None, enable_fmri_realism=True, enable_heatmap_enhancement=True):
     """
-    Genereert alle frames voor de bewegend mannetje animatie (originele ovaal route).
+    Genereert alle frames voor de bewegend mannetje animatie (originele ovaal route) met heatmap enhancement.
     
     Args:
         clockwise (bool): Bewegingsrichting
@@ -316,6 +367,7 @@ def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplie
         speed_multiplier (float): Snelheid multiplier (standaard uit constants)
         color_scheme (str): Naam van het kleurschema
         enable_fmri_realism (bool): Schakel fMRI realisme effecten in
+        enable_heatmap_enhancement (bool): Schakel heatmap enhancement in
         
     Returns:
         list: Lijst van PIL.Image frames
@@ -352,14 +404,15 @@ def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplie
         # Tijd factor voor dynamische effecten
         time_factor = frame_num / TOTAL_FRAMES
         
-        # Creëer bewegend figuur met enhanced kleuren en realisme
+        # Creëer bewegend figuur met enhanced kleuren, realisme en heatmap enhancement
         pulse_position = (frame_num / TOTAL_FRAMES) * 4  # 4 pulses per cyclus
         figure = create_moving_figure(
             pulse_position=pulse_position,
             color_scheme=color_scheme,
             activity_level=activity_level,
             time_factor=time_factor,
-            enable_fmri_realism=enable_fmri_realism
+            enable_fmri_realism=enable_fmri_realism,
+            enable_heatmap_enhancement=enable_heatmap_enhancement
         )
         
         # Maak frame met achtergrond
@@ -385,6 +438,43 @@ def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplie
             previous_frame_data = frame_data
             masked_overlay = enhanced_overlay
         
+        # Pas heatmap enhancement toe op het hele frame indien ingeschakeld
+        if enable_heatmap_enhancement:
+            # Creëer intensiteit data voor heatmap
+            width, height = background.size
+            intensity_data = np.zeros((height, width))
+            
+            # Voeg intensiteit toe rond figuur positie
+            intensity_radius = 30
+            for dy in range(-intensity_radius, intensity_radius):
+                for dx in range(-intensity_radius, intensity_radius):
+                    px, py = x + dx, y + dy
+                    if 0 <= px < width and 0 <= py < height:
+                        distance = math.sqrt(dx*dx + dy*dy)
+                        if distance <= intensity_radius:
+                            intensity = activity_level * math.exp(-distance**2 / (2 * (intensity_radius/3)**2))
+                            intensity_data[py, px] = max(intensity_data[py, px], intensity)
+            
+            # Creëer geanimeerd heatmap frame
+            heatmap_frame = create_animated_heatmap_frame(
+                intensity_data, background, frame_num, TOTAL_FRAMES, 
+                color_scheme, temporal_effects=True
+            )
+            
+            # Optimaliseer voor animatie
+            optimization_level = HEATMAP_ENHANCEMENT.get('optimization_level', 'balanced')
+            heatmap_frame = optimize_heatmap_for_animation(
+                heatmap_frame, frame_num, TOTAL_FRAMES, optimization_level
+            )
+            
+            # Combineer heatmap met bestaande overlay
+            masked_overlay = apply_heatmap_compositing(
+                masked_overlay, heatmap_frame,
+                blend_mode=HEATMAP_ENHANCEMENT.get('blending_mode', 'screen'),
+                opacity=HEATMAP_ENHANCEMENT.get('blending_opacity', 0.8),
+                enhance_visibility=True
+            )
+        
         # Combineer met originele achtergrond
         final_frame = background.copy()
         final_frame = composite_images(final_frame, masked_overlay)
@@ -395,14 +485,16 @@ def generate_animation_frames(clockwise=True, route_variation=0, speed_multiplie
     return frames
 
 
-def generate_walking_animation_frames(start_position=None, color_scheme=None, enable_fmri_realism=True):
+def generate_walking_animation_frames(start_position=None, color_scheme=None, enable_fmri_realism=True,
+                                    enable_heatmap_enhancement=True):
     """
-    Genereert alle frames voor de realistische lopende mannetje animatie.
+    Genereert alle frames voor de realistische lopende mannetje animatie met heatmap enhancement.
     
     Args:
         start_position (tuple): Start positie (willekeurig als None)
         color_scheme (str): Naam van het kleurschema
         enable_fmri_realism (bool): Schakel fMRI realisme effecten in
+        enable_heatmap_enhancement (bool): Schakel heatmap enhancement in
         
     Returns:
         list: Lijst van PIL.Image frames
@@ -435,7 +527,7 @@ def generate_walking_animation_frames(start_position=None, color_scheme=None, en
         # Tijd factor voor dynamische effecten
         time_factor = frame_num / TOTAL_FRAMES
         
-        # Creëer lopend mannetje met enhanced kleuren en realisme
+        # Creëer lopend mannetje met enhanced kleuren, realisme en heatmap enhancement
         pulse_position = (frame_num / TOTAL_FRAMES) * 3  # 3 pulses per cyclus
         figure = create_walking_figure(
             pose_frame=pose_frame,
@@ -444,7 +536,8 @@ def generate_walking_animation_frames(start_position=None, color_scheme=None, en
             movement_speed=movement_speed,
             max_speed=max_speed,
             time_factor=time_factor,
-            enable_fmri_realism=enable_fmri_realism
+            enable_fmri_realism=enable_fmri_realism,
+            enable_heatmap_enhancement=enable_heatmap_enhancement
         )
         
         # Maak frame met achtergrond
@@ -469,6 +562,64 @@ def generate_walking_animation_frames(start_position=None, color_scheme=None, en
             )
             previous_frame_data = frame_data
             masked_overlay = enhanced_overlay
+        
+        # Pas heatmap enhancement toe op het hele frame indien ingeschakeld
+        if enable_heatmap_enhancement:
+            # Creëer intensiteit data voor heatmap gebaseerd op beweging
+            width, height = background.size
+            intensity_data = np.zeros((height, width))
+            
+            # Voeg intensiteit toe rond figuur positie, gebaseerd op bewegingssnelheid
+            activity_level = min(1.0, movement_speed / max_speed) if max_speed > 0 else 0.3
+            intensity_radius = int(20 + activity_level * 20)  # Groter bij meer beweging
+            
+            for dy in range(-intensity_radius, intensity_radius):
+                for dx in range(-intensity_radius, intensity_radius):
+                    px, py = x + dx, y + dy
+                    if 0 <= px < width and 0 <= py < height:
+                        distance = math.sqrt(dx*dx + dy*dy)
+                        if distance <= intensity_radius:
+                            intensity = activity_level * math.exp(-distance**2 / (2 * (intensity_radius/3)**2))
+                            intensity_data[py, px] = max(intensity_data[py, px], intensity)
+            
+            # Voeg bewegingsspoor toe (trail effect)
+            if previous_pos is not None:
+                trail_intensity = activity_level * 0.5
+                trail_steps = 5
+                for i in range(1, trail_steps + 1):
+                    trail_factor = 1.0 - (i / trail_steps)
+                    trail_x = int(x + (previous_pos[0] - x) * (i / trail_steps))
+                    trail_y = int(y + (previous_pos[1] - y) * (i / trail_steps))
+                    
+                    trail_radius = int(intensity_radius * trail_factor)
+                    for dy in range(-trail_radius, trail_radius):
+                        for dx in range(-trail_radius, trail_radius):
+                            px, py = trail_x + dx, trail_y + dy
+                            if 0 <= px < width and 0 <= py < height:
+                                distance = math.sqrt(dx*dx + dy*dy)
+                                if distance <= trail_radius:
+                                    intensity = trail_intensity * trail_factor * math.exp(-distance**2 / (2 * (trail_radius/3)**2))
+                                    intensity_data[py, px] = max(intensity_data[py, px], intensity)
+            
+            # Creëer geanimeerd heatmap frame
+            heatmap_frame = create_animated_heatmap_frame(
+                intensity_data, background, frame_num, TOTAL_FRAMES, 
+                color_scheme, temporal_effects=True
+            )
+            
+            # Optimaliseer voor animatie
+            optimization_level = HEATMAP_ENHANCEMENT.get('optimization_level', 'balanced')
+            heatmap_frame = optimize_heatmap_for_animation(
+                heatmap_frame, frame_num, TOTAL_FRAMES, optimization_level
+            )
+            
+            # Combineer heatmap met bestaande overlay
+            masked_overlay = apply_heatmap_compositing(
+                masked_overlay, heatmap_frame,
+                blend_mode=HEATMAP_ENHANCEMENT.get('blending_mode', 'screen'),
+                opacity=HEATMAP_ENHANCEMENT.get('blending_opacity', 0.8),
+                enhance_visibility=True
+            )
         
         # Combineer met originele achtergrond
         final_frame = background.copy()
@@ -530,10 +681,11 @@ def genereer_bewegend_mannetje_animatie(
     smooth_interpolation=False,
     output_filename=None,
     color_scheme=None,
-    enable_fmri_realism=True
+    enable_fmri_realism=True,
+    enable_heatmap_enhancement=True
 ):
     """
-    Hoofdfunctie voor het genereren van bewegend mannetje animatie (originele ovaal route).
+    Hoofdfunctie voor het genereren van bewegend mannetje animatie (originele ovaal route) met heatmap enhancement.
     
     Args:
         clockwise (bool): Bewegingsrichting (True=rechtsom, False=linksom)
@@ -543,6 +695,7 @@ def genereer_bewegend_mannetje_animatie(
         output_filename (str): Naam van output bestand (standaard uit constants)
         color_scheme (str): Naam van het kleurschema
         enable_fmri_realism (bool): Schakel fMRI realisme effecten in
+        enable_heatmap_enhancement (bool): Schakel heatmap enhancement in
         
     Returns:
         str: Pad naar gegenereerde GIF
@@ -554,18 +707,19 @@ def genereer_bewegend_mannetje_animatie(
         if color_scheme is None:
             color_scheme = DEFAULT_COLOR_SCHEME
             
-        print("Genereren van bewegend mannetje animatie (ovaal route)...")
+        print("Genereren van bewegend mannetje animatie (ovaal route) met heatmap enhancement...")
         print(f"- Richting: {'Rechtsom' if clockwise else 'Linksom'}")
         print(f"- Route variatie: {route_variation}")
         print(f"- Snelheid multiplier: {speed_multiplier or MOVING_FIGURE_SPEED}")
         print(f"- Kleurschema: {color_scheme}")
         print(f"- Smooth interpolatie: {smooth_interpolation}")
         print(f"- fMRI realisme: {enable_fmri_realism}")
+        print(f"- Heatmap enhancement: {enable_heatmap_enhancement}")
         
         # Genereer basis frames
         frames = generate_animation_frames(
             clockwise, route_variation, speed_multiplier, 
-            color_scheme, enable_fmri_realism
+            color_scheme, enable_fmri_realism, enable_heatmap_enhancement
         )
         print(f"- {len(frames)} basis frames gegenereerd")
         
@@ -576,7 +730,11 @@ def genereer_bewegend_mannetje_animatie(
         
         # Bepaal output bestandsnaam
         if output_filename is None:
-            suffix = "_fmri_realism" if enable_fmri_realism else ""
+            suffix = ""
+            if enable_heatmap_enhancement:
+                suffix += "_heatmap"
+            if enable_fmri_realism:
+                suffix += "_realism"
             output_filename = OUTPUT_FILENAMES['moving_figure'].replace('.gif', f'{suffix}.gif')
         
         # Creëer GIF
@@ -596,10 +754,11 @@ def genereer_lopend_mannetje_animatie(
     smooth_interpolation=False,
     output_filename=None,
     color_scheme=None,
-    enable_fmri_realism=True
+    enable_fmri_realism=True,
+    enable_heatmap_enhancement=True
 ):
     """
-    Hoofdfunctie voor het genereren van realistisch lopend mannetje animatie.
+    Hoofdfunctie voor het genereren van realistisch lopend mannetje animatie met heatmap enhancement.
     
     Args:
         start_position (tuple): Start positie (willekeurig als None)
@@ -607,6 +766,7 @@ def genereer_lopend_mannetje_animatie(
         output_filename (str): Naam van output bestand (standaard uit constants)
         color_scheme (str): Naam van het kleurschema
         enable_fmri_realism (bool): Schakel fMRI realisme effecten in
+        enable_heatmap_enhancement (bool): Schakel heatmap enhancement in
         
     Returns:
         str: Pad naar gegenereerde GIF
@@ -618,16 +778,19 @@ def genereer_lopend_mannetje_animatie(
         if color_scheme is None:
             color_scheme = DEFAULT_COLOR_SCHEME
             
-        print("Genereren van realistisch lopend mannetje animatie...")
+        print("Genereren van realistisch lopend mannetje animatie met heatmap enhancement...")
         print(f"- Start positie: {start_position or 'Willekeurig'}")
         print(f"- Mannetje grootte: {WALKING_FIGURE_SIZE}")
         print(f"- Bewegingssnelheid: {WALKING_SPEED} pixels/frame")
         print(f"- Kleurschema: {color_scheme}")
         print(f"- Smooth interpolatie: {smooth_interpolation}")
         print(f"- fMRI realisme: {enable_fmri_realism}")
+        print(f"- Heatmap enhancement: {enable_heatmap_enhancement}")
         
         # Genereer basis frames
-        frames = generate_walking_animation_frames(start_position, color_scheme, enable_fmri_realism)
+        frames = generate_walking_animation_frames(
+            start_position, color_scheme, enable_fmri_realism, enable_heatmap_enhancement
+        )
         print(f"- {len(frames)} basis frames gegenereerd")
         
         # Voeg smooth interpolatie toe indien gewenst
@@ -637,7 +800,11 @@ def genereer_lopend_mannetje_animatie(
         
         # Bepaal output bestandsnaam
         if output_filename is None:
-            suffix = "_fmri_realism" if enable_fmri_realism else ""
+            suffix = ""
+            if enable_heatmap_enhancement:
+                suffix += "_heatmap"
+            if enable_fmri_realism:
+                suffix += "_realism"
             output_filename = OUTPUT_FILENAMES['walking_figure'].replace('.gif', f'{suffix}.gif')
         
         # Creëer GIF
@@ -652,9 +819,9 @@ def genereer_lopend_mannetje_animatie(
         raise Exception(error_msg)
 
 
-def create_fmri_realism_demo():
+def create_heatmap_enhancement_demo():
     """
-    Creëert demo animaties die het verschil tonen tussen normale en fMRI-realisme versies.
+    Creëert demo animaties die het verschil tonen tussen normale en heatmap-enhanced versies.
     
     Returns:
         list: Lijst van paden naar gegenereerde GIFs
@@ -662,41 +829,43 @@ def create_fmri_realism_demo():
     demo_files = []
     
     try:
-        print("\n=== fMRI Realisme Demo ===")
+        print("\n=== Heatmap Enhancement Demo ===")
         
-        # Test verschillende kleurschema's met en zonder realisme
+        # Test verschillende kleurschema's met en zonder heatmap enhancement
         color_schemes = ['hot', 'viridis']
         
         for scheme in color_schemes:
             print(f"\n--- Kleurschema: {scheme} ---")
             
-            # Normale versie
+            # Normale versie (zonder heatmap enhancement)
             normal_path = genereer_lopend_mannetje_animatie(
                 color_scheme=scheme,
-                enable_fmri_realism=False,
+                enable_fmri_realism=True,
+                enable_heatmap_enhancement=False,
                 output_filename=f"demo_{scheme}_normal.gif"
             )
             demo_files.append(normal_path)
             
-            # fMRI realisme versie
-            realism_path = genereer_lopend_mannetje_animatie(
+            # Heatmap enhanced versie
+            enhanced_path = genereer_lopend_mannetje_animatie(
                 color_scheme=scheme,
                 enable_fmri_realism=True,
-                output_filename=f"demo_{scheme}_fmri_realism.gif"
+                enable_heatmap_enhancement=True,
+                output_filename=f"demo_{scheme}_heatmap_enhanced.gif"
             )
-            demo_files.append(realism_path)
+            demo_files.append(enhanced_path)
         
         print(f"\n✅ {len(demo_files)} demo bestanden gegenereerd")
         return demo_files
         
     except Exception as e:
-        print(f"❌ Fout bij genereren fMRI realisme demo: {str(e)}")
+        print(f"❌ Fout bij genereren heatmap enhancement demo: {str(e)}")
         return demo_files
 
 
 def create_demo_variations():
     """
-    Creëert demo variaties van de bewegend mannetje animaties met verschillende kleurschema's.
+    Creëert demo variaties van de bewegend mannetje animaties met verschillende kleurschema's en heatmap enhancement.
     
     Returns:
         list: Lijst van paden naar gegenereerde GIFs
@@ -707,30 +876,32 @@ def create_demo_variations():
         # Test verschillende kleurschema's
         color_schemes = ['hot', 'cool', 'jet', 'viridis']
         
-        print("\n=== Genereren enhanced fMRI kleurschema variaties ===")
+        print("\n=== Genereren enhanced fMRI kleurschema variaties met heatmap enhancement ===")
         
         for scheme in color_schemes:
             print(f"\n--- Kleurschema: {scheme} ---")
             
-            # Originele ovaal route met kleurschema en fMRI realisme
+            # Originele ovaal route met kleurschema, fMRI realisme en heatmap enhancement
             path1 = genereer_bewegend_mannetje_animatie(
                 clockwise=True,
                 route_variation=0,
                 color_scheme=scheme,
                 enable_fmri_realism=True,
-                output_filename=f"bewegend_mannetje_{scheme}_ovaal_realism.gif"
+                enable_heatmap_enhancement=True,
+                output_filename=f"bewegend_mannetje_{scheme}_ovaal_heatmap.gif"
             )
             variations.append(path1)
             
-            # Realistisch lopend mannetje met kleurschema en fMRI realisme
+            # Realistisch lopend mannetje met kleurschema, fMRI realisme en heatmap enhancement
             path2 = genereer_lopend_mannetje_animatie(
                 color_scheme=scheme,
                 enable_fmri_realism=True,
-                output_filename=f"bewegend_mannetje_{scheme}_lopend_realism.gif"
+                enable_heatmap_enhancement=True,
+                output_filename=f"bewegend_mannetje_{scheme}_lopend_heatmap.gif"
             )
             variations.append(path2)
         
-        print(f"\n✅ {len(variations)} enhanced kleurschema variaties succesvol gegenereerd")
+        print(f"\n✅ {len(variations)} enhanced kleurschema variaties met heatmap enhancement succesvol gegenereerd")
         return variations
         
     except Exception as e:
@@ -738,30 +909,108 @@ def create_demo_variations():
         return variations
 
 
-if __name__ == "__main__":
-    # Test de nieuwe fMRI realisme functionaliteit
+def create_heatmap_comparison_demo():
+    """
+    Creëert vergelijking tussen verschillende heatmap instellingen.
+    
+    Returns:
+        list: Lijst van paden naar gegenereerde GIFs
+    """
+    comparison_files = []
+    
     try:
-        print("=== Test Enhanced fMRI Realisme ===")
+        print("\n=== Heatmap Comparison Demo ===")
         
-        # Test fMRI realisme demo
-        print("\n--- fMRI Realisme Demo ---")
-        demo_paths = create_fmri_realism_demo()
+        # Test verschillende heatmap instellingen
+        heatmap_settings = [
+            {
+                'name': 'minimal',
+                'settings': {
+                    'gaussian_blur_sigma': 0.5,
+                    'color_saturation': 1.1,
+                    'hotspot_enhancement': False,
+                    'depth_simulation': False
+                }
+            },
+            {
+                'name': 'balanced',
+                'settings': {
+                    'gaussian_blur_sigma': 1.5,
+                    'color_saturation': 1.3,
+                    'hotspot_enhancement': True,
+                    'depth_simulation': True
+                }
+            },
+            {
+                'name': 'maximum',
+                'settings': {
+                    'gaussian_blur_sigma': 2.5,
+                    'color_saturation': 1.5,
+                    'hotspot_enhancement': True,
+                    'depth_simulation': True,
+                    'contrast_enhancement': 1.4
+                }
+            }
+        ]
+        
+        for setting in heatmap_settings:
+            print(f"\n--- Heatmap setting: {setting['name']} ---")
+            
+            # Tijdelijk overschrijf heatmap instellingen
+            original_settings = HEATMAP_ENHANCEMENT.copy()
+            HEATMAP_ENHANCEMENT.update(setting['settings'])
+            
+            try:
+                path = genereer_lopend_mannetje_animatie(
+                    color_scheme='hot',
+                    enable_fmri_realism=True,
+                    enable_heatmap_enhancement=True,
+                    output_filename=f"heatmap_comparison_{setting['name']}.gif"
+                )
+                comparison_files.append(path)
+            finally:
+                # Herstel originele instellingen
+                HEATMAP_ENHANCEMENT.clear()
+                HEATMAP_ENHANCEMENT.update(original_settings)
+        
+        print(f"\n✅ {len(comparison_files)} heatmap vergelijking bestanden gegenereerd")
+        return comparison_files
+        
+    except Exception as e:
+        print(f"❌ Fout bij genereren heatmap vergelijking demo: {str(e)}")
+        return comparison_files
+
+
+if __name__ == "__main__":
+    # Test de nieuwe heatmap enhancement functionaliteit
+    try:
+        print("=== Test Enhanced fMRI Heatmap Enhancement ===")
+        
+        # Test heatmap enhancement demo
+        print("\n--- Heatmap Enhancement Demo ---")
+        demo_paths = create_heatmap_enhancement_demo()
         print(f"Demo bestanden: {demo_paths}")
         
-        # Test met verschillende kleurschema's en realisme
+        # Test heatmap vergelijking
+        print("\n--- Heatmap Comparison Demo ---")
+        comparison_paths = create_heatmap_comparison_demo()
+        print(f"Vergelijking bestanden: {comparison_paths}")
+        
+        # Test met verschillende kleurschema's en heatmap enhancement
         schemes_to_test = ['hot', 'viridis']
         
         for scheme in schemes_to_test:
-            print(f"\n--- Test {scheme} kleurschema met fMRI realisme ---")
+            print(f"\n--- Test {scheme} kleurschema met heatmap enhancement ---")
             output_path = genereer_lopend_mannetje_animatie(
                 color_scheme=scheme,
                 enable_fmri_realism=True,
-                output_filename=f"test_{scheme}_walking_realism.gif"
+                enable_heatmap_enhancement=True,
+                output_filename=f"test_{scheme}_walking_heatmap.gif"
             )
             print(f"Test animatie gegenereerd: {output_path}")
         
         # Genereer ook demo variaties
-        print("\n=== Genereren Demo Variaties ===")
+        print("\n=== Genereren Demo Variaties met Heatmap Enhancement ===")
         demo_variations = create_demo_variations()
         print(f"Demo variaties: {demo_variations}")
         
