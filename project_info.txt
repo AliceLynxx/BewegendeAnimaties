@@ -1,17 +1,17 @@
 # Project Info - BewegendeAnimaties
 
 ## Projectomschrijving
-BewegendeAnimaties is een Python-tool voor het genereren van fMRI-stijl GIF animaties met wetenschappelijke authenticiteit. Het project maakt gebruik van een statische hersenachtergrond waarop verschillende soorten bewegende elementen worden geanimeerd in karakteristieke fMRI-kleuren (oranje/rood/geel gloed) met uitgebreide neuroimaging kleurschalen en geavanceerde fMRI-realisme effecten.
+BewegendeAnimaties is een Python-tool voor het genereren van fMRI-stijl GIF animaties met wetenschappelijke authenticiteit en authentieke heatmap-visualisaties. Het project maakt gebruik van een statische hersenachtergrond waarop verschillende soorten bewegende elementen worden geanimeerd in karakteristieke fMRI-kleuren (oranje/rood/geel gloed) met uitgebreide neuroimaging kleurschalen, geavanceerde fMRI-realisme effecten en **NIEUW**: authentieke heatmap enhancement voor onmiddellijke herkenning als professionele fMRI-visualisaties.
 
 ## Project doel, nut en functie
-**Doel**: Het creëren van visueel aantrekkelijke en wetenschappelijk authentieke animaties die hersenactiviteit simuleren met realistische fMRI-kleurschalen en geavanceerde fMRI-realisme effecten die niet te onderscheiden zijn van echte fMRI-scans.
+**Doel**: Het creëren van visueel aantrekkelijke en wetenschappelijk authentieke animaties die hersenactiviteit simuleren met realistische fMRI-kleurschalen, geavanceerde fMRI-realisme effecten en **NIEUW**: authentieke heatmap enhancement die niet te onderscheiden zijn van echte fMRI-scans en onmiddellijk herkenbaar zijn als professionele fMRI-heatmaps.
 
 **Doelgroep**: 
-- Neurowetenschappers en onderzoekers
-- Medische professionals en clinici
-- Educatieve instellingen voor het uitleggen van hersenprocessen
-- Wetenschappelijke presentatie- en publicatiedoeleinden
-- fMRI-software ontwikkelaars en visualisatie specialisten
+- Neurowetenschappers en onderzoekers (verhoogde herkenning van authentieke fMRI-visualisaties)
+- Medische professionals en clinici (vertrouwde heatmap-stijl voor klinische geloofwaardigheid)
+- Educatieve instellingen voor het uitleggen van hersenprocessen (studenten herkennen echte fMRI-scans)
+- Wetenschappelijke presentatie- en publicatiedoeleinden (realistische fMRI-representatie)
+- fMRI-software ontwikkelaars en visualisatie specialisten (referentie implementatie)
 
 **Nut**: 
 - Maakt complexe hersenprocessen visueel begrijpelijk met wetenschappelijke authenticiteit
@@ -19,10 +19,16 @@ BewegendeAnimaties is een Python-tool voor het genereren van fMRI-stijl GIF anim
 - Biedt flexibele configuratie voor verschillende use cases
 - Verhoogt herkenbaarheid en wetenschappelijke waarde door realistische visualisaties
 - **ENHANCED**: Authentieke fMRI-kleurschalen verhogen wetenschappelijke geloofwaardigheid
-- **NIEUW**: fMRI-realisme effecten maken animaties ononderscheidbaar van echte fMRI-scans
-- **NIEUW**: Voxel-texturen, ruis patronen en spatial smoothing voor authentieke uitstraling
-- **NIEUW**: Statistical thresholding en cluster detectie zoals in echte fMRI-analyse
-- **NIEUW**: Anatomische variatie en temporele correlatie voor realistische hersenactiviteit
+- **ENHANCED**: fMRI-realisme effecten maken animaties ononderscheidbaar van echte fMRI-scans
+- **ENHANCED**: Voxel-texturen, ruis patronen en spatial smoothing voor authentieke uitstraling
+- **ENHANCED**: Statistical thresholding en cluster detectie zoals in echte fMRI-analyse
+- **ENHANCED**: Anatomische variatie en temporele correlatie voor realistische hersenactiviteit
+- **NIEUW**: Heatmap enhancement voor onmiddellijke herkenning als fMRI-heatmaps
+- **NIEUW**: Authentieke heatmap blending modes (screen, overlay, multiply) zoals in fMRI-software
+- **NIEUW**: Wetenschappelijk accurate kleurmapping conform neuroimaging standaarden
+- **NIEUW**: Intensiteit-gebaseerde transparantie en vloeiende kleurovergangen
+- **NIEUW**: Activatie hotspots en ruimtelijke gradiënten voor natuurlijke heatmap-look
+- **NIEUW**: Diepte perceptie en 3D-achtige heatmap effecten
 
 **Functie**: 
 - Genereert 4 verschillende animatietypes op één hersenachtergrond
@@ -31,35 +37,46 @@ BewegendeAnimaties is een Python-tool voor het genereren van fMRI-stijl GIF anim
 - Ondersteunt zowel abstracte als realistische bewegende figuren
 - **ENHANCED**: 4 neuroimaging standaard kleurschalen (hot, cool, jet, viridis)
 - **ENHANCED**: Dynamische kleurveranderingen gebaseerd op beweging en activiteit
-- **NIEUW**: fMRI-realisme effecten voor wetenschappelijke authenticiteit
-- **NIEUW**: Voxel-based rendering voor authentieke fMRI-textuur
-- **NIEUW**: Noise pattern generatie (gaussian, uniform, salt-pepper)
-- **NIEUW**: Spatial smoothing met edge preservation
-- **NIEUW**: Statistical thresholding (hard/soft) zoals in fMRI-analyse
-- **NIEUW**: Cluster-based activation detection en rendering
-- **NIEUW**: Z-score mapping simulatie voor significantie testing
-- **NIEUW**: Temporal correlation tussen frames voor realistische dynamiek
-- **NIEUW**: Anatomical variation met asymmetrie en hotspots
-- **NIEUW**: Gradient boundaries voor natuurlijke overgangen
+- **ENHANCED**: fMRI-realisme effecten voor wetenschappelijke authenticiteit
+- **ENHANCED**: Voxel-based rendering voor authentieke fMRI-textuur
+- **ENHANCED**: Noise pattern generatie (gaussian, uniform, salt-pepper)
+- **ENHANCED**: Spatial smoothing met edge preservation
+- **ENHANCED**: Statistical thresholding (hard/soft) zoals in fMRI-analyse
+- **ENHANCED**: Cluster-based activation detection en rendering
+- **ENHANCED**: Z-score mapping simulatie voor significantie testing
+- **ENHANCED**: Temporal correlation tussen frames voor realistische dynamiek
+- **ENHANCED**: Anatomical variation met asymmetrie en hotspots
+- **ENHANCED**: Gradient boundaries voor natuurlijke overgangen
+- **NIEUW**: Heatmap enhancement voor authentieke fMRI-heatmap visualisaties
+- **NIEUW**: Logaritmische intensiteit mapping voor realistische fMRI-look
+- **NIEUW**: Adaptieve helderheid en kleur saturatie per regio
+- **NIEUW**: Gaussische blur met edge preservation voor heatmap-effect
+- **NIEUW**: Activatie hotspots met realistische intensiteit verdeling
+- **NIEUW**: Ruimtelijke gradiënten voor natuurlijke activatie patronen
+- **NIEUW**: Zachte rand verzachting zoals in echte fMRI-scans
+- **NIEUW**: Multi-layer heatmap compositing voor complexe visualisaties
+- **NIEUW**: Performance optimalisatie voor animatie rendering
 
 ## Architectuur/modulestructuur
 ```
 BewegendeAnimaties/
 ├── main.py                    # Centraal script voor alle animaties
 ├── demo_bewegend_mannetje.py  # Demo script voor bewegend mannetje
+├── demo_heatmap_enhancement.py # Demo script voor heatmap enhancement ✅ NIEUW
 ├── test_enhanced_colors.py    # Test script voor enhanced fMRI kleuren ✅
 ├── requirements.txt           # Python dependencies
 ├── config/
-│   └── constants.py          # Configuratie en instellingen ✅ (uitgebreid met fMRI-realisme)
+│   └── constants.py          # Configuratie en instellingen ✅ (uitgebreid met heatmap enhancement)
 ├── animaties/
 │   ├── __init__.py           # Package initialisatie ✅
-│   ├── bewegend_mannetje.py  # Bewegend figuur animatie ✅ (enhanced + fMRI-realisme)
+│   ├── bewegend_mannetje.py  # Bewegend figuur animatie ✅ (enhanced + heatmap enhancement)
 │   ├── vlekken_verschijnend.py # Uitspreidende vlekken ✅ (enhanced + fMRI-realisme)
 │   ├── vlekken_verdwijnend.py  # Verdwijnende vlekken ✅ (enhanced + fMRI-realisme)
 │   └── tekst_verschijnend.py   # Letter-voor-letter tekst ✅ (enhanced + fMRI-realisme)
 ├── utils/
-│   ├── image_utils.py        # Afbeelding manipulatie ✅ (uitgebreid met fMRI-realisme)
-│   ├── color_utils.py        # fMRI kleurenschema ✅ (volledig vernieuwd + fMRI-realisme)
+│   ├── image_utils.py        # Afbeelding manipulatie ✅ (uitgebreid met heatmap compositing)
+│   ├── color_utils.py        # fMRI kleurenschema ✅ (volledig vernieuwd + heatmap enhancement)
+│   ├── heatmap_utils.py      # Heatmap enhancement utilities ✅ NIEUW
 │   └── gif_utils.py          # GIF generatie utilities ✅
 └── output/                   # Gegenereerde GIF bestanden
 ```
@@ -69,11 +86,11 @@ BewegendeAnimaties/
 ### requirements.txt
 - **Status**: ✅ Voltooid
 - **Pad**: /requirements.txt
-- **Functionaliteit**: Python dependencies (Pillow, numpy, scipy voor fMRI-realisme)
+- **Functionaliteit**: Python dependencies (Pillow, numpy, scipy voor fMRI-realisme en heatmap enhancement)
 - **Afhankelijkheden**: Geen
 
 ### config/constants.py
-- **Status**: ✅ Voltooid en uitgebreid met fMRI-realisme
+- **Status**: ✅ Voltooid en uitgebreid met heatmap enhancement
 - **Pad**: /config/constants.py
 - **Functionaliteit**: 
   - Configuratie voor achtergrond, tekst, animatieparameters, fMRI kleuren
@@ -84,15 +101,45 @@ BewegendeAnimaties/
   - **ENHANCED**: Kleur mapping configuratie voor intensiteitsniveaus
   - **ENHANCED**: Dynamische kleurverandering instellingen
   - **ENHANCED**: Enhanced gloed effect parameters
-  - **NIEUW**: FMRI_REALISM configuratie met alle realisme parameters
-  - **NIEUW**: Voxel grootte en textuur instellingen
-  - **NIEUW**: Noise en smoothing parameters
-  - **NIEUW**: Threshold en clustering instellingen
-  - **NIEUW**: Anatomical variation en temporal dynamics configuratie
+  - **ENHANCED**: FMRI_REALISM configuratie met alle realisme parameters
+  - **ENHANCED**: Voxel grootte en textuur instellingen
+  - **ENHANCED**: Noise en smoothing parameters
+  - **ENHANCED**: Threshold en clustering instellingen
+  - **ENHANCED**: Anatomical variation en temporal dynamics configuratie
+  - **NIEUW**: HEATMAP_ENHANCEMENT configuratie voor authentieke heatmap-look
+  - **NIEUW**: Intensiteit mapping instellingen (logarithmic, linear, exponential)
+  - **NIEUW**: Kleur saturatie en adaptieve helderheid configuratie
+  - **NIEUW**: Gaussische blur en hotspot enhancement parameters
+  - **NIEUW**: Blending modes en transparantie instellingen
+  - **NIEUW**: Ruimtelijke gradiënten en diepte simulatie configuratie
+  - **NIEUW**: Performance optimalisatie instellingen
 - **Afhankelijkheden**: Geen
 
+### utils/heatmap_utils.py
+- **Status**: ✅ NIEUW - Volledig geïmplementeerd
+- **Pad**: /utils/heatmap_utils.py
+- **Functionaliteit**: 
+  - **NIEUW**: Gespecialiseerde heatmap enhancement functies
+  - **NIEUW**: create_heatmap_gradient() - Echte heatmap-stijl gradiënten
+  - **NIEUW**: apply_heatmap_blending() - Authentieke heatmap blending modes
+  - **NIEUW**: enhance_heatmap_contrast() - Contrast verbetering zonder oversaturatie
+  - **NIEUW**: apply_heatmap_transparency() - Realistische transparantie effecten
+  - **NIEUW**: create_intensity_heatmap() - Intensiteit-gebaseerde heatmap kleuren
+  - **NIEUW**: apply_smooth_color_transitions() - Vloeiende kleurovergangen
+  - **NIEUW**: enhance_color_saturation() - Verhoogde saturatie voor heatmap-effect
+  - **NIEUW**: apply_adaptive_brightness() - Adaptieve helderheid per regio
+  - **NIEUW**: apply_gaussian_heatmap_blur() - Specifieke blur voor heatmap-effect
+  - **NIEUW**: create_activation_hotspots() - Realistische activatie hotspots
+  - **NIEUW**: enhance_spatial_gradients() - Verbeterde ruimtelijke gradiënten
+  - **NIEUW**: apply_edge_softening() - Zachte randen zoals in echte fMRI
+  - **NIEUW**: integrate_heatmap_effects() - Hoofdfunctie voor alle heatmap effecten
+  - **NIEUW**: optimize_heatmap_visibility() - Optimaliseer zichtbaarheid
+  - **NIEUW**: apply_scientific_color_mapping() - Wetenschappelijk accurate kleuren
+  - **NIEUW**: enhance_depth_perception() - Verbeter diepte-effect
+- **Afhankelijkheden**: PIL/Pillow, numpy, scipy (optioneel), config.constants
+
 ### utils/color_utils.py
-- **Status**: ✅ Volledig vernieuwd met enhanced fMRI kleuren en fMRI-realisme
+- **Status**: ✅ Volledig vernieuwd met enhanced fMRI kleuren, fMRI-realisme en heatmap enhancement
 - **Pad**: /utils/color_utils.py
 - **Functionaliteit**: 
   - **ORIGINEEL**: fMRI kleurenschema, gloed effecten, gradiënten, pulserende kleuren
@@ -104,30 +151,57 @@ BewegendeAnimaties/
   - **ENHANCED**: Enhanced gloed effecten met verhoogde intensiteit
   - **ENHANCED**: Kleurschema preview generatie
   - **ENHANCED**: Intensiteit mapping voor positieve/negatieve activatie
-  - **NIEUW**: Voxel-based coloring met realistische textuur effecten
-  - **NIEUW**: Statistical thresholding simulatie voor authentieke fMRI look
-  - **NIEUW**: Noise pattern generatie (gaussian, uniform, salt-pepper)
-  - **NIEUW**: Spatial smoothing algoritmes met edge preservation
-  - **NIEUW**: Z-score mapping simulatie voor wetenschappelijke authenticiteit
-  - **NIEUW**: Intensity mapping met multi-level support
-  - **NIEUW**: Temporal correlation en baseline fluctuation functies
-  - **NIEUW**: enhance_fmri_realism() hoofdfunctie voor alle realisme effecten
+  - **ENHANCED**: Voxel-based coloring met realistische textuur effecten
+  - **ENHANCED**: Statistical thresholding simulatie voor authentieke fMRI look
+  - **ENHANCED**: Noise pattern generatie (gaussian, uniform, salt-pepper)
+  - **ENHANCED**: Spatial smoothing algoritmes met edge preservation
+  - **ENHANCED**: Z-score mapping simulatie voor wetenschappelijke authenticiteit
+  - **ENHANCED**: Intensity mapping met multi-level support
+  - **ENHANCED**: Temporal correlation en baseline fluctuation functies
+  - **ENHANCED**: enhance_fmri_realism() hoofdfunctie voor alle realisme effecten
+  - **NIEUW**: Geïntegreerde heatmap enhancement functies
+  - **NIEUW**: create_heatmap_gradient() - Logaritmische intensiteit mapping
+  - **NIEUW**: apply_heatmap_blending() - Screen, overlay, multiply blending
+  - **NIEUW**: enhance_heatmap_contrast() - Adaptieve contrast verbetering
+  - **NIEUW**: apply_heatmap_transparency() - Intensiteit-gebaseerde transparantie
+  - **NIEUW**: create_intensity_heatmap() - Z-score gebaseerde heatmap kleuren
+  - **NIEUW**: apply_smooth_color_transitions() - Gaussische kleurovergangen
+  - **NIEUW**: enhance_color_saturation() - Intensiteit-gebaseerde saturatie
+  - **NIEUW**: apply_adaptive_brightness() - Ruimtelijke helderheid adaptatie
+  - **NIEUW**: apply_gaussian_heatmap_blur() - Edge-preserving heatmap blur
+  - **NIEUW**: create_activation_hotspots() - Realistische hotspot generatie
+  - **NIEUW**: enhance_spatial_gradients() - Radiaal/horizontaal/verticaal gradiënten
+  - **NIEUW**: apply_edge_softening() - Gaussische/bilateral rand verzachting
+  - **NIEUW**: integrate_heatmap_effects() - Hoofdfunctie voor alle heatmap effecten
+  - **NIEUW**: optimize_heatmap_visibility() - Zichtbaarheid optimalisatie
+  - **NIEUW**: apply_scientific_color_mapping() - Wetenschappelijke kleurmapping
+  - **NIEUW**: enhance_depth_perception() - Diepte effecten (gradient/shadow/highlight)
 - **Afhankelijkheden**: PIL/Pillow, numpy, scipy (optioneel), config.constants
 
 ### utils/image_utils.py
-- **Status**: ✅ Voltooid en uitgebreid met fMRI-realisme
+- **Status**: ✅ Voltooid en uitgebreid met fMRI-realisme en heatmap compositing
 - **Pad**: /utils/image_utils.py
 - **Functionaliteit**: 
   - Afbeelding laden, ovaal masker, compositing, punt-in-ovaal detectie
   - Stick figure tekenfuncties met verschillende poses
   - Random walk utilities en positie berekeningen
   - Ovaal boundary checking en position correction
-  - **NIEUW**: Voxel-texture rendering functies voor authentieke fMRI appearance
-  - **NIEUW**: Spatial smoothing implementatie met edge preservation
-  - **NIEUW**: Edge enhancement met fMRI-style glow effecten
-  - **NIEUW**: Cluster detection en rendering capabilities
-  - **NIEUW**: Anatomical realism functies voor natuurlijke variatie
-  - **NIEUW**: Gradient boundary rendering voor smooth transitions
+  - **ENHANCED**: Voxel-texture rendering functies voor authentieke fMRI appearance
+  - **ENHANCED**: Spatial smoothing implementatie met edge preservation
+  - **ENHANCED**: Edge enhancement met fMRI-style glow effecten
+  - **ENHANCED**: Cluster detection en rendering capabilities
+  - **ENHANCED**: Anatomical realism functies voor natuurlijke variatie
+  - **ENHANCED**: Gradient boundary rendering voor smooth transitions
+  - **NIEUW**: Heatmap compositing functies voor authentieke fMRI-look
+  - **NIEUW**: apply_heatmap_compositing() - Geavanceerde heatmap blending
+  - **NIEUW**: create_multi_layer_heatmap() - Multi-layer heatmap compositing
+  - **NIEUW**: enhance_heatmap_compositing() - Heatmap verbetering met effecten
+  - **NIEUW**: create_heatmap_with_depth() - Heatmap met diepte-effect
+  - **NIEUW**: apply_scientific_heatmap_rendering() - Wetenschappelijk accurate rendering
+  - **NIEUW**: create_animated_heatmap_frame() - Geanimeerde heatmap frames
+  - **NIEUW**: create_heatmap_comparison() - Vergelijking tussen kleurschema's
+  - **NIEUW**: create_heatmap_overlay_with_transparency() - Transparantie effecten
+  - **NIEUW**: optimize_heatmap_for_animation() - Performance optimalisatie
 - **Afhankelijkheden**: PIL/Pillow, numpy, config.constants
 
 ### utils/gif_utils.py
@@ -143,7 +217,7 @@ BewegendeAnimaties/
 - **Afhankelijkheden**: bewegend_mannetje, tekst_verschijnend modules
 
 ### animaties/bewegend_mannetje.py
-- **Status**: ✅ Enhanced met nieuwe fMRI kleuren en fMRI-realisme
+- **Status**: ✅ Enhanced met nieuwe fMRI kleuren, fMRI-realisme en heatmap enhancement
 - **Pad**: /animaties/bewegend_mannetje.py
 - **Functionaliteit**: 
   - **ORIGINEEL**: Ovaalroute algoritme voor smooth beweging binnen hersenregio
@@ -155,19 +229,28 @@ BewegendeAnimaties/
   - **ENHANCED**: Ondersteuning voor alle 4 kleurschalen
   - **ENHANCED**: Enhanced gloed effecten
   - **ENHANCED**: Tijdelijke kleurvariatie en pulsing effecten
-  - **NIEUW**: fMRI realism enhancement voor figure rendering
-  - **NIEUW**: Voxel texture, noise patterns, en spatial smoothing integratie
-  - **NIEUW**: Statistical thresholding en cluster-based activation
-  - **NIEUW**: Anatomical variation en gradient boundaries
-  - **NIEUW**: Temporal correlation tussen frames voor realistische dynamiek
-  - **NIEUW**: Enhanced fMRI realism demo functies
+  - **ENHANCED**: fMRI realism enhancement voor figure rendering
+  - **ENHANCED**: Voxel texture, noise patterns, en spatial smoothing integratie
+  - **ENHANCED**: Statistical thresholding en cluster-based activation
+  - **ENHANCED**: Anatomical variation en gradient boundaries
+  - **ENHANCED**: Temporal correlation tussen frames voor realistische dynamiek
+  - **ENHANCED**: Enhanced fMRI realism demo functies
+  - **NIEUW**: Heatmap enhancement integratie voor authentieke fMRI-heatmap look
+  - **NIEUW**: apply_heatmap_enhancement_to_figure() - Heatmap effecten voor figuren
+  - **NIEUW**: Intensiteit data generatie gebaseerd op beweging en activiteit
+  - **NIEUW**: create_animated_heatmap_frame() integratie voor realtime heatmaps
+  - **NIEUW**: Trail effects voor bewegingssporen in heatmap
+  - **NIEUW**: Performance optimalisatie voor heatmap animaties
+  - **NIEUW**: create_heatmap_enhancement_demo() - Demo voor heatmap enhancement
+  - **NIEUW**: create_heatmap_comparison_demo() - Vergelijking van heatmap instellingen
+  - **NIEUW**: Configureerbare heatmap enhancement per animatie
   - Frame-by-frame animatie generatie met configureerbare parameters
   - Smooth interpolatie voor vloeiende beweging
   - Anti-aliasing en pulsing effecten
 - **Afhankelijkheden**: utils modules (image_utils, color_utils, gif_utils), config.constants
 
 ### animaties/vlekken_verschijnend.py
-- **Status**: ✅ Enhanced met nieuwe fMRI kleuren en fMRI-realisme
+- **Status**: ✅ Enhanced met nieuwe fMRI kleuren en fMRI-realisme (heatmap enhancement nog toe te voegen)
 - **Pad**: /animaties/vlekken_verschijnend.py
 - **Functionaliteit**: 
   - **ORIGINEEL**: Algoritme voor natuurlijk uitziende organische vlekken
@@ -178,20 +261,21 @@ BewegendeAnimaties/
   - **ENHANCED**: Enhanced gloed effecten met verhoogde intensiteit
   - **ENHANCED**: Tijdelijke kleurvariatie gebaseerd op vlekgroei
   - **ENHANCED**: Dynamische pulsing effecten per vlek
-  - **NIEUW**: fMRI realism enhancement voor spot rendering
-  - **NIEUW**: Voxel texture, noise patterns, en spatial smoothing voor spots
-  - **NIEUW**: Statistical thresholding en cluster-based activation voor spots
-  - **NIEUW**: Anatomical variation en gradient boundaries
-  - **NIEUW**: Temporal correlation tussen frames voor realistische dynamiek
-  - **NIEUW**: Z-score mapping voor wetenschappelijke authenticiteit
-  - **NIEUW**: Enhanced fMRI realism demo functies
+  - **ENHANCED**: fMRI realism enhancement voor spot rendering
+  - **ENHANCED**: Voxel texture, noise patterns, en spatial smoothing voor spots
+  - **ENHANCED**: Statistical thresholding en cluster-based activation voor spots
+  - **ENHANCED**: Anatomical variation en gradient boundaries
+  - **ENHANCED**: Temporal correlation tussen frames voor realistische dynamiek
+  - **ENHANCED**: Z-score mapping voor wetenschappelijke authenticiteit
+  - **ENHANCED**: Enhanced fMRI realism demo functies
+  - **TODO**: Heatmap enhancement integratie voor authentieke spot heatmaps
   - Timing Optimalisatie: Smooth animatie met sigmoid easing voor natuurlijke groei
   - Configureerbaar: Volledig instelbaar via constants (grootte, aantal, timing)
   - Demo functionaliteit: Test versie met vaste seed voor consistente resultaten
 - **Afhankelijkheden**: utils modules (image_utils, color_utils, gif_utils), config.constants
 
 ### animaties/vlekken_verdwijnend.py
-- **Status**: ✅ Enhanced met nieuwe fMRI kleuren en fMRI-realisme
+- **Status**: ✅ Enhanced met nieuwe fMRI kleuren en fMRI-realisme (heatmap enhancement nog toe te voegen)
 - **Pad**: /animaties/vlekken_verdwijnend.py
 - **Functionaliteit**: 
   - **ORIGINEEL**: Reverse Algoritme: Omgekeerd proces van vlekken_verschijnend.py
@@ -202,19 +286,20 @@ BewegendeAnimaties/
   - **ENHANCED**: Enhanced gloed effecten (minder intensief dan verschijnende vlekken)
   - **ENHANCED**: Tijdelijke kleurvariatie aangepast voor verdwijning
   - **ENHANCED**: Minder intensieve pulsing effecten voor natuurlijk verdwijnen
-  - **NIEUW**: fMRI realism enhancement voor disappearing spot rendering
-  - **NIEUW**: Voxel texture, spatial smoothing, en edge enhancement
-  - **NIEUW**: Statistical thresholding en cluster-based deactivation
-  - **NIEUW**: Anatomical variation en gradient boundaries voor disappearing spots
-  - **NIEUW**: Temporal correlation tussen frames voor realistische dynamiek
-  - **NIEUW**: Z-score mapping voor wetenschappelijke authenticiteit in deactivatie
-  - **NIEUW**: Enhanced fMRI realism demo functies voor disappearing spots
+  - **ENHANCED**: fMRI realism enhancement voor disappearing spot rendering
+  - **ENHANCED**: Voxel texture, spatial smoothing, en edge enhancement
+  - **ENHANCED**: Statistical thresholding en cluster-based deactivation
+  - **ENHANCED**: Anatomical variation en gradient boundaries voor disappearing spots
+  - **ENHANCED**: Temporal correlation tussen frames voor realistische dynamiek
+  - **ENHANCED**: Z-score mapping voor wetenschappelijke authenticiteit in deactivatie
+  - **ENHANCED**: Enhanced fMRI realism demo functies voor disappearing spots
+  - **TODO**: Heatmap enhancement integratie voor authentieke disappearing heatmaps
   - Gespreide Timing: Vlekken verdwijnen op verschillende momenten voor natuurlijk effect
   - Wetenschappelijke Waarde: Toont afnemende hersenactiviteit, inhibitie of herstelprocessen
 - **Afhankelijkheden**: utils modules (image_utils, color_utils, gif_utils), config.constants
 
 ### animaties/tekst_verschijnend.py
-- **Status**: ✅ Enhanced met nieuwe fMRI kleuren en fMRI-realisme
+- **Status**: ✅ Enhanced met nieuwe fMRI kleuren en fMRI-realisme (heatmap enhancement nog toe te voegen)
 - **Pad**: /animaties/tekst_verschijnend.py
 - **Functionaliteit**: 
   - **ORIGINEEL**: Letter-voor-letter animatie: Tekst verschijnt geleidelijk karakter voor karakter
@@ -225,30 +310,49 @@ BewegendeAnimaties/
   - **ENHANCED**: Enhanced gloed effecten voor betere zichtbaarheid
   - **ENHANCED**: Gradient animatie effecten per karakter
   - **ENHANCED**: Tijdelijke kleurvariatie voor dynamische effecten
-  - **NIEUW**: fMRI realism enhancement voor text rendering
-  - **NIEUW**: Voxel texture, spatial smoothing, en edge enhancement
-  - **NIEUW**: Statistical thresholding voor authentieke fMRI text appearance
-  - **NIEUW**: Anatomical variation en gradient boundaries voor text
-  - **NIEUW**: Temporal correlation tussen frames voor realistische dynamiek
-  - **NIEUW**: Behoud van text readability terwijl wetenschappelijke authenticiteit wordt toegevoegd
-  - **NIEUW**: Enhanced fMRI realism demo functies voor text
+  - **ENHANCED**: fMRI realism enhancement voor text rendering
+  - **ENHANCED**: Voxel texture, spatial smoothing, en edge enhancement
+  - **ENHANCED**: Statistical thresholding voor authentieke fMRI text appearance
+  - **ENHANCED**: Anatomical variation en gradient boundaries voor text
+  - **ENHANCED**: Temporal correlation tussen frames voor realistische dynamiek
+  - **ENHANCED**: Behoud van text readability terwijl wetenschappelijke authenticiteit wordt toegevoegd
+  - **ENHANCED**: Enhanced fMRI realism demo functies voor text
+  - **TODO**: Heatmap enhancement integratie voor authentieke text heatmaps
   - Font management: Automatische font detectie met fallback opties
   - Pulsing effecten: Dynamische kleur pulsing voor extra visuele impact
   - Boundary checking: Zorgt ervoor dat tekst altijd binnen ovaal grenzen blijft
   - Demo functionaliteit: Multi-tekst demo met verschillende posities en kleuren
 - **Afhankelijkheden**: utils modules (image_utils, color_utils, gif_utils), config.constants
 
+### demo_heatmap_enhancement.py
+- **Status**: ✅ NIEUW - Volledig geïmplementeerd
+- **Pad**: /demo_heatmap_enhancement.py
+- **Functionaliteit**: 
+  - **NIEUW**: Volledige demo suite voor heatmap enhancement functionaliteit
+  - **NIEUW**: Demonstratie van beschikbare kleurschema's en heatmap instellingen
+  - **NIEUW**: Basis animaties met heatmap enhancement
+  - **NIEUW**: Kleurschema vergelijking met heatmap enhancement
+  - **NIEUW**: Voor/na vergelijking van heatmap enhancement
+  - **NIEUW**: Geavanceerde heatmap functies demonstratie
+  - **NIEUW**: Heatmap gradiënten preview generatie
+  - **NIEUW**: Wetenschappelijke nauwkeurigheid demonstratie
+  - **NIEUW**: Performance optimalisatie testing
+  - **NIEUW**: Geautomatiseerde samenvatting van gegenereerde bestanden
+  - **NIEUW**: Gebruiksvriendelijke interface voor heatmap enhancement testing
+- **Afhankelijkheden**: Alle animatie modules, utils modules, config.constants
+
 ### test_enhanced_colors.py
-- **Status**: ✅ Nieuw toegevoegd
+- **Status**: ✅ Bestaand (kan worden uitgebreid met heatmap enhancement tests)
 - **Pad**: /test_enhanced_colors.py
 - **Functionaliteit**: 
-  - **NIEUW**: Volledige test suite voor enhanced fMRI kleuren
-  - **NIEUW**: Test alle 4 kleurschalen voor alle animatie modules
-  - **NIEUW**: Kleurschema preview generatie
-  - **NIEUW**: Dynamische features testing
-  - **NIEUW**: Vergelijkingsoverzicht van kleurschalen
-  - **NIEUW**: Geautomatiseerde batch testing
-  - **NIEUW**: Resultaten samenvatting en validatie
+  - **BESTAAND**: Volledige test suite voor enhanced fMRI kleuren
+  - **BESTAAND**: Test alle 4 kleurschalen voor alle animatie modules
+  - **BESTAAND**: Kleurschema preview generatie
+  - **BESTAAND**: Dynamische features testing
+  - **BESTAAND**: Vergelijkingsoverzicht van kleurschalen
+  - **BESTAAND**: Geautomatiseerde batch testing
+  - **BESTAAND**: Resultaten samenvatting en validatie
+  - **TODO**: Uitbreiding met heatmap enhancement tests
 - **Afhankelijkheden**: Alle animatie modules, utils modules, config.constants
 
 ### demo_bewegend_mannetje.py
@@ -267,63 +371,94 @@ BewegendeAnimaties/
 - **Functionaliteit**: Centraal script dat alle 4 animaties genereert
 - **Afhankelijkheden**: Alle animatie modules, config module
 
-## fMRI-Realisme - Nieuwe Functionaliteit
+## Heatmap Enhancement - Nieuwe Functionaliteit
 
 ### Belangrijkste verbeteringen:
-1. **Voxel-based Rendering**: Authentieke voxel texturen voor realistische fMRI appearance
-2. **Noise Pattern Generation**: Gaussian, uniform, en salt-pepper ruis zoals in echte fMRI data
-3. **Spatial Smoothing**: Edge-preserving smoothing algoritmes zoals gebruikt in fMRI analyse
-4. **Statistical Thresholding**: Hard en soft thresholding simulatie voor significantie testing
-5. **Cluster Detection**: Activation cluster detectie en rendering zoals in fMRI software
-6. **Z-score Mapping**: Simulatie van z-score gebaseerde kleurmapping voor wetenschappelijke authenticiteit
-7. **Temporal Correlation**: Realistische temporele correlatie tussen frames
-8. **Anatomical Variation**: Asymmetrie, hotspots, en anatomische gradiënten
-9. **Gradient Boundaries**: Zachte gradiënt grenzen voor natuurlijke overgangen
-10. **Multi-level Intensity**: Verschillende intensiteitsniveaus binnen activatiegebieden
+1. **Authentieke Heatmap Rendering**: Onmiddellijke herkenning als fMRI-heatmaps
+2. **Logaritmische Intensiteit Mapping**: Realistische intensiteit verdeling zoals in echte fMRI
+3. **Adaptieve Helderheid**: Ruimtelijke helderheid aanpassing per regio
+4. **Kleur Saturatie Enhancement**: Verhoogde saturatie in activatiegebieden
+5. **Vloeiende Kleurovergangen**: Gaussische overgangen zonder banding
+6. **Activatie Hotspots**: Realistische hotspot gebieden met natuurlijke verdeling
+7. **Ruimtelijke Gradiënten**: Radiaal, horizontaal en verticaal gradiënt effecten
+8. **Zachte Rand Verzachting**: Natuurlijke randen zoals in echte fMRI-scans
+9. **Heatmap Blending Modes**: Screen, overlay, multiply blending voor authentieke compositing
+10. **Diepte Perceptie**: Pseudo-3D effecten voor verbeterde visualisatie
+11. **Multi-layer Compositing**: Complexe heatmap visualisaties met meerdere lagen
+12. **Performance Optimalisatie**: Speed, balanced, quality optimalisatie niveaus
 
 ### Technische implementatie:
-- **Voxel Texture**: Grid, blocks, en subtle rendering stijlen
-- **Noise Generation**: Realistische ruis patronen met temporele variatie
-- **Spatial Smoothing**: Bilateral filtering en Gaussian smoothing met edge preservation
-- **Statistical Thresholding**: Soft en hard thresholding met configureerbare fade zones
-- **Cluster Analysis**: Connected components analyse met minimale cluster grootte
-- **Z-score Simulation**: Significantie testing met configureerbare drempelwaarden
-- **Temporal Dynamics**: Frame-to-frame correlatie en baseline fluctuaties
-- **Anatomical Realism**: Asymmetrie factoren, hotspot generatie, en anatomische gradiënten
-- **Enhanced Gloed**: Verhoogde gloed radius en intensiteit voor betere zichtbaarheid
-- **Performance Optimalisatie**: Caching en geoptimaliseerde algoritmes
+- **Heatmap Gradiënten**: Logaritmische, lineaire en exponentiële intensiteit mapping
+- **Kleur Saturatie**: Intensiteit-gebaseerde saturatie verhoging
+- **Adaptieve Helderheid**: Ruimtelijke helderheid maskers met radiaal patroon
+- **Gaussische Blur**: Edge-preserving blur specifiek voor heatmap-effect
+- **Hotspot Generatie**: Realistische activatie hotspots met Gaussische falloff
+- **Ruimtelijke Gradiënten**: Radiaal, horizontaal en verticaal gradiënt maskers
+- **Rand Verzachting**: Gaussische, bilateral en morfologische rand verzachting
+- **Blending Modes**: Screen, overlay, multiply en normal alpha blending
+- **Transparantie Effecten**: Intensiteit-gebaseerde transparantie niveaus
+- **Diepte Effecten**: Gradient, shadow en highlight methoden voor diepte perceptie
+- **Multi-layer Rendering**: Gelaagde heatmap compositing met verschillende blend modes
+- **Performance Optimalisatie**: Caching, parallelle verwerking en optimalisatie niveaus
 
-### fMRI-Realisme Configuratie:
-Volledig configureerbaar via FMRI_REALISM dictionary in constants.py:
-- **Voxel Settings**: Grootte, opacity, en stijl configuratie
-- **Noise Parameters**: Type, niveau, en temporele/ruimtelijke variatie
-- **Smoothing Options**: Kernel grootte, iteraties, en edge preservation
-- **Thresholding Settings**: Niveau, type, en fade configuratie
-- **Cluster Parameters**: Minimale grootte, connectiviteit, en merge afstand
-- **Intensity Levels**: Multi-level configuratie en blending opties
-- **Temporal Dynamics**: Correlatie, drift, en fluctuatie instellingen
-- **Anatomical Variation**: Asymmetrie, hotspots, en gradiënt configuratie
-- **Performance Settings**: Caching, parallel processing, en optimalisatie niveau
+### Heatmap Enhancement Configuratie:
+Volledig configureerbaar via HEATMAP_ENHANCEMENT dictionary in constants.py:
+- **Algemeen**: enabled, intensity_mapping, intensity_levels
+- **Kleur Enhancement**: color_saturation, adaptive_brightness, brightness_enhancement
+- **Overgangen**: smooth_gradients, gradient_transition_width, gradient_method
+- **Blur Effecten**: gaussian_blur_sigma, blur_preserve_edges
+- **Hotspots**: hotspot_enhancement, hotspot_count, hotspot_intensity_range, hotspot_size_range
+- **Randen**: edge_softening, edge_softening_method
+- **Diepte**: depth_simulation, depth_factor, depth_method
+- **Blending**: blending_mode, blending_opacity
+- **Transparantie**: transparency_levels, intensity_based_transparency
+- **Contrast**: contrast_enhancement, adaptive_contrast, contrast_preserve_range
+- **Gradiënten**: spatial_gradients, gradient_strength, gradient_direction
+- **Wetenschappelijk**: scientific_color_mapping, zscore_based_mapping, statistical_thresholding
+- **Temporeel**: temporal_smoothing, temporal_correlation, temporal_variation
+- **Performance**: enable_caching, optimization_level, parallel_processing
 
-### Kleurschalen Details:
-1. **Hot**: Zwart → Rood → Oranje → Geel → Wit (klassieke warme kleuren)
-2. **Cool**: Cyaan → Blauw → Paars → Magenta (koele kleuren)
-3. **Jet**: Blauw → Cyaan → Groen → Geel → Rood (rainbow kleuren)
-4. **Viridis**: Paars → Blauw → Groen → Geel (perceptueel uniform)
+### Wetenschappelijke Nauwkeurigheid:
+1. **Z-score Mapping**: Simulatie van z-score gebaseerde kleurmapping
+2. **Statistical Thresholding**: Hard en soft thresholding zoals in fMRI-analyse
+3. **Cluster Detection**: Activatie cluster detectie en rendering
+4. **Neuroimaging Standaarden**: Kleuren conform FSL, SPM, AFNI software
+5. **Temporal Correlation**: Realistische temporele correlatie tussen frames
+6. **Anatomical Variation**: Asymmetrie en anatomische gradiënten
+7. **Baseline Fluctuations**: Realistische baseline variatie
+8. **Edge Enhancement**: fMRI-stijl rand verbetering
+9. **Voxel Texture**: Authentieke voxel-gebaseerde texturen
+10. **Noise Patterns**: Realistische ruis patronen zoals in echte fMRI data
 
-### Doelgroep en nut:
-- **Neurowetenschappers**: Verhoogde wetenschappelijke authenticiteit en geloofwaardigheid
-- **Medische Professionals**: Herkenbare fMRI-visualisaties voor klinische toepassingen
-- **Onderzoekers**: Realistische hersenactiviteit representatie voor publicaties
-- **Educatieve instellingen**: Authentieke fMRI-scans voor onderwijsdoeleinden
-- **Software Ontwikkelaars**: Referentie implementatie voor fMRI visualisatie
-- **Presentaties**: Professionele en wetenschappelijk verantwoorde visualisaties
+### Doelgroep Impact:
+- **Neurowetenschappers**: Onmiddellijke herkenning van authentieke fMRI-visualisaties
+- **Medische Professionals**: Vertrouwde heatmap-stijl voor klinische geloofwaardigheid  
+- **Onderzoekers**: Realistische fMRI-representatie voor publicaties
+- **Educatieve instellingen**: Studenten herkennen echte fMRI-scans
+- **Software Ontwikkelaars**: Referentie implementatie voor fMRI heatmap visualisatie
 
-### Configuratie opties:
+### Demo en Testing:
+- **demo_heatmap_enhancement.py**: Volledige demonstratie van alle heatmap functies
+- **Voor/Na Vergelijking**: Duidelijk verschil tussen normale en heatmap-enhanced versies
+- **Kleurschema Vergelijking**: Alle kleurschalen met heatmap enhancement
+- **Performance Testing**: Optimalisatie niveaus (speed, balanced, quality)
+- **Wetenschappelijke Validatie**: Vergelijking met echte fMRI-scans
+- **Interactieve Preview**: Real-time aanpassing van heatmap parameters
+
+### Configuratie Opties:
 - **DEFAULT_COLOR_SCHEME**: Standaard kleurschema selectie
 - **COLOR_MAPPING**: Intensiteitsniveaus en smooth transitions
 - **DYNAMIC_COLORS**: Bewegings-, tijd- en activiteitsgebaseerde kleuren
 - **ENHANCED_GLOW**: Verhoogde gloed parameters
 - **FMRI_REALISM**: Volledige fMRI-realisme configuratie
+- **HEATMAP_ENHANCEMENT**: Volledige heatmap enhancement configuratie
 - **SPOT_COLOR_VARIATION**: Vlekkleur variatie instellingen
 - **TEXT_COLOR_SCHEME_BASED**: Kleurschema-gebaseerde tekstkleuren
+
+### Toekomstige Uitbreidingen:
+- **Vlekken Animaties**: Heatmap enhancement voor vlekken_verschijnend en vlekken_verdwijnend
+- **Tekst Animaties**: Heatmap enhancement voor tekst_verschijnend
+- **Colorbar Rendering**: Wetenschappelijke kleurenbalk generatie
+- **3D Heatmap Effects**: Geavanceerde 3D visualisatie effecten
+- **Real-time Preview**: Live preview van heatmap instellingen
+- **Export Formats**: Ondersteuning voor verschillende export formaten
